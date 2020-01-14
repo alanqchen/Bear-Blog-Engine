@@ -1,0 +1,2 @@
+# MGBlog
+Modern Golang Blog
