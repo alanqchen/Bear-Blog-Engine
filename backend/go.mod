@@ -1,4 +1,4 @@
-module github.com/alanqchen/MGBlog
+module github.com/alanqchen/MGBlog/backend
 
 go 1.13
 
