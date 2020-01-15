@@ -4,23 +4,24 @@ import (
 	"context"
 	"encoding/json"
 	"flag"
+	models "github.com/alanqchen/MGBlog/backend/models"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
 	"time"
-
-	"github.com/gorilla/mux"
 )
 
+/*
 type Post struct {
 	ID    string `json:"id"`
 	Title string `json:"title"`
 	Body  string `json:"body"`
 }
-
-var posts []Post
+*/
+var posts []models.Post
 var numPostsCreated = 1
 
 func getPosts(w http.ResponseWriter, r *http.Request) {
@@ -29,11 +30,11 @@ func getPosts(w http.ResponseWriter, r *http.Request) {
 }
 func createPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var post Post
+	var post models.Post
 	_ = json.NewDecoder(r.Body).Decode(&post)
-    post.ID = strconv.Itoa(numPostsCreated)
+	post.ID = strconv.Itoa(numPostsCreated)
 	numPostsCreated++
-	ts = append(posts, post)
+	posts = append(posts, post)
 	json.NewEncoder(w).Encode(&post)
 }
 func getPost(w http.ResponseWriter, r *http.Request) {
@@ -45,7 +46,7 @@ func getPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	json.NewEncoder(w).Encode(&Post{})
+	json.NewEncoder(w).Encode(&models.Post{})
 }
 func updatePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -53,7 +54,7 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 	for index, item := range posts {
 		if item.ID == params["id"] {
 			posts = append(posts[:index], posts[index+1:]...)
-			var post Post
+			var post models.Post
 			_ = json.NewDecoder(r.Body).Decode(&post)
 			post.ID = params["id"]
 			posts = append(posts, post)
