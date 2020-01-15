@@ -1,4 +1,4 @@
-module github.com/TutorialEdge/realtime-chat-go-react
+module github.com/alanqchen/MGBlog
 
 go 1.13
 
