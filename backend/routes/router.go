@@ -1,0 +1,61 @@
+package routes
+
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/alanqchen/MGBlog/backend/app"
+	"github.com/alanqchen/MGBlog/backend/controllers"
+	"github.com/alanqchen/MGBlog/backend/middleware"
+	"github.com/alanqchen/MGBlog/backend/repositories"
+	"github.com/alanqchen/MGBlog/backend/services"
+	"github.com/gorilla/mux"
+)
+
+func NewRouter(a *app.App) *mux.Router {
+	r := mux.NewRouter()
+	fmt.Println("Loaded router")
+	// Repositories
+	ur := repositories.NewUserRespository(a.Database)
+	pr := repositories.NewPostRepository(a.Database)
+	fmt.Println("Loaded Repositories")
+	// Services
+	jwtAuth := services.NewJWTAuthService(&a.Config.JWT, a.Redis)
+	fmt.Println("Loaded Services")
+	// Controllers
+	ac := controllers.NewAuthController(a, ur, jwtAuth)
+	uc := controllers.NewUserController(a, ur, pr)
+	pc := controllers.NewPostController(a, pr, ur)
+	uploadController := controllers.NewUploadController()
+	fmt.Println("Loaded Contollers")
+	r.HandleFunc("/", middleware.Logger(uc.HelloWorld)).Methods(http.MethodGet)
+
+	api := r.PathPrefix("/api/v1").Subrouter()
+
+	// Uploads
+	api.HandleFunc("/images/upload", middleware.Logger(middleware.RequireAuthentication(a, uploadController.UploadImage, true))).Methods(http.MethodPost)
+	fmt.Println("Created image uploads route")
+	// Users
+	api.HandleFunc("/users", middleware.Logger(uc.GetAll)).Methods(http.MethodGet)
+	api.HandleFunc("/users", middleware.Logger(uc.Create)).Methods(http.MethodPost)
+	api.HandleFunc("/users/{id}", middleware.Logger(uc.GetById)).Methods(http.MethodGet)
+	//api.HandleFunc("/users/{id}/posts", middleware.Logger(uc.FindPostsByUser)).Methods(http.MethodGet)
+	api.HandleFunc("/protected", middleware.Logger(middleware.RequireAuthentication(a, uc.Profile, false))).Methods(http.MethodGet)
+	fmt.Println("Created users routes")
+	// Posts
+	api.HandleFunc("/posts", middleware.Logger(pc.GetAll)).Methods(http.MethodGet)
+	api.HandleFunc("/posts/{id:[0-9]+}", middleware.Logger(pc.GetById)).Methods(http.MethodGet)
+	api.HandleFunc("/posts/{slug}", middleware.Logger(pc.GetBySlug)).Methods(http.MethodGet)
+	api.HandleFunc("/posts", middleware.Logger(middleware.RequireAuthentication(a, pc.Create, true))).Methods(http.MethodPost)
+	api.HandleFunc("/posts/{id}", middleware.Logger(middleware.RequireAuthentication(a, pc.Update, true))).Methods(http.MethodPut)
+	fmt.Println("Created posts routes")
+	// Authentication
+	auth := api.PathPrefix("/auth").Subrouter()
+	auth.HandleFunc("/login", middleware.Logger(ac.Authenticate)).Methods(http.MethodPost)
+	auth.HandleFunc("/refresh", middleware.Logger(middleware.RequireRefreshToken(a, ac.RefreshTokens))).Methods(http.MethodGet)
+	auth.HandleFunc("/update", middleware.Logger(middleware.RequireAuthentication(a, uc.Update, false))).Methods(http.MethodPut)
+	auth.HandleFunc("/logout", middleware.Logger(middleware.RequireAuthentication(a, ac.Logout, false))).Methods(http.MethodGet)
+	auth.HandleFunc("/logout/all", middleware.Logger(middleware.RequireAuthentication(a, ac.LogoutAll, false))).Methods(http.MethodGet)
+	fmt.Println("Created authentication routes")
+	return r
+}
