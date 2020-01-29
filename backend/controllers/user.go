@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"time"
@@ -14,6 +16,7 @@ import (
 	"github.com/alanqchen/MGBlog/backend/util"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgtype"
+	"github.com/jackc/pgx/v4"
 )
 
 type UserController struct {
@@ -93,7 +96,14 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var newID int
+	for collision := true; collision; collision = !(err == pgx.ErrNoRows) {
+		newID = int(rand.Int31())
+		_, err = uc.Database.Conn.Prepare(context.Background(), "id-exists-query", "SELECT user_schema.\"user\".id FROM user_schema.\"user\" WHERE id = $1;")
+		err = uc.Database.Conn.QueryRow(context.Background(), "id-exists-query", newID).Scan(exists)
+	}
 	u := &models.User{
+		ID:        newID,
 		Name:      name,
 		Email:     email,
 		Admin:     false,
