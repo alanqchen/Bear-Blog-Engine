@@ -21,6 +21,7 @@ func NewRedis(dbConfig config.RedisConfig) (*Redis, error) {
 		DB:       0,
 	})
 	fmt.Println(dbConfig.Host)
+	fmt.Println(dbConfig.Port)
 	fmt.Println("Pinging redis...")
 	_, err := client.Ping().Result()
 	if err != nil {

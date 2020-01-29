@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
 
 	"github.com/alanqchen/MGBlog/backend/database"
 	"github.com/alanqchen/MGBlog/backend/models"
@@ -63,8 +64,9 @@ func (ur *userRepository) Update(u *models.User) error {
 func (ur *userRepository) GetAll() ([]*models.User, error) {
 	var users []*models.User
 
-	rows, err := ur.Conn.Query(context.Background(), "SELECT id, name, email, admin, created_at, updated_at FROM users")
+	rows, err := ur.Conn.Query(context.Background(), "SELECT id, name, email, admin, created_at, updated_at FROM user")
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	defer rows.Close()

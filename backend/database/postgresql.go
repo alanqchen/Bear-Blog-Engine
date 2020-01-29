@@ -20,7 +20,6 @@ func NewPostgres(dbConfig config.PostgreSQLConfig) (*Postgres, error) {
 		fmt.Fprintf(os.Stderr, "Unable to connection to database: %v\n", err)
 		os.Exit(1)
 	}
-	defer conn.Close(context.Background())
 
 	return &Postgres{conn}, nil
 }

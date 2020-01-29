@@ -13,8 +13,8 @@ type PostgreSQLConfig struct {
 
 type JWTConfig struct {
 	Secret     string `json:"secret"`
-	PublicKey  string `json:"public"`
-	PrivateKey string `json:"private"`
+	PublicKey  string `json:"public_key"`
+	PrivateKey string `json:"private_key"`
 }
 
 type RedisConfig struct {

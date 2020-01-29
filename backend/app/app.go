@@ -17,19 +17,20 @@ type App struct {
 	Redis    *database.Redis
 }
 
-func New(appConfig config.Config) *App {
+func New(appConfig config.Config) (*App, *database.Postgres) {
 	fmt.Println("Starting Postgres")
 	db, err := database.NewPostgres(appConfig.ProstgreSQL)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	fmt.Println("Starting Redis")
 	redis, err := database.NewRedis(appConfig.RedisDB)
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("Databases started succesfully")
-	return &App{appConfig, db, redis}
+	return &App{appConfig, db, redis}, db
 }
 
 func (a *App) Run(r *mux.Router) {
