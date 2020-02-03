@@ -11,7 +11,7 @@ import (
 	"github.com/alanqchen/MGBlog/backend/routes"
 )
 
-/* Backend File Structure from https://github.com/steffen25/golang.zone. Used
+/* Big thanks to steffen for Backend File Structure from https://github.com/steffen25/golang.zone. Used
  * w/ permission through MIT Liscense
  */
 

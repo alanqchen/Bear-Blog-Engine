@@ -12,6 +12,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const (
+	AssetFolder = "/public/"
+)
+
 func NewRouter(a *app.App) *mux.Router {
 	r := mux.NewRouter()
 	fmt.Println("Loaded router")
@@ -30,11 +34,17 @@ func NewRouter(a *app.App) *mux.Router {
 	fmt.Println("Loaded Contollers")
 	r.HandleFunc("/", middleware.Logger(uc.HelloWorld)).Methods(http.MethodGet)
 
+	// media routes, might change later
+	r.PathPrefix("/assets/images").Handler(http.StripPrefix("/assets/images", http.FileServer(http.Dir("./public/images/"))))
+	r.PathPrefix("/assets/videos").Handler(http.StripPrefix("/assets/videos", http.FileServer(http.Dir("./public/videos/"))))
+	//r.PathPrefix("/public").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("./public/images/"))))
+
 	api := r.PathPrefix("/api/v1").Subrouter()
 
 	// Uploads
 	api.HandleFunc("/images/upload", middleware.Logger(middleware.RequireAuthentication(a, uploadController.UploadImage, true))).Methods(http.MethodPost)
-	fmt.Println("Created images uploads route")
+	api.HandleFunc("/videos/upload", middleware.Logger(middleware.RequireAuthentication(a, uploadController.UploadVideo, true))).Methods(http.MethodPost)
+	fmt.Println("Created media uploads route")
 	// Users
 	api.HandleFunc("/users", middleware.Logger(uc.GetAll)).Methods(http.MethodGet)
 	api.HandleFunc("/users", middleware.Logger(uc.Create)).Methods(http.MethodPost)
