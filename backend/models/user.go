@@ -87,6 +87,15 @@ func (u *User) CheckPassword(password string) bool {
 	return true
 }
 
+/*
+func (u *User) GetHashedPassword() string {
+	return u.Password
+}
+
+func (u *User) GetCreationTime() time.Time {
+	return u.CreatedAt
+}
+*/
 func (u *User) IsAdmin() bool {
 	return u.Admin == true
 }

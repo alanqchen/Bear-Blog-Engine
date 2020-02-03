@@ -34,7 +34,7 @@ func NewRouter(a *app.App) *mux.Router {
 
 	// Uploads
 	api.HandleFunc("/images/upload", middleware.Logger(middleware.RequireAuthentication(a, uploadController.UploadImage, true))).Methods(http.MethodPost)
-	fmt.Println("Created image uploads route")
+	fmt.Println("Created images uploads route")
 	// Users
 	api.HandleFunc("/users", middleware.Logger(uc.GetAll)).Methods(http.MethodGet)
 	api.HandleFunc("/users", middleware.Logger(uc.Create)).Methods(http.MethodPost)

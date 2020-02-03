@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -71,6 +72,7 @@ func (uc *UploadController) UploadImage(w http.ResponseWriter, r *http.Request) 
 
 	err = ioutil.WriteFile("./public/images/"+fileName+ext, Buf.Bytes(), 0644)
 	if err != nil {
+		log.Println(err)
 		NewAPIError(&APIError{false, "Could not write file to disk", http.StatusInternalServerError}, w)
 		return
 	}

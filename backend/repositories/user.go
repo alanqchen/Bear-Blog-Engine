@@ -58,7 +58,7 @@ func (ur *userRepository) Create(u *models.User) error {
 func (ur *userRepository) Update(u *models.User) error {
 	// Check if an user already exists with the email
 	// Prepare statement for inserting data
-	_, err := ur.Conn.Prepare(context.Background(), "update-query", "UPDATE users SET name=?, email=?, password=?, updated_at=? WHERE id = ?")
+	_, err := ur.Conn.Prepare(context.Background(), "update-query", "UPDATE user_schema.\"user\" SET name=?, email=?, password=?, updated_at=? WHERE id = ?")
 	if err != nil {
 		return err
 	}
@@ -102,8 +102,8 @@ func (ur *userRepository) GetAll() ([]*models.User, error) {
 func (ur *userRepository) FindByEmail(email string) (*models.User, error) {
 	user := models.User{}
 
-	err := ur.Conn.QueryRow(context.Background(), "SELECT id, name, email, password, admin, created_at, updated_at FROM users WHERE email = '?'", email).Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Admin, &user.CreatedAt, &user.UpdatedAt)
-	if err != nil {
+	err := ur.Conn.QueryRow(context.Background(), "SELECT * FROM user_schema.\"user\" WHERE email = $1", email).Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Admin, &user.CreatedAt, &user.UpdatedAt)
+	if err != nil && err != pgx.ErrNoRows {
 		return nil, err
 	}
 
@@ -113,7 +113,8 @@ func (ur *userRepository) FindByEmail(email string) (*models.User, error) {
 func (ur *userRepository) FindById(id int) (*models.User, error) {
 	user := models.User{}
 
-	err := ur.Conn.QueryRow(context.Background(), "SELECT id, name, email, password, admin, created_at, updated_at FROM users WHERE id = ?", id).Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Admin, &user.CreatedAt, &user.UpdatedAt)
+	err := ur.Conn.QueryRow(context.Background(), "SELECT id, name, email, password, admin, created_at, updated_at FROM user_schema.\"user\" WHERE id = $1", id).Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Admin, &user.CreatedAt, &user.UpdatedAt)
+	log.Println(err)
 	if err != nil {
 		return nil, err
 	}

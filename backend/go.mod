@@ -4,6 +4,9 @@ go 1.13
 
 require (
 	github.com/DataDog/zstd v1.4.4 // indirect
+	github.com/SlyMarbo/gmail v0.0.0-20170317233059-3ec3141ee13b
+	github.com/dchest/authcookie v0.0.0-20190824115100-f900d2294c8e // indirect
+	github.com/dchest/passwordreset v0.0.0-20190826080013-4518b1f41006
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-redis/redis v6.15.6+incompatible
 	github.com/go-redis/redis/v7 v7.0.0-beta.5

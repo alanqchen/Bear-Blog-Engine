@@ -39,6 +39,7 @@ func (ac *AuthController) Authenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	u, err := ac.UserRepository.FindByEmail(email)
+	log.Println(err)
 	if err != nil {
 		NewAPIError(&APIError{false, "Incorrect email or password", http.StatusBadRequest}, w)
 		return
@@ -54,6 +55,7 @@ func (ac *AuthController) Authenticate(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Incorrect email or password", http.StatusBadRequest}, w)
 		return
 	}
+	log.Println(err)
 
 	tokens, err := ac.jwtService.GenerateTokens(u)
 	if err != nil {

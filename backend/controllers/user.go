@@ -25,6 +25,14 @@ type UserController struct {
 	repositories.PostRepository
 }
 
+/*
+type PasswordResetController struct { // Same as Auth
+	App *app.App
+	repositories.UserRepository
+	jwtService services.JWTAuthService
+}
+*/
+
 func NewUserController(a *app.App, ur repositories.UserRepository, pr repositories.PostRepository) *UserController {
 	return &UserController{a, ur, pr}
 }
@@ -208,3 +216,71 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 
 	NewAPIResponse(&APIResponse{Success: true, Data: authUser}, w, http.StatusOK)
 }
+
+// Password reset functionality - Might look into this more later
+/*
+func (prc *PasswordResetController) ResetPasswordRequest(w http.ResponseWriter, r *http.Request) {
+	j, err := GetJSON(r.Body)
+	if err != nil {
+		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
+		return
+	}
+	if err != nil {
+		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
+		return
+	}
+	email, err := j.GetString("email")
+	if err != nil {
+		NewAPIError(&APIError{false, "Email is required", http.StatusBadRequest}, w)
+		return
+	}
+	if ok := util.IsEmail(email); !ok {
+		NewAPIError(&APIError{false, "You must provide a valid email address", http.StatusBadRequest}, w)
+		return
+	}
+
+	user, err := prc.UserRepository.FindByEmail(email)
+
+	data := struct {
+		Tokens *services.Tokens `json:"tokens"`
+		User   *models.AuthUser `json:"user"`
+	}{
+		nil,
+		nil,
+	}
+
+	if user != nil {
+		tokens, err := prc.jwtService.GenerateResetToken(user)
+		if err != nil {
+			NewAPIError(&APIError{false, "Something went wrong", http.StatusBadRequest}, w)
+			return
+		}
+
+		err := smtp.SendMail(
+			email := gmail.Compose("Email subject", tokens.AccessToken)
+			email.From = "empty@gmail.com"
+			email.Password = "empty"
+
+			// Defaults to "text/plain; charset=utf-8" if unset.
+			email.ContentType = "text/html; charset=utf-8"
+
+			// Normally you'll only need one of these, but I thought I'd show both.
+			email.AddRecipient(email)
+
+			err := email.Send()
+			if err != nil {
+				log.err("Failed to send email")
+				return
+			}
+		)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+	}
+	NewAPIResponse(&APIResponse{Success: true, Message: "Login successful", Data: data}, w, http.StatusOK)
+	// TODO return jwt tokens
+	//NewAPIResponse(&APIResponse{Success: true, Data: j}, w, http.StatusOK)
+
+}
+*/

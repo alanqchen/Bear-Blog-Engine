@@ -88,7 +88,7 @@ func (jwtService *jwtAuthService) GenerateTokens(u *models.User) (*Tokens, error
 	authClaims := KAuthTokenClaims{
 		jwt.StandardClaims{
 			Id:        uid + "." + uuid.NewV4().String(),
-			ExpiresAt: now.Add(TokenDuration).Unix(),
+			ExpiresAt: now.Add(TokenDuration).Unix(), // 1 Hour
 			IssuedAt:  now.Unix(),
 		},
 		u.ID,
@@ -136,6 +136,65 @@ func (jwtService *jwtAuthService) GenerateTokens(u *models.User) (*Tokens, error
 	return tokens, nil
 }
 
+/*
+func (jwtService *jwtAuthService) GenerateResetToken(u *models.User) (*Tokens, error) {
+	hashPassword := u.GetHashedPassword()
+	dateString := u.GetCreationTime().String()
+	secretKey := hashPassword + dateString
+	uid := strconv.Itoa(u.ID) // payload
+	now := time.Now()
+	tokenHash := util.GetMD5Hash(now.String() + uid)
+	authClaims := KAuthTokenClaims{
+		jwt.StandardClaims{
+			Id:        uid + "." + uuid.NewV4().String(),
+			ExpiresAt: now.Add(TokenDuration).Unix(), // 1 Hour
+			IssuedAt:  now.Unix(),
+		},
+		u.ID,
+		u.Admin,
+		tokenHash,
+	}
+
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, authClaims)
+
+	accessTokenString, err := accessToken.SignedString([]byte(secretKey))
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	err = jwtService.Redis.Set(tokenHash+"."+authClaims.Id, u.ID, TokenDuration).Err()
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	refreshToken := jwt.New(jwt.SigningMethodRS512)
+	authClaims.Id = uid + "." + uuid.NewV4().String()
+	authClaims.ExpiresAt = now.Add(RefreshTokenDuration).Unix()
+	refreshToken.Claims = authClaims
+	refreshTokenString, err := refreshToken.SignedString(jwtService.privateKey)
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	err = jwtService.Redis.Set(tokenHash+"."+authClaims.Id, u.ID, RefreshTokenDuration).Err()
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	tokens := &Tokens{
+		accessTokenString,
+		refreshTokenString,
+		3600,
+		TokenType,
+	}
+
+	return tokens, nil
+}
+*/
 func ExtractJti(cfg *config.Config, tokenStr string) (string, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

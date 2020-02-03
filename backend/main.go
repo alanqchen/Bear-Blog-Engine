@@ -11,6 +11,10 @@ import (
 	"github.com/alanqchen/MGBlog/backend/routes"
 )
 
+/* Backend File Structure from https://github.com/steffen25/golang.zone. Used
+ * w/ permission through MIT Liscense
+ */
+
 func main() {
 	fmt.Println("Starting up")
 	cfg, err := config.New("config/app.json")
