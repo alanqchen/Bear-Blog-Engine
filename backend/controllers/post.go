@@ -129,7 +129,7 @@ func (pc *PostController) GetBySlug(w http.ResponseWriter, r *http.Request) {
 }
 
 func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
-	_, err := services.UserIdFromContext(r.Context())
+	uid, err := services.UserIdFromContext(r.Context())
 	if err != nil {
 		NewAPIError(&APIError{false, "Something went wrong", http.StatusInternalServerError}, w)
 		return
@@ -149,7 +149,7 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 
 	//title = util.CleanZalgoText(title)
 
-	if len(title) < 10 {
+	if len(title) < 4 {
 		NewAPIError(&APIError{false, "Title is too short", http.StatusBadRequest}, w)
 		return
 	}
@@ -173,11 +173,20 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tags, err := j.GetStringArray("tags")
+	if err != nil {
+		NewAPIError(&APIError{false, "Missing tags key", http.StatusBadRequest}, w)
+		return
+	}
+
 	post := &models.Post{
 		Title:     title,
 		Slug:      slug,
 		Body:      body,
 		CreatedAt: time.Now(),
+		Tags:      tags,
+		Hidden:    false,
+		AuthorID:  uid,
 	}
 
 	err = pc.PostRepository.Create(post)

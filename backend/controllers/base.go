@@ -133,6 +133,22 @@ func (d *JsonData) GetInt(key string) (int, error) {
 	return -1, err
 }
 
+func (d *JsonData) GetStringArray(key string) ([]string, error) {
+	keys := d.data
+	err := errors.New("Could not find key: " + key)
+	if v, ok := keys[key]; ok {
+
+		keySlice := make([]string, len(v.([]interface{})))
+
+		for i, vIn := range v.([]interface{}) {
+			keySlice[i] = vIn.(string)
+		}
+		return keySlice, nil
+	}
+
+	return []string{}, err
+}
+
 func NewAPIError(e *APIError, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(e.Status)

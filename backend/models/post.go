@@ -14,6 +14,9 @@ type Post struct {
 	Body      string             `json:"body"`
 	CreatedAt time.Time          `json:"createdAt"`
 	UpdatedAt pgtype.Timestamptz `json:"updatedAt"`
+	Tags      []string           `json:"tags"`
+	Hidden    bool               `json:"hidden"`
+	AuthorID  int                `json:"authorid"`
 }
 
 func (p *Post) MarshalJSON() ([]byte, error) {
@@ -27,7 +30,10 @@ func (p *Post) MarshalJSON() ([]byte, error) {
 			Body      string              `json:"body"`
 			CreatedAt time.Time           `json:"createdAt"`
 			UpdatedAt *pgtype.Timestamptz `json:"updatedAt"`
-		}{p.ID, p.Title, p.Slug, p.Body, p.CreatedAt, nil})
+			Tags      []string            `json:"tags"`
+			Hidden    bool                `json:"hidden"`
+			AuthorID  int                 `json:"authorid"`
+		}{p.ID, p.Title, p.Slug, p.Body, p.CreatedAt, nil, p.Tags, p.Hidden, p.AuthorID})
 	}
 
 	return json.Marshal(struct {
@@ -37,5 +43,8 @@ func (p *Post) MarshalJSON() ([]byte, error) {
 		Body      string    `json:"body"`
 		CreatedAt time.Time `json:"createdAt"`
 		UpdatedAt time.Time `json:"updatedAt"`
-	}{p.ID, p.Title, p.Slug, p.Body, p.CreatedAt, p.UpdatedAt.Time})
+		Tags      []string  `json:"tags"`
+		Hidden    bool      `json:"hidden"`
+		AuthorID  int       `json:"authorid"`
+	}{p.ID, p.Title, p.Slug, p.Body, p.CreatedAt, p.UpdatedAt.Time, p.Tags, p.Hidden, p.AuthorID})
 }

@@ -40,38 +40,36 @@ func (pr *postRepository) Create(p *models.Post) error {
 
 		return nil
 	}
-	// ("INSERT INTO posts SET title=?, slug=?, body=?, created_at=?, user_id=?")
 
-	_, err := pr.Conn.Prepare(context.Background(), "post-query", "INSERT INTO posts SET tile=?, slug=?, body=?, created_at=?, user_id=? RETURNING id")
+	_, err := pr.Conn.Prepare(context.Background(), "post-query", "INSERT INTO posts_schema.posts VALUES (default, $1, $2, $3, $4, $5, $6, $7, $8) RETURNING id")
 	if err != nil {
+		log.Println(err)
 		return err
 	}
-	defer pr.Conn.Close(context.Background())
-	//result, err := pr.Conn.Exec(context.Background(), p.Title, p.Slug, p.Body, p.CreatedAt.Format("20060102150405"))
+
 	var pId int
-	err = pr.Conn.QueryRow(context.Background(), p.Title, p.Slug, p.Body, p.CreatedAt.Format("20060102150405")).Scan(&pId)
+
+	err = pr.Conn.QueryRow(context.Background(), "post-query", p.Title, p.Slug, p.Body, p.CreatedAt.UTC(), nil, p.Tags, p.Hidden, p.AuthorID).Scan(&pId)
+
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
-	//pId, err := result.LastInsertId()
-	//if err != nil {
-	//	return err
-	//}
-	//p.ID = int(pId)
 	p.ID = pId
 
 	return nil
 }
 
 func (pr *postRepository) Delete(id int) error {
+
 	return nil
 }
 
 // Check if a slug already exists
 func (pr *postRepository) Exists(slug string) bool {
 	var exists bool
-	err := pr.Conn.QueryRow(context.Background(), "SELECT EXISTS (SELECT id FROM posts WHERE slug=?)", slug).Scan(&exists)
+	err := pr.Conn.QueryRow(context.Background(), "SELECT EXISTS (SELECT id FROM posts_schema.posts WHERE slug=$1)", slug).Scan(&exists)
 	if err != nil {
 		log.Printf("[POST REPO]: Exists err %v", err)
 		return true
@@ -82,33 +80,30 @@ func (pr *postRepository) Exists(slug string) bool {
 
 // This is a 'private' function to be used in cases where a slug already exists
 func (pr *postRepository) createWithSlugCount(p *models.Post) error {
-	var count int
-	err := pr.Conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM posts where slug LIKE ?", "%"+p.Slug+"%").Scan(&count)
-	if err != nil {
-		return err
-	}
-	counter := strconv.Itoa(count)
 
-	_, err = pr.Conn.Prepare(context.Background(), "slug-query", "INSERT INTO posts SET title=?, slug=?, body=?, created_at=?, user_id=? RETURNING id")
+	var count int
+	err := pr.Conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM posts_schema.posts WHERE slug LIKE $1", p.Slug+"%").Scan(&count)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
-	defer pr.Conn.Close(context.Background())
-	// result, err := pr.Conn.QueryRow(p.Title, p.Slug+"-"+counter, p.Body, p.CreatedAt.Format("20060102150405"))
-	var pId int
-	err = pr.Conn.QueryRow(context.Background(), p.Title, p.Slug+"-"+counter, p.Body, p.CreatedAt.Format("20060102150405")).Scan(&pId)
+	counter := strconv.Itoa(count + 1)
+
+	_, err = pr.Conn.Prepare(context.Background(), "slug-query", "INSERT INTO posts_schema.posts VALUES (default, $1, $2, $3, $4, $5, $6, $7, $8) RETURNING id")
 	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	var pId int
+	err = pr.Conn.QueryRow(context.Background(), "slug-query", p.Title, p.Slug+"-"+counter, p.Body, p.CreatedAt.UTC(), nil, p.Tags, p.Hidden, p.AuthorID).Scan(&pId)
+	if err != nil {
+		log.Println(err)
 		return err
 	}
 
 	p.Slug = p.Slug + "-" + counter
-	/*
-		pId, err := result.LastInsertId()
-		if err != nil {
-			return err
-		}
-		p.ID = int(pId)
-	*/
+
 	p.ID = pId
 	return nil
 }
@@ -206,8 +201,9 @@ func (pr *postRepository) FindBySlug(slug string) (*models.Post, error) {
 func (pr *postRepository) GetAll() ([]*models.Post, error) {
 	var posts []*models.Post
 
-	rows, err := pr.Conn.Query(context.Background(), "SELECT id, title, slug, body, created_at, updated_at, user_id from posts")
+	rows, err := pr.Conn.Query(context.Background(), "SELECT * From posts_schema.posts")
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -216,6 +212,7 @@ func (pr *postRepository) GetAll() ([]*models.Post, error) {
 		p := new(models.Post)
 		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt)
 		if err != nil {
+			log.Println(err)
 			return nil, err
 		}
 		posts = append(posts, p)
