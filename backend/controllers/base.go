@@ -89,6 +89,16 @@ func (d *JsonData) GetInt(key string) (int, error) {
 	return -1, err
 }
 
+func (d *JsonData) GetBool(key string) (bool, error) {
+	keys := d.data
+	err := errors.New("Could not find key: " + key)
+	if v, ok := keys[key]; ok {
+		return v.(bool), nil
+	}
+
+	return false, err
+}
+
 func (d *JsonData) GetStringArray(key string) ([]string, error) {
 	keys := d.data
 	err := errors.New("Could not find key: " + key)

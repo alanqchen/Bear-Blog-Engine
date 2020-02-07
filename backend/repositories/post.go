@@ -124,7 +124,7 @@ func (pr *postRepository) createWithSlugCount(p *models.Post) error {
 func (pr *postRepository) FindById(id int) (*models.Post, error) {
 	post := models.Post{}
 
-	err := pr.Conn.QueryRow(context.Background(), "SELECT p.`id`, p.`title`, p.`slug`, p.`body`, p.`created_at`, p.`updated_at`, p.`user_id`, u.`name` as author FROM posts p INNER JOIN `users` as u on p.`user_id`=u.`id` WHERE p.`id`=?", id).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt)
+	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM posts_schema.posts WHERE id = $1", id).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +134,9 @@ func (pr *postRepository) FindById(id int) (*models.Post, error) {
 
 func (pr *postRepository) Update(p *models.Post) error {
 	exists := pr.Exists(p.Slug)
+	// Check if this is a new slug
 	if !exists {
+		//
 		err := pr.updatePost(p)
 		if err != nil {
 			return err
@@ -146,7 +148,7 @@ func (pr *postRepository) Update(p *models.Post) error {
 	// Post do exists
 	// Now we want to find out if the slug is the post we are updating
 	var postId int
-	err := pr.Conn.QueryRow(context.Background(), "SELECT id FROM posts WHERE slug=?", p.Slug).Scan(&postId)
+	err := pr.Conn.QueryRow(context.Background(), "SELECT id FROM posts_schema.posts WHERE slug LIKE $1", p.Slug).Scan(&postId)
 	if err != nil && err != pgx.ErrNoRows {
 		return err
 	}
@@ -162,11 +164,11 @@ func (pr *postRepository) Update(p *models.Post) error {
 
 	// If its not the same post we append the next count number of that slug
 	var slugCount int
-	err = pr.Conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM posts where slug LIKE ?", "%"+p.Slug+"%").Scan(&slugCount)
+	err = pr.Conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM posts_schema.posts where slug LIKE $1", "%"+p.Slug+"%").Scan(&slugCount)
 	if err != nil {
 		return err
 	}
-	counter := strconv.Itoa(slugCount)
+	counter := strconv.Itoa(slugCount + 1)
 	p.Slug = p.Slug + "-" + counter
 
 	err = pr.updatePost(p)
@@ -178,13 +180,15 @@ func (pr *postRepository) Update(p *models.Post) error {
 }
 
 func (pr *postRepository) updatePost(p *models.Post) error {
-	_, err := pr.Conn.Prepare(context.Background(), "update-post-query", "UPDATE posts SET title=?, slug=?, body=?, updated_at=?, user_id=? WHERE id = ?")
+	_, err := pr.Conn.Prepare(context.Background(), "update-post-query", "UPDATE posts_schema.posts SET title=$1, slug=$2, body=$3, updated_at=$4, tags=$5, hidden=$6 WHERE id=$7")
 	if err != nil {
+		log.Println(err)
 		return err
 	}
-	defer pr.Conn.Close(context.Background())
-	_, err = pr.Conn.Exec(context.Background(), p.Title, p.Slug, p.Body, p.UpdatedAt, p.ID)
+
+	_, err = pr.Conn.Exec(context.Background(), "update-post-query", p.Title, p.Slug, p.Body, p.UpdatedAt, p.Tags, p.Hidden, p.ID)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -204,8 +208,10 @@ func (pr *postRepository) GetTotalPostCount() (int, error) {
 
 func (pr *postRepository) FindBySlug(slug string) (*models.Post, error) {
 	post := models.Post{}
-	err := pr.Conn.QueryRow(context.Background(), "SELECT p.`id`, p.`title`, p.`slug`, p.`body`, p.`created_at`, p.`updated_at`, p.`user_id`, u.`name` as author FROM posts p INNER JOIN `users` as u on p.`user_id`=u.`id` WHERE slug LIKE ?", "%"+slug+"%").Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt)
+	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM posts_schema.posts WHERE slug LIKE $1", slug).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID)
+
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 

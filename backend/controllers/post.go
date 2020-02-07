@@ -254,11 +254,27 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	hidden, err := j.GetBool("hidden")
+	if err != nil {
+		NewAPIError(&APIError{false, "Missing hidden key", http.StatusBadRequest}, w)
+		return
+	}
+
+	tags, err := j.GetStringArray("tags")
+	if err != nil {
+		NewAPIError(&APIError{false, "Missing tags key", http.StatusBadRequest}, w)
+		return
+	}
+
 	//post.UserID = uid
-	post.UpdatedAt = pgtype.Timestamptz{Time: time.Now()}
+	post.UpdatedAt = pgtype.Timestamptz{Time: time.Now(), Status: pgtype.Present}
 	post.Title = title
 	post.Body = body
 	post.Slug = slug
+	post.Hidden = hidden
+	post.Tags = tags
+	//post.ID = postId
+
 	err = pc.PostRepository.Update(post)
 	if err != nil {
 		NewAPIError(&APIError{false, "Could not update post", http.StatusBadRequest}, w)
