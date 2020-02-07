@@ -36,62 +36,18 @@ type JsonData struct {
 }
 
 type APIPagination struct {
-	Total        int    `json:"total"`
-	PerPage      int    `json:"perPage"`
-	CurrentPage  int    `json:"currentPage"`
-	LastPage     int    `json:"lastPage"`
-	From         int    `json:"from"`
-	To           int    `json:"to"`
-	FirstPageURL string `json:"firstPageUrl"`
-	LastPageURL  string `json:"lastPageUrl"`
-	NextPageURL  string `json:"nextPageUrl"`
-	PrevPageURL  string `json:"prevPageUrl"`
+	Total   int `json:"total"`
+	PerPage int `json:"perPage"`
+	MinID   int `json:"minID"`
 }
 
 func (p *APIPagination) MarshalJSON() ([]byte, error) {
-	// TODO: Find a better way to set updatedAt to nil
-	if p.PrevPageURL == "" {
-		return json.Marshal(struct {
-			Total        int     `json:"total"`
-			PerPage      int     `json:"perPage"`
-			CurrentPage  int     `json:"currentPage"`
-			LastPage     int     `json:"lastPage"`
-			From         int     `json:"from"`
-			To           int     `json:"to"`
-			FirstPageURL string  `json:"firstPageUrl"`
-			LastPageURL  string  `json:"lastPageUrl"`
-			NextPageURL  string  `json:"nextPageUrl"`
-			PrevPageURL  *string `json:"prevPageUrl"`
-		}{p.Total, p.PerPage, p.CurrentPage, p.LastPage, p.From, p.To, p.FirstPageURL, p.LastPageURL, p.NextPageURL, nil})
-	}
-
-	if p.NextPageURL == "" {
-		return json.Marshal(struct {
-			Total        int     `json:"total"`
-			PerPage      int     `json:"perPage"`
-			CurrentPage  int     `json:"currentPage"`
-			LastPage     int     `json:"lastPage"`
-			From         int     `json:"from"`
-			To           int     `json:"to"`
-			FirstPageURL string  `json:"firstPageUrl"`
-			LastPageURL  string  `json:"lastPageUrl"`
-			NextPageURL  *string `json:"nextPageUrl"`
-			PrevPageURL  string  `json:"prevPageUrl"`
-		}{p.Total, p.PerPage, p.CurrentPage, p.LastPage, p.From, p.To, p.FirstPageURL, p.LastPageURL, nil, p.PrevPageURL})
-	}
 
 	return json.Marshal(struct {
-		Total        int    `json:"total"`
-		PerPage      int    `json:"perPage"`
-		CurrentPage  int    `json:"currentPage"`
-		LastPage     int    `json:"lastPage"`
-		From         int    `json:"from"`
-		To           int    `json:"to"`
-		FirstPageURL string `json:"firstPageUrl"`
-		LastPageURL  string `json:"lastPageUrl"`
-		NextPageURL  string `json:"nextPageUrl"`
-		PrevPageURL  string `json:"prevPageUrl"`
-	}{p.Total, p.PerPage, p.CurrentPage, p.LastPage, p.From, p.To, p.FirstPageURL, p.LastPageURL, p.NextPageURL, p.PrevPageURL})
+		Total   int `json:"total"`
+		PerPage int `json:"perPage"`
+		MinID   int `json:"minID"`
+	}{p.Total, p.PerPage, p.MinID})
 }
 
 //var NotImplemented = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

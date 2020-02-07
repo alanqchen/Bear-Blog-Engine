@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -39,42 +39,40 @@ func NewPostController(a *app.App, pr repositories.PostRepository, ur repositori
 }
 
 func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
-	httpScheme := "https://"
+	//httpScheme := "https://"
 	total, _ := pc.PostRepository.GetTotalPostCount()
-	page := r.URL.Query().Get("page")
-	pageInt, err := strconv.Atoi(page)
+
+	//page := r.URL.Query().Get("page")
+	//log.Println("Page: ", page)
+	//pageInt, err := strconv.Atoi(page)
+	//if err != nil {
+	//	pageInt = 1
+	//}
+	j, err := GetJSON(r.Body)
 	if err != nil {
-		pageInt = 1
-	}
-	perPage := r.URL.Query().Get("perpage")
-	perPageInt, err := strconv.Atoi(perPage)
-	if err != nil || perPageInt < 1 || perPageInt > 100 {
-		perPageInt = 10
-	}
-	offset := (pageInt - 1) * perPageInt
-	to := pageInt * perPageInt
-	if to > total {
-		to = total
+		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
+		return
 	}
 
-	from := offset + 1
-	totalPages := (total-1)/perPageInt + 1
-	prevPage := pageInt - 1
-	firstPageUrl := fmt.Sprintf(httpScheme+r.Host+r.URL.Path+"?page=%d", 1)
-	lastPageString := fmt.Sprintf(httpScheme+r.Host+r.URL.Path+"?page=%d", totalPages)
-	var prevPageUrl string
-	var nextPageUrl string
-	if prevPage > 0 && prevPage < totalPages {
-		prevPageUrl = fmt.Sprintf(httpScheme+r.Host+r.URL.Path+"?page=%d", prevPage)
-	}
+	maxIDString, err := j.GetString("maxID")
+	maxID, err := strconv.Atoi(maxIDString)
 
-	nextPage := pageInt + 1
-	if nextPage <= totalPages {
-		nextPageUrl = fmt.Sprintf(httpScheme+r.Host+r.URL.Path+"?page=%d", nextPage)
-	}
-
-	posts, err := pc.PostRepository.Paginate(perPageInt, offset)
+	log.Println(maxID)
 	if err != nil {
+		NewAPIError(&APIError{false, "Max ID is required (or -1 if first page)", http.StatusBadRequest}, w)
+		return
+	}
+	if maxID == -1 {
+		maxID, _ = pc.PostRepository.GetLastID()
+		maxID += 1
+	}
+
+	// May add changing num posts per page in the future
+	perPageInt := 10
+	posts, minID, err := pc.PostRepository.Paginate(maxID, perPageInt)
+
+	if err != nil {
+		log.Println(err)
 		NewAPIError(&APIError{false, "Could not fetch posts", http.StatusBadRequest}, w)
 		return
 	}
@@ -87,14 +85,7 @@ func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
 	postPaginator := APIPagination{
 		total,
 		perPageInt,
-		pageInt,
-		totalPages,
-		from,
-		to,
-		firstPageUrl,
-		lastPageString,
-		nextPageUrl,
-		prevPageUrl,
+		minID,
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
@@ -275,4 +266,26 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Message: "Post updated", Data: post}, w, http.StatusOK)
+}
+
+func (pc *PostController) Delete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
+		return
+	}
+	err = pc.PostRepository.Delete(id)
+	if err != nil {
+		NewAPIError(&APIError{false, "Could not find post to delete", http.StatusNotFound}, w)
+		return
+	}
+	/*
+		err = pc.PostRepository.ResetSeq()
+		if err != nil {
+			NewAPIError(&APIError{false, "Could not reset sequence", http.StatusNotFound}, w)
+			return
+		}
+	*/
+	NewAPIResponse(&APIResponse{Success: true, Data: id}, w, http.StatusOK)
 }

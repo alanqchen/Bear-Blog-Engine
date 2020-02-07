@@ -18,8 +18,10 @@ type PostRepository interface {
 	Exists(slug string) bool
 	Delete(id int) error
 	Update(p *models.Post) error
-	Paginate(perpage int, offset int) ([]*models.Post, error)
+	Paginate(maxID int, perPage int) ([]*models.Post, int, error)
 	GetTotalPostCount() (int, error)
+	ResetSeq() error
+	GetLastID() (int, error)
 }
 
 type postRepository struct {
@@ -62,7 +64,18 @@ func (pr *postRepository) Create(p *models.Post) error {
 }
 
 func (pr *postRepository) Delete(id int) error {
-
+	_, err := pr.Conn.Prepare(context.Background(), "delete-query", "DELETE FROM posts_schema.posts WHERE id=$1")
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	log.Println("pass")
+	row, err := pr.Conn.Query(context.Background(), "delete-query", id)
+	defer row.Close()
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 	return nil
 }
 
@@ -180,8 +193,9 @@ func (pr *postRepository) updatePost(p *models.Post) error {
 
 func (pr *postRepository) GetTotalPostCount() (int, error) {
 	var count int
-	err := pr.Conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM posts").Scan(&count)
+	err := pr.Conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM posts_schema.posts").Scan(&count)
 	if err != nil {
+		log.Println(err)
 		return -1, err
 	}
 
@@ -225,27 +239,56 @@ func (pr *postRepository) GetAll() ([]*models.Post, error) {
 	return posts, nil
 }
 
-func (pr *postRepository) Paginate(perpage int, offset int) ([]*models.Post, error) {
+func (pr *postRepository) Paginate(maxID int, perPage int) ([]*models.Post, int, error) {
 	var posts []*models.Post
 
-	rows, err := pr.Conn.Query(context.Background(), "SELECT p.`id`, p.`title`, p.`slug`, p.`body`, p.`created_at`, p.`updated_at`, p.`user_id`, u.`name` as author FROM posts p INNER JOIN `users` as u on p.`user_id`=u.`id` LIMIT ? OFFSET ?", perpage, offset)
+	rows, err := pr.Conn.Query(context.Background(), "SELECT * FROM posts_schema.posts WHERE id < $1 ORDER BY created_at DESC, id DESC LIMIT $2", maxID, perPage)
+
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		p := new(models.Post)
-		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt)
+		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt, &p.Tags, &p.Hidden, &p.AuthorID)
 		if err != nil {
-			return nil, err
+			return nil, -1, err
 		}
 		posts = append(posts, p)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
-	return posts, nil
+	var minID int
+	err = pr.QueryRow(context.Background(), "SELECT id  FROM (SELECT * FROM posts_schema.posts WHERE id < $1 ORDER BY created_at DESC, id DESC LIMIT $2) AS trash_alias ORDER BY created_at LIMIT 1;", maxID, perPage).Scan(&minID)
+	if err != nil {
+		log.Println(err)
+		return nil, -1, err
+	}
+	return posts, minID, nil
+}
+
+func (pr *postRepository) ResetSeq() error {
+	row, err := pr.Conn.Query(context.Background(), "SELECT setval(pg_get_serial_sequence('posts_schema.posts', 'id'), coalesce(max(id),0)+ 1, false) FROM posts_schema.posts")
+
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	defer row.Close()
+	return nil
+}
+
+func (pr *postRepository) GetLastID() (int, error) {
+	var lastID int
+	err := pr.Conn.QueryRow(context.Background(), "SELECT id FROM posts_schema.posts ORDER BY created_at DESC LIMIT 1").Scan(&lastID)
+	if err != nil {
+		log.Println(err)
+		return -1, err
+	}
+
+	return lastID, nil
 }
