@@ -145,7 +145,15 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	slug := util.GenerateSlug(title)
+	slug := strconv.Itoa(time.Now().Year()) + "/"
+	monthNum := int(time.Now().Month())
+	if monthNum < 10 {
+		slug = slug + "0" + strconv.Itoa(monthNum)
+	} else {
+		slug = slug + strconv.Itoa(monthNum)
+	}
+	slug = slug + "/" + util.GenerateSlug(title)
+
 	if len(slug) == 0 {
 		NewAPIError(&APIError{false, "Title is invalid", http.StatusBadRequest}, w)
 		return

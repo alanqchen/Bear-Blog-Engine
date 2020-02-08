@@ -20,6 +20,12 @@ func NewPostgres(dbConfig config.PostgreSQLConfig) (*Postgres, error) {
 		fmt.Fprintf(os.Stderr, "Unable to connection to database: %v\n", err)
 		os.Exit(1)
 	}
+	// Set connection timezone to the one in config
+	rows, err := conn.Query(context.Background(), "SET timezone = $1", dbConfig.Timezone)
+	defer rows.Close()
+	if err != nil {
+		fmt.Println("failed to set timezone")
+	}
 
 	return &Postgres{conn}, nil
 }
