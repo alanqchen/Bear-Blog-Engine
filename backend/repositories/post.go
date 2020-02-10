@@ -18,7 +18,7 @@ type PostRepository interface {
 	Exists(slug string) bool
 	Delete(id int) error
 	Update(p *models.Post) error
-	Paginate(maxID int, perPage int) ([]*models.Post, int, error)
+	Paginate(maxID int, perPage int, tags []string) ([]*models.Post, int, error)
 	GetTotalPostCount() (int, error)
 	ResetSeq() error
 	GetLastID() (int, error)
@@ -245,10 +245,10 @@ func (pr *postRepository) GetAll() ([]*models.Post, error) {
 	return posts, nil
 }
 
-func (pr *postRepository) Paginate(maxID int, perPage int) ([]*models.Post, int, error) {
+func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*models.Post, int, error) {
 	var posts []*models.Post
 
-	rows, err := pr.Conn.Query(context.Background(), "SELECT * FROM posts_schema.posts WHERE id < $1 ORDER BY created_at DESC, id DESC LIMIT $2", maxID, perPage)
+	rows, err := pr.Conn.Query(context.Background(), "SELECT * FROM posts_schema.posts WHERE id < $1 AND tags @> $2::text[] ORDER BY created_at DESC, id DESC LIMIT $3", maxID, &tags, perPage)
 
 	if err != nil {
 		return nil, -1, err
@@ -259,17 +259,17 @@ func (pr *postRepository) Paginate(maxID int, perPage int) ([]*models.Post, int,
 		p := new(models.Post)
 		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt, &p.Tags, &p.Hidden, &p.AuthorID, &p.FeatureImgURL)
 		if err != nil {
+			log.Println(err)
 			return nil, -1, err
 		}
 		posts = append(posts, p)
 	}
-
 	if err := rows.Err(); err != nil {
 		return nil, -1, err
 	}
 
 	var minID int
-	err = pr.QueryRow(context.Background(), "SELECT id  FROM (SELECT * FROM posts_schema.posts WHERE id < $1 ORDER BY created_at DESC, id DESC LIMIT $2) AS trash_alias ORDER BY created_at LIMIT 1;", maxID, perPage).Scan(&minID)
+	err = pr.QueryRow(context.Background(), "SELECT id FROM (SELECT * FROM posts_schema.posts WHERE id < $1 ORDER BY created_at DESC, id DESC LIMIT $2) AS trash_alias WHERE tags @> $3::text[] ORDER BY created_at LIMIT 1;", maxID, perPage, &tags).Scan(&minID)
 	if err != nil {
 		log.Println(err)
 		return nil, -1, err

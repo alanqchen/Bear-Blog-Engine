@@ -36,9 +36,10 @@ type JsonData struct {
 }
 
 type APIPagination struct {
-	Total   int `json:"total"`
-	PerPage int `json:"perPage"`
-	MinID   int `json:"minID"`
+	Total   int      `json:"total"`
+	PerPage int      `json:"perPage"`
+	MinID   int      `json:"minID"`
+	Tags    []string `json:"tags"`
 }
 
 func (p *APIPagination) MarshalJSON() ([]byte, error) {

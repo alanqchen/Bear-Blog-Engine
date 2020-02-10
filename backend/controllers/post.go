@@ -41,7 +41,6 @@ func NewPostController(a *app.App, pr repositories.PostRepository, ur repositori
 func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
 	//httpScheme := "https://"
 	total, _ := pc.PostRepository.GetTotalPostCount()
-
 	//page := r.URL.Query().Get("page")
 	//log.Println("Page: ", page)
 	//pageInt, err := strconv.Atoi(page)
@@ -62,6 +61,13 @@ func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Max ID is required (or -1 if first page)", http.StatusBadRequest}, w)
 		return
 	}
+
+	var tagsSlice []string
+	tagsSlice, err = j.GetStringArray("tags")
+	if err != nil {
+		log.Println("[WARN] No tags slice")
+	}
+
 	if maxID == -1 {
 		maxID, _ = pc.PostRepository.GetLastID()
 		maxID += 1
@@ -69,7 +75,7 @@ func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
 
 	// May add changing num posts per page in the future
 	perPageInt := 10
-	posts, minID, err := pc.PostRepository.Paginate(maxID, perPageInt)
+	posts, minID, err := pc.PostRepository.Paginate(maxID, perPageInt, tagsSlice)
 
 	if err != nil {
 		log.Println(err)
@@ -86,6 +92,7 @@ func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
 		total,
 		perPageInt,
 		minID,
+		tagsSlice,
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
