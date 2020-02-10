@@ -178,14 +178,20 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	imgURL, err := j.GetString("image-url")
+	if err != nil {
+		imgURL = ""
+	}
+
 	post := &models.Post{
-		Title:     title,
-		Slug:      slug,
-		Body:      body,
-		CreatedAt: time.Now(),
-		Tags:      tags,
-		Hidden:    false,
-		AuthorID:  uid,
+		Title:         title,
+		Slug:          slug,
+		Body:          body,
+		CreatedAt:     time.Now(),
+		Tags:          tags,
+		Hidden:        false,
+		AuthorID:      uid,
+		FeatureImgURL: imgURL,
 	}
 
 	err = pc.PostRepository.Create(post)
