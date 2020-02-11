@@ -4,7 +4,7 @@ Modern Golang Blog
 **Work-In-Progress**
 
 Status:
-Backend is nearing sufficient completion for me to start working on the front-end
+Starting to work on the front-end!
 
 # TODO (An incomplete list):
 Backend
