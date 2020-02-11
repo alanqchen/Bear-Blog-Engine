@@ -36,62 +36,19 @@ type JsonData struct {
 }
 
 type APIPagination struct {
-	Total        int    `json:"total"`
-	PerPage      int    `json:"perPage"`
-	CurrentPage  int    `json:"currentPage"`
-	LastPage     int    `json:"lastPage"`
-	From         int    `json:"from"`
-	To           int    `json:"to"`
-	FirstPageURL string `json:"firstPageUrl"`
-	LastPageURL  string `json:"lastPageUrl"`
-	NextPageURL  string `json:"nextPageUrl"`
-	PrevPageURL  string `json:"prevPageUrl"`
+	Total   int      `json:"total"`
+	PerPage int      `json:"perPage"`
+	MinID   int      `json:"minID"`
+	Tags    []string `json:"tags"`
 }
 
 func (p *APIPagination) MarshalJSON() ([]byte, error) {
-	// TODO: Find a better way to set updatedAt to nil
-	if p.PrevPageURL == "" {
-		return json.Marshal(struct {
-			Total        int     `json:"total"`
-			PerPage      int     `json:"perPage"`
-			CurrentPage  int     `json:"currentPage"`
-			LastPage     int     `json:"lastPage"`
-			From         int     `json:"from"`
-			To           int     `json:"to"`
-			FirstPageURL string  `json:"firstPageUrl"`
-			LastPageURL  string  `json:"lastPageUrl"`
-			NextPageURL  string  `json:"nextPageUrl"`
-			PrevPageURL  *string `json:"prevPageUrl"`
-		}{p.Total, p.PerPage, p.CurrentPage, p.LastPage, p.From, p.To, p.FirstPageURL, p.LastPageURL, p.NextPageURL, nil})
-	}
-
-	if p.NextPageURL == "" {
-		return json.Marshal(struct {
-			Total        int     `json:"total"`
-			PerPage      int     `json:"perPage"`
-			CurrentPage  int     `json:"currentPage"`
-			LastPage     int     `json:"lastPage"`
-			From         int     `json:"from"`
-			To           int     `json:"to"`
-			FirstPageURL string  `json:"firstPageUrl"`
-			LastPageURL  string  `json:"lastPageUrl"`
-			NextPageURL  *string `json:"nextPageUrl"`
-			PrevPageURL  string  `json:"prevPageUrl"`
-		}{p.Total, p.PerPage, p.CurrentPage, p.LastPage, p.From, p.To, p.FirstPageURL, p.LastPageURL, nil, p.PrevPageURL})
-	}
 
 	return json.Marshal(struct {
-		Total        int    `json:"total"`
-		PerPage      int    `json:"perPage"`
-		CurrentPage  int    `json:"currentPage"`
-		LastPage     int    `json:"lastPage"`
-		From         int    `json:"from"`
-		To           int    `json:"to"`
-		FirstPageURL string `json:"firstPageUrl"`
-		LastPageURL  string `json:"lastPageUrl"`
-		NextPageURL  string `json:"nextPageUrl"`
-		PrevPageURL  string `json:"prevPageUrl"`
-	}{p.Total, p.PerPage, p.CurrentPage, p.LastPage, p.From, p.To, p.FirstPageURL, p.LastPageURL, p.NextPageURL, p.PrevPageURL})
+		Total   int `json:"total"`
+		PerPage int `json:"perPage"`
+		MinID   int `json:"minID"`
+	}{p.Total, p.PerPage, p.MinID})
 }
 
 //var NotImplemented = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -131,6 +88,32 @@ func (d *JsonData) GetInt(key string) (int, error) {
 	}
 
 	return -1, err
+}
+
+func (d *JsonData) GetBool(key string) (bool, error) {
+	keys := d.data
+	err := errors.New("Could not find key: " + key)
+	if v, ok := keys[key]; ok {
+		return v.(bool), nil
+	}
+
+	return false, err
+}
+
+func (d *JsonData) GetStringArray(key string) ([]string, error) {
+	keys := d.data
+	err := errors.New("Could not find key: " + key)
+	if v, ok := keys[key]; ok {
+
+		keySlice := make([]string, len(v.([]interface{})))
+
+		for i, vIn := range v.([]interface{}) {
+			keySlice[i] = vIn.(string)
+		}
+		return keySlice, nil
+	}
+
+	return []string{}, err
 }
 
 func NewAPIError(e *APIError, w http.ResponseWriter) {

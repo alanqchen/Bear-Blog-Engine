@@ -18,8 +18,10 @@ type PostRepository interface {
 	Exists(slug string) bool
 	Delete(id int) error
 	Update(p *models.Post) error
-	Paginate(perpage int, offset int) ([]*models.Post, error)
+	Paginate(maxID int, perPage int, tags []string) ([]*models.Post, int, error)
 	GetTotalPostCount() (int, error)
+	ResetSeq() error
+	GetLastID() (int, error)
 }
 
 type postRepository struct {
@@ -40,38 +42,47 @@ func (pr *postRepository) Create(p *models.Post) error {
 
 		return nil
 	}
-	// ("INSERT INTO posts SET title=?, slug=?, body=?, created_at=?, user_id=?")
 
-	_, err := pr.Conn.Prepare(context.Background(), "post-query", "INSERT INTO posts SET tile=?, slug=?, body=?, created_at=?, user_id=? RETURNING id")
+	_, err := pr.Conn.Prepare(context.Background(), "post-query", "INSERT INTO posts_schema.posts VALUES (default, $1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id")
 	if err != nil {
+		log.Println(err)
 		return err
 	}
-	defer pr.Conn.Close(context.Background())
-	//result, err := pr.Conn.Exec(context.Background(), p.Title, p.Slug, p.Body, p.CreatedAt.Format("20060102150405"))
+
 	var pId int
-	err = pr.Conn.QueryRow(context.Background(), p.Title, p.Slug, p.Body, p.CreatedAt.Format("20060102150405")).Scan(&pId)
+
+	err = pr.Conn.QueryRow(context.Background(), "post-query", p.Title, p.Slug, p.Body, p.CreatedAt.UTC(), nil, p.Tags, p.Hidden, p.AuthorID, p.FeatureImgURL).Scan(&pId)
+
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
-	//pId, err := result.LastInsertId()
-	//if err != nil {
-	//	return err
-	//}
-	//p.ID = int(pId)
 	p.ID = pId
 
 	return nil
 }
 
 func (pr *postRepository) Delete(id int) error {
+	_, err := pr.Conn.Prepare(context.Background(), "delete-query", "DELETE FROM posts_schema.posts WHERE id=$1")
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	log.Println("pass")
+	row, err := pr.Conn.Query(context.Background(), "delete-query", id)
+	defer row.Close()
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 	return nil
 }
 
 // Check if a slug already exists
 func (pr *postRepository) Exists(slug string) bool {
 	var exists bool
-	err := pr.Conn.QueryRow(context.Background(), "SELECT EXISTS (SELECT id FROM posts WHERE slug=?)", slug).Scan(&exists)
+	err := pr.Conn.QueryRow(context.Background(), "SELECT EXISTS (SELECT id FROM posts_schema.posts WHERE slug=$1)", slug).Scan(&exists)
 	if err != nil {
 		log.Printf("[POST REPO]: Exists err %v", err)
 		return true
@@ -82,33 +93,30 @@ func (pr *postRepository) Exists(slug string) bool {
 
 // This is a 'private' function to be used in cases where a slug already exists
 func (pr *postRepository) createWithSlugCount(p *models.Post) error {
-	var count int
-	err := pr.Conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM posts where slug LIKE ?", "%"+p.Slug+"%").Scan(&count)
-	if err != nil {
-		return err
-	}
-	counter := strconv.Itoa(count)
 
-	_, err = pr.Conn.Prepare(context.Background(), "slug-query", "INSERT INTO posts SET title=?, slug=?, body=?, created_at=?, user_id=? RETURNING id")
+	var count int
+	err := pr.Conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM posts_schema.posts WHERE slug LIKE $1", p.Slug+"%").Scan(&count)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
-	defer pr.Conn.Close(context.Background())
-	// result, err := pr.Conn.QueryRow(p.Title, p.Slug+"-"+counter, p.Body, p.CreatedAt.Format("20060102150405"))
-	var pId int
-	err = pr.Conn.QueryRow(context.Background(), p.Title, p.Slug+"-"+counter, p.Body, p.CreatedAt.Format("20060102150405")).Scan(&pId)
+	counter := strconv.Itoa(count + 1)
+
+	_, err = pr.Conn.Prepare(context.Background(), "slug-query", "INSERT INTO posts_schema.posts VALUES (default, $1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id")
 	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	var pId int
+	err = pr.Conn.QueryRow(context.Background(), "slug-query", p.Title, p.Slug+"-"+counter, p.Body, p.CreatedAt.UTC(), nil, p.Tags, p.Hidden, p.AuthorID, p.FeatureImgURL).Scan(&pId)
+	if err != nil {
+		log.Println(err)
 		return err
 	}
 
 	p.Slug = p.Slug + "-" + counter
-	/*
-		pId, err := result.LastInsertId()
-		if err != nil {
-			return err
-		}
-		p.ID = int(pId)
-	*/
+
 	p.ID = pId
 	return nil
 }
@@ -116,7 +124,7 @@ func (pr *postRepository) createWithSlugCount(p *models.Post) error {
 func (pr *postRepository) FindById(id int) (*models.Post, error) {
 	post := models.Post{}
 
-	err := pr.Conn.QueryRow(context.Background(), "SELECT p.`id`, p.`title`, p.`slug`, p.`body`, p.`created_at`, p.`updated_at`, p.`user_id`, u.`name` as author FROM posts p INNER JOIN `users` as u on p.`user_id`=u.`id` WHERE p.`id`=?", id).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt)
+	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM posts_schema.posts WHERE id = $1", id).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID, &post.FeatureImgURL)
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +134,9 @@ func (pr *postRepository) FindById(id int) (*models.Post, error) {
 
 func (pr *postRepository) Update(p *models.Post) error {
 	exists := pr.Exists(p.Slug)
+	// Check if this is a new slug
 	if !exists {
+		//
 		err := pr.updatePost(p)
 		if err != nil {
 			return err
@@ -138,7 +148,7 @@ func (pr *postRepository) Update(p *models.Post) error {
 	// Post do exists
 	// Now we want to find out if the slug is the post we are updating
 	var postId int
-	err := pr.Conn.QueryRow(context.Background(), "SELECT id FROM posts WHERE slug=?", p.Slug).Scan(&postId)
+	err := pr.Conn.QueryRow(context.Background(), "SELECT id FROM posts_schema.posts WHERE slug LIKE $1", p.Slug).Scan(&postId)
 	if err != nil && err != pgx.ErrNoRows {
 		return err
 	}
@@ -154,11 +164,11 @@ func (pr *postRepository) Update(p *models.Post) error {
 
 	// If its not the same post we append the next count number of that slug
 	var slugCount int
-	err = pr.Conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM posts where slug LIKE ?", "%"+p.Slug+"%").Scan(&slugCount)
+	err = pr.Conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM posts_schema.posts where slug LIKE $1", "%"+p.Slug+"%").Scan(&slugCount)
 	if err != nil {
 		return err
 	}
-	counter := strconv.Itoa(slugCount)
+	counter := strconv.Itoa(slugCount + 1)
 	p.Slug = p.Slug + "-" + counter
 
 	err = pr.updatePost(p)
@@ -170,13 +180,15 @@ func (pr *postRepository) Update(p *models.Post) error {
 }
 
 func (pr *postRepository) updatePost(p *models.Post) error {
-	_, err := pr.Conn.Prepare(context.Background(), "update-post-query", "UPDATE posts SET title=?, slug=?, body=?, updated_at=?, user_id=? WHERE id = ?")
+	_, err := pr.Conn.Prepare(context.Background(), "update-post-query", "UPDATE posts_schema.posts SET title=$1, slug=$2, body=$3, updated_at=$4, tags=$5, hidden=$6, feature_image_url=$7 WHERE id=$8")
 	if err != nil {
+		log.Println(err)
 		return err
 	}
-	defer pr.Conn.Close(context.Background())
-	_, err = pr.Conn.Exec(context.Background(), p.Title, p.Slug, p.Body, p.UpdatedAt, p.ID)
+
+	_, err = pr.Conn.Exec(context.Background(), "update-post-query", p.Title, p.Slug, p.Body, p.UpdatedAt, p.Tags, p.Hidden, p.FeatureImgURL, p.ID)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -185,8 +197,9 @@ func (pr *postRepository) updatePost(p *models.Post) error {
 
 func (pr *postRepository) GetTotalPostCount() (int, error) {
 	var count int
-	err := pr.Conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM posts").Scan(&count)
+	err := pr.Conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM posts_schema.posts").Scan(&count)
 	if err != nil {
+		log.Println(err)
 		return -1, err
 	}
 
@@ -195,8 +208,10 @@ func (pr *postRepository) GetTotalPostCount() (int, error) {
 
 func (pr *postRepository) FindBySlug(slug string) (*models.Post, error) {
 	post := models.Post{}
-	err := pr.Conn.QueryRow(context.Background(), "SELECT p.`id`, p.`title`, p.`slug`, p.`body`, p.`created_at`, p.`updated_at`, p.`user_id`, u.`name` as author FROM posts p INNER JOIN `users` as u on p.`user_id`=u.`id` WHERE slug LIKE ?", "%"+slug+"%").Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt)
+	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM posts_schema.posts WHERE slug LIKE $1", slug).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID, &post.FeatureImgURL)
+
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
@@ -206,16 +221,18 @@ func (pr *postRepository) FindBySlug(slug string) (*models.Post, error) {
 func (pr *postRepository) GetAll() ([]*models.Post, error) {
 	var posts []*models.Post
 
-	rows, err := pr.Conn.Query(context.Background(), "SELECT id, title, slug, body, created_at, updated_at, user_id from posts")
+	rows, err := pr.Conn.Query(context.Background(), "SELECT * From posts_schema.posts")
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		p := new(models.Post)
-		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt)
+		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt, &p.Tags, &p.Hidden, &p.AuthorID, &p.FeatureImgURL)
 		if err != nil {
+			log.Println(err)
 			return nil, err
 		}
 		posts = append(posts, p)
@@ -228,27 +245,56 @@ func (pr *postRepository) GetAll() ([]*models.Post, error) {
 	return posts, nil
 }
 
-func (pr *postRepository) Paginate(perpage int, offset int) ([]*models.Post, error) {
+func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*models.Post, int, error) {
 	var posts []*models.Post
 
-	rows, err := pr.Conn.Query(context.Background(), "SELECT p.`id`, p.`title`, p.`slug`, p.`body`, p.`created_at`, p.`updated_at`, p.`user_id`, u.`name` as author FROM posts p INNER JOIN `users` as u on p.`user_id`=u.`id` LIMIT ? OFFSET ?", perpage, offset)
+	rows, err := pr.Conn.Query(context.Background(), "SELECT * FROM posts_schema.posts WHERE id < $1 AND tags @> $2::text[] ORDER BY created_at DESC, id DESC LIMIT $3", maxID, &tags, perPage)
+
 	if err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		p := new(models.Post)
-		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt)
+		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt, &p.Tags, &p.Hidden, &p.AuthorID, &p.FeatureImgURL)
 		if err != nil {
-			return nil, err
+			log.Println(err)
+			return nil, -1, err
 		}
 		posts = append(posts, p)
 	}
-
 	if err := rows.Err(); err != nil {
-		return nil, err
+		return nil, -1, err
 	}
 
-	return posts, nil
+	var minID int
+	err = pr.QueryRow(context.Background(), "SELECT id FROM (SELECT * FROM posts_schema.posts WHERE id < $1 ORDER BY created_at DESC, id DESC LIMIT $2) AS trash_alias WHERE tags @> $3::text[] ORDER BY created_at LIMIT 1;", maxID, perPage, &tags).Scan(&minID)
+	if err != nil {
+		log.Println(err)
+		return nil, -1, err
+	}
+	return posts, minID, nil
+}
+
+func (pr *postRepository) ResetSeq() error {
+	row, err := pr.Conn.Query(context.Background(), "SELECT setval(pg_get_serial_sequence('posts_schema.posts', 'id'), coalesce(max(id),0)+ 1, false) FROM posts_schema.posts")
+
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	defer row.Close()
+	return nil
+}
+
+func (pr *postRepository) GetLastID() (int, error) {
+	var lastID int
+	err := pr.Conn.QueryRow(context.Background(), "SELECT id FROM posts_schema.posts ORDER BY created_at DESC LIMIT 1").Scan(&lastID)
+	if err != nil {
+		log.Println(err)
+		return -1, err
+	}
+
+	return lastID, nil
 }

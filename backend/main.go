@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/alanqchen/MGBlog/backend/app"
 	"github.com/alanqchen/MGBlog/backend/config"
@@ -22,6 +23,8 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Println("Creating app")
+	time := time.Now()
+	fmt.Println(time)
 	var db *database.Postgres
 	app, db := app.New(cfg)
 	defer db.Close(context.Background())

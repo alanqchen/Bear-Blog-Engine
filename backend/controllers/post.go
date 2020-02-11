@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -39,42 +39,46 @@ func NewPostController(a *app.App, pr repositories.PostRepository, ur repositori
 }
 
 func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
-	httpScheme := "https://"
+	//httpScheme := "https://"
 	total, _ := pc.PostRepository.GetTotalPostCount()
-	page := r.URL.Query().Get("page")
-	pageInt, err := strconv.Atoi(page)
+	//page := r.URL.Query().Get("page")
+	//log.Println("Page: ", page)
+	//pageInt, err := strconv.Atoi(page)
+	//if err != nil {
+	//	pageInt = 1
+	//}
+	j, err := GetJSON(r.Body)
 	if err != nil {
-		pageInt = 1
-	}
-	perPage := r.URL.Query().Get("perpage")
-	perPageInt, err := strconv.Atoi(perPage)
-	if err != nil || perPageInt < 1 || perPageInt > 100 {
-		perPageInt = 10
-	}
-	offset := (pageInt - 1) * perPageInt
-	to := pageInt * perPageInt
-	if to > total {
-		to = total
+		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
+		return
 	}
 
-	from := offset + 1
-	totalPages := (total-1)/perPageInt + 1
-	prevPage := pageInt - 1
-	firstPageUrl := fmt.Sprintf(httpScheme+r.Host+r.URL.Path+"?page=%d", 1)
-	lastPageString := fmt.Sprintf(httpScheme+r.Host+r.URL.Path+"?page=%d", totalPages)
-	var prevPageUrl string
-	var nextPageUrl string
-	if prevPage > 0 && prevPage < totalPages {
-		prevPageUrl = fmt.Sprintf(httpScheme+r.Host+r.URL.Path+"?page=%d", prevPage)
-	}
+	maxIDString, err := j.GetString("maxID")
+	maxID, err := strconv.Atoi(maxIDString)
 
-	nextPage := pageInt + 1
-	if nextPage <= totalPages {
-		nextPageUrl = fmt.Sprintf(httpScheme+r.Host+r.URL.Path+"?page=%d", nextPage)
-	}
-
-	posts, err := pc.PostRepository.Paginate(perPageInt, offset)
+	log.Println(maxID)
 	if err != nil {
+		NewAPIError(&APIError{false, "Max ID is required (or -1 if first page)", http.StatusBadRequest}, w)
+		return
+	}
+
+	var tagsSlice []string
+	tagsSlice, err = j.GetStringArray("tags")
+	if err != nil {
+		log.Println("[WARN] No tags slice")
+	}
+
+	if maxID == -1 {
+		maxID, _ = pc.PostRepository.GetLastID()
+		maxID += 1
+	}
+
+	// May add changing num posts per page in the future
+	perPageInt := 10
+	posts, minID, err := pc.PostRepository.Paginate(maxID, perPageInt, tagsSlice)
+
+	if err != nil {
+		log.Println(err)
 		NewAPIError(&APIError{false, "Could not fetch posts", http.StatusBadRequest}, w)
 		return
 	}
@@ -87,14 +91,8 @@ func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
 	postPaginator := APIPagination{
 		total,
 		perPageInt,
-		pageInt,
-		totalPages,
-		from,
-		to,
-		firstPageUrl,
-		lastPageString,
-		nextPageUrl,
-		prevPageUrl,
+		minID,
+		tagsSlice,
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
@@ -129,7 +127,7 @@ func (pc *PostController) GetBySlug(w http.ResponseWriter, r *http.Request) {
 }
 
 func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
-	_, err := services.UserIdFromContext(r.Context())
+	uid, err := services.UserIdFromContext(r.Context())
 	if err != nil {
 		NewAPIError(&APIError{false, "Something went wrong", http.StatusInternalServerError}, w)
 		return
@@ -149,12 +147,20 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 
 	//title = util.CleanZalgoText(title)
 
-	if len(title) < 10 {
+	if len(title) < 4 {
 		NewAPIError(&APIError{false, "Title is too short", http.StatusBadRequest}, w)
 		return
 	}
 
-	slug := util.GenerateSlug(title)
+	slug := strconv.Itoa(time.Now().Year()) + "/"
+	monthNum := int(time.Now().Month())
+	if monthNum < 10 {
+		slug = slug + "0" + strconv.Itoa(monthNum)
+	} else {
+		slug = slug + strconv.Itoa(monthNum)
+	}
+	slug = slug + "/" + util.GenerateSlug(title)
+
 	if len(slug) == 0 {
 		NewAPIError(&APIError{false, "Title is invalid", http.StatusBadRequest}, w)
 		return
@@ -173,11 +179,26 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tags, err := j.GetStringArray("tags")
+	if err != nil {
+		NewAPIError(&APIError{false, "Missing tags key", http.StatusBadRequest}, w)
+		return
+	}
+
+	imgURL, err := j.GetString("image-url")
+	if err != nil {
+		imgURL = ""
+	}
+
 	post := &models.Post{
-		Title:     title,
-		Slug:      slug,
-		Body:      body,
-		CreatedAt: time.Now(),
+		Title:         title,
+		Slug:          slug,
+		Body:          body,
+		CreatedAt:     time.Now(),
+		Tags:          tags,
+		Hidden:        false,
+		AuthorID:      uid,
+		FeatureImgURL: imgURL,
 	}
 
 	err = pc.PostRepository.Create(post)
@@ -254,11 +275,27 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	hidden, err := j.GetBool("hidden")
+	if err != nil {
+		NewAPIError(&APIError{false, "Missing hidden key", http.StatusBadRequest}, w)
+		return
+	}
+
+	tags, err := j.GetStringArray("tags")
+	if err != nil {
+		NewAPIError(&APIError{false, "Missing tags key", http.StatusBadRequest}, w)
+		return
+	}
+
 	//post.UserID = uid
-	post.UpdatedAt = pgtype.Timestamptz{Time: time.Now()}
+	post.UpdatedAt = pgtype.Timestamptz{Time: time.Now(), Status: pgtype.Present}
 	post.Title = title
 	post.Body = body
 	post.Slug = slug
+	post.Hidden = hidden
+	post.Tags = tags
+	//post.ID = postId
+
 	err = pc.PostRepository.Update(post)
 	if err != nil {
 		NewAPIError(&APIError{false, "Could not update post", http.StatusBadRequest}, w)
@@ -266,4 +303,26 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Message: "Post updated", Data: post}, w, http.StatusOK)
+}
+
+func (pc *PostController) Delete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
+		return
+	}
+	err = pc.PostRepository.Delete(id)
+	if err != nil {
+		NewAPIError(&APIError{false, "Could not find post to delete", http.StatusNotFound}, w)
+		return
+	}
+	/*
+		err = pc.PostRepository.ResetSeq()
+		if err != nil {
+			NewAPIError(&APIError{false, "Could not reset sequence", http.StatusNotFound}, w)
+			return
+		}
+	*/
+	NewAPIResponse(&APIResponse{Success: true, Data: id}, w, http.StatusOK)
 }

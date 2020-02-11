@@ -7,8 +7,9 @@ import (
 )
 
 type PostgreSQLConfig struct {
-	Host string `json:"host"`
-	Port string `json:"port"`
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	Timezone string `json:"timezone"`
 }
 
 type JWTConfig struct {
