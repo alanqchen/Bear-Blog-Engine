@@ -9,3 +9,11 @@ body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, form, input, button, 
   border-bottom-width: 0px;
   border-left-width: 0px;
 }
+
+.full-height {
+    height: 100vh;
+}
+
+#root {
+    min-height: 100vh;
+}

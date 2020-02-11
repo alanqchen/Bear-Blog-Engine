@@ -49,10 +49,10 @@ function App() {
     </div>
     */
    <BrowserRouter>
-      <div>
+      <div class="full-height">
 
         <MetaTags>
-          <title>Mindup</title>
+          <title>Bear Post</title>
           <meta name="description" content="Bear Post" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         </MetaTags>
@@ -60,6 +60,9 @@ function App() {
         { /* ReactRouter offers support for putting a <nav> element here, should investigate that at some point. */ }
 
         <Switch>
+          <Route path="/backend">
+            { /* Do nothing */ }
+          </Route>
           <Route path="/">
             <FourZeroFour />
           </Route>
