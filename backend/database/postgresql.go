@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alanqchen/MGBlog/backend/config"
+	"github.com/alanqchen/Bear-Post/backend/config"
 	"github.com/jackc/pgx/v4"
 )
 

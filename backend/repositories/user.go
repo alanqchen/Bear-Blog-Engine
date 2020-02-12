@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/alanqchen/MGBlog/backend/database"
-	"github.com/alanqchen/MGBlog/backend/models"
+	"github.com/alanqchen/Bear-Post/backend/database"
+	"github.com/alanqchen/Bear-Post/backend/models"
 	"github.com/jackc/pgx/v4"
 )
 

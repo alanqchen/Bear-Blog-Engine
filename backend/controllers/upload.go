@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/alanqchen/MGBlog/backend/util"
+	"github.com/alanqchen/Bear-Post/backend/util"
 )
 
 const (

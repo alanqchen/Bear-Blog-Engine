@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/alanqchen/MGBlog/backend/app"
-	"github.com/alanqchen/MGBlog/backend/models"
-	"github.com/alanqchen/MGBlog/backend/repositories"
-	"github.com/alanqchen/MGBlog/backend/services"
-	"github.com/alanqchen/MGBlog/backend/util"
+	"github.com/alanqchen/Bear-Post/backend/app"
+	"github.com/alanqchen/Bear-Post/backend/models"
+	"github.com/alanqchen/Bear-Post/backend/repositories"
+	"github.com/alanqchen/Bear-Post/backend/services"
+	"github.com/alanqchen/Bear-Post/backend/util"
 )
 
 // TODO repository, services

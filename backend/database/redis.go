@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/alanqchen/MGBlog/backend/config"
+	"github.com/alanqchen/Bear-Post/backend/config"
 	"github.com/go-redis/redis"
 )
 
@@ -22,12 +22,12 @@ func NewRedis(dbConfig config.RedisConfig) (*Redis, error) {
 	})
 	fmt.Println(dbConfig.Host)
 	fmt.Println(dbConfig.Port)
-	fmt.Println("Pinging redis...")
+	fmt.Println("[LOG] Pinging redis...")
 	_, err := client.Ping().Result()
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
 	}
-	fmt.Println("Ping Successful")
+	fmt.Println("[LOG] Ping Successful")
 	return &Redis{client}, err
 }

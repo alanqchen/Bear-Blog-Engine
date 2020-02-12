@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/alanqchen/MGBlog/backend/config"
-	"github.com/alanqchen/MGBlog/backend/database"
+	"github.com/alanqchen/Bear-Post/backend/config"
+	"github.com/alanqchen/Bear-Post/backend/database"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )

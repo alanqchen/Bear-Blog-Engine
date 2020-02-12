@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/alanqchen/MGBlog/backend/app"
-	"github.com/alanqchen/MGBlog/backend/controllers"
-	"github.com/alanqchen/MGBlog/backend/middleware"
-	"github.com/alanqchen/MGBlog/backend/repositories"
-	"github.com/alanqchen/MGBlog/backend/services"
+	"github.com/alanqchen/Bear-Post/backend/app"
+	"github.com/alanqchen/Bear-Post/backend/controllers"
+	"github.com/alanqchen/Bear-Post/backend/middleware"
+	"github.com/alanqchen/Bear-Post/backend/repositories"
+	"github.com/alanqchen/Bear-Post/backend/services"
 	"github.com/gorilla/mux"
 )
 

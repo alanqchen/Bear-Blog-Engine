@@ -6,10 +6,10 @@ import (
 	"log"
 	"time"
 
-	"github.com/alanqchen/MGBlog/backend/app"
-	"github.com/alanqchen/MGBlog/backend/config"
-	"github.com/alanqchen/MGBlog/backend/database"
-	"github.com/alanqchen/MGBlog/backend/routes"
+	"github.com/alanqchen/Bear-Post/backend/app"
+	"github.com/alanqchen/Bear-Post/backend/config"
+	"github.com/alanqchen/Bear-Post/backend/database"
+	"github.com/alanqchen/Bear-Post/backend/routes"
 )
 
 /* Big thanks to steffen for Backend File Structure from https://github.com/steffen25/golang.zone. Used

@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/alanqchen/MGBlog/backend/app"
-	"github.com/alanqchen/MGBlog/backend/models"
-	"github.com/alanqchen/MGBlog/backend/repositories"
-	"github.com/alanqchen/MGBlog/backend/services"
-	"github.com/alanqchen/MGBlog/backend/util"
+	"github.com/alanqchen/Bear-Post/backend/app"
+	"github.com/alanqchen/Bear-Post/backend/models"
+	"github.com/alanqchen/Bear-Post/backend/repositories"
+	"github.com/alanqchen/Bear-Post/backend/services"
+	"github.com/alanqchen/Bear-Post/backend/util"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgtype"
 )
@@ -178,6 +178,10 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Body is too short", http.StatusBadRequest}, w)
 		return
 	}
+	hidden, err := j.GetBool("hidden")
+	if err != nil {
+		hidden = false
+	}
 
 	tags, err := j.GetStringArray("tags")
 	if err != nil {
@@ -196,7 +200,7 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 		Body:          body,
 		CreatedAt:     time.Now(),
 		Tags:          tags,
-		Hidden:        false,
+		Hidden:        hidden,
 		AuthorID:      uid,
 		FeatureImgURL: imgURL,
 	}

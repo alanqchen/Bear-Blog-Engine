@@ -9,9 +9,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/alanqchen/MGBlog/backend/app"
-	"github.com/alanqchen/MGBlog/backend/controllers"
-	"github.com/alanqchen/MGBlog/backend/services"
+	"github.com/alanqchen/Bear-Post/backend/app"
+	"github.com/alanqchen/Bear-Post/backend/controllers"
+	"github.com/alanqchen/Bear-Post/backend/services"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/dgrijalva/jwt-go/request"
 )
@@ -23,7 +23,7 @@ func RequireAuthentication(a *app.App, next http.HandlerFunc, admin bool) http.H
 		t, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
 			func(token *jwt.Token) (interface{}, error) {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-					return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+					return nil, fmt.Errorf("[ERROR] Unexpected signing method: %v", token.Header["alg"])
 				}
 
 				return []byte(a.Config.JWT.Secret), nil
