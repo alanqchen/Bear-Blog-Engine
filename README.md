@@ -1,5 +1,6 @@
 # Bear Post
-A Modern Blog Engine
+A Modern Blog Engine.
+
 Uses Go for the backend and React for the frontend.
 
 **Work-In-Progress**
