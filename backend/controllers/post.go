@@ -40,7 +40,7 @@ func NewPostController(a *app.App, pr repositories.PostRepository, ur repositori
 
 func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
 	//httpScheme := "https://"
-	total, _ := pc.PostRepository.GetTotalPostCount()
+	total, _ := pc.PostRepository.GetPublicPostCount()
 	//page := r.URL.Query().Get("page")
 	//log.Println("Page: ", page)
 	//pageInt, err := strconv.Atoi(page)

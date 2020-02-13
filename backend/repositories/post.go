@@ -20,6 +20,7 @@ type PostRepository interface {
 	Update(p *models.Post) error
 	Paginate(maxID int, perPage int, tags []string) ([]*models.Post, int, error)
 	GetTotalPostCount() (int, error)
+	GetPublicPostCount() (int, error)
 	ResetSeq() error
 	GetLastID() (int, error)
 }
@@ -206,9 +207,20 @@ func (pr *postRepository) GetTotalPostCount() (int, error) {
 	return count, nil
 }
 
+func (pr *postRepository) GetPublicPostCount() (int, error) {
+	var count int
+	err := pr.Conn.QueryRow(context.Background(), "SELECT COUNT(*) FROM posts_schema.posts WHERE NOT hidden").Scan(&count)
+	if err != nil {
+		log.Println(err)
+		return -1, err
+	}
+
+	return count, nil
+}
+
 func (pr *postRepository) FindBySlug(slug string) (*models.Post, error) {
 	post := models.Post{}
-	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM posts_schema.posts WHERE slug LIKE $1", slug).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID, &post.FeatureImgURL)
+	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM posts_schema.posts WHERE NOT hidden AND slug LIKE $1", slug).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID, &post.FeatureImgURL)
 
 	if err != nil {
 		log.Println(err)
@@ -269,7 +281,7 @@ func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*mo
 	}
 
 	var minID int
-	err = pr.QueryRow(context.Background(), "SELECT id FROM (SELECT * FROM posts_schema.posts WHERE id < $1 ORDER BY created_at DESC, id DESC LIMIT $2) AS trash_alias WHERE tags @> $3::text[] ORDER BY created_at LIMIT 1;", maxID, perPage, &tags).Scan(&minID)
+	err = pr.QueryRow(context.Background(), "SELECT id FROM (SELECT * FROM posts_schema.posts WHERE id < $1 AND NOT hidden ORDER BY created_at DESC, id DESC LIMIT $2) AS trash_alias WHERE tags @> $3::text[] ORDER BY created_at LIMIT 1;", maxID, perPage, &tags).Scan(&minID)
 	if err != nil {
 		log.Println(err)
 		return nil, -1, err
@@ -290,7 +302,7 @@ func (pr *postRepository) ResetSeq() error {
 
 func (pr *postRepository) GetLastID() (int, error) {
 	var lastID int
-	err := pr.Conn.QueryRow(context.Background(), "SELECT id FROM posts_schema.posts ORDER BY created_at DESC LIMIT 1").Scan(&lastID)
+	err := pr.Conn.QueryRow(context.Background(), "SELECT id FROM posts_schema.posts WHERE NOT hidden ORDER BY created_at DESC LIMIT 1").Scan(&lastID)
 	if err != nil {
 		log.Println(err)
 		return -1, err
