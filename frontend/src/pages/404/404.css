@@ -13,3 +13,8 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+#logo {
+    height: 25vh;
+    width: auto;
+}
