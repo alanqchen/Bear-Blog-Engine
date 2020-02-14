@@ -14,7 +14,9 @@ type PostRepository interface {
 	Create(p *models.Post) error
 	GetAll() ([]*models.Post, error)
 	FindById(id int) (*models.Post, error)
+	FindByIdAdmin(id int) (*models.Post, error)
 	FindBySlug(slug string) (*models.Post, error)
+	FindBySlugAdmin(slug string) (*models.Post, error)
 	Exists(slug string) bool
 	Delete(id int) error
 	Update(p *models.Post) error
@@ -44,7 +46,7 @@ func (pr *postRepository) Create(p *models.Post) error {
 		return nil
 	}
 
-	_, err := pr.Conn.Prepare(context.Background(), "post-query", "INSERT INTO posts_schema.posts VALUES (default, $1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id")
+	_, err := pr.Conn.Prepare(context.Background(), "post-query", "INSERT INTO posts_schema.posts VALUES (default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id")
 	if err != nil {
 		log.Println(err)
 		return err
@@ -52,7 +54,7 @@ func (pr *postRepository) Create(p *models.Post) error {
 
 	var pId int
 
-	err = pr.Conn.QueryRow(context.Background(), "post-query", p.Title, p.Slug, p.Body, p.CreatedAt.UTC(), nil, p.Tags, p.Hidden, p.AuthorID, p.FeatureImgURL).Scan(&pId)
+	err = pr.Conn.QueryRow(context.Background(), "post-query", p.Title, p.Slug, p.Body, p.CreatedAt.UTC(), nil, p.Tags, p.Hidden, p.AuthorID, p.FeatureImgURL, p.Subtitle, p.Views).Scan(&pId)
 
 	if err != nil {
 		log.Println(err)
@@ -103,14 +105,14 @@ func (pr *postRepository) createWithSlugCount(p *models.Post) error {
 	}
 	counter := strconv.Itoa(count + 1)
 
-	_, err = pr.Conn.Prepare(context.Background(), "slug-query", "INSERT INTO posts_schema.posts VALUES (default, $1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id")
+	_, err = pr.Conn.Prepare(context.Background(), "slug-query", "INSERT INTO posts_schema.posts VALUES (default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id")
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 
 	var pId int
-	err = pr.Conn.QueryRow(context.Background(), "slug-query", p.Title, p.Slug+"-"+counter, p.Body, p.CreatedAt.UTC(), nil, p.Tags, p.Hidden, p.AuthorID, p.FeatureImgURL).Scan(&pId)
+	err = pr.Conn.QueryRow(context.Background(), "slug-query", p.Title, p.Slug+"-"+counter, p.Body, p.CreatedAt.UTC(), nil, p.Tags, p.Hidden, p.AuthorID, p.FeatureImgURL, p.Subtitle, p.Views).Scan(&pId)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -125,7 +127,24 @@ func (pr *postRepository) createWithSlugCount(p *models.Post) error {
 func (pr *postRepository) FindById(id int) (*models.Post, error) {
 	post := models.Post{}
 
-	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM posts_schema.posts WHERE id = $1", id).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID, &post.FeatureImgURL)
+	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM posts_schema.posts WHERE NOT hidden AND id = $1", id).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID, &post.FeatureImgURL, &post.Subtitle, &post.Views)
+	if err != nil {
+		return nil, err
+	}
+	post.Views += 1
+	err = pr.Conn.QueryRow(context.Background(), "UPDATE posts_schema.posts SET views=$1 WHERE NOT hidden AND id = $2", post.Views, id).Scan()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return &post, nil
+}
+
+func (pr *postRepository) FindByIdAdmin(id int) (*models.Post, error) {
+	post := models.Post{}
+
+	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM posts_schema.posts WHERE id = $1", id).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID, &post.FeatureImgURL, &post.Subtitle, &post.Views)
 	if err != nil {
 		return nil, err
 	}
@@ -181,13 +200,13 @@ func (pr *postRepository) Update(p *models.Post) error {
 }
 
 func (pr *postRepository) updatePost(p *models.Post) error {
-	_, err := pr.Conn.Prepare(context.Background(), "update-post-query", "UPDATE posts_schema.posts SET title=$1, slug=$2, body=$3, updated_at=$4, tags=$5, hidden=$6, feature_image_url=$7 WHERE id=$8")
+	_, err := pr.Conn.Prepare(context.Background(), "update-post-query", "UPDATE posts_schema.posts SET title=$1, slug=$2, body=$3, updated_at=$4, tags=$5, hidden=$6, feature_image_url=$7, subtitle=$8 WHERE id=$9")
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 
-	_, err = pr.Conn.Exec(context.Background(), "update-post-query", p.Title, p.Slug, p.Body, p.UpdatedAt, p.Tags, p.Hidden, p.FeatureImgURL, p.ID)
+	_, err = pr.Conn.Exec(context.Background(), "update-post-query", p.Title, p.Slug, p.Body, p.UpdatedAt, p.Tags, p.Hidden, p.FeatureImgURL, p.Subtitle, p.ID)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -220,12 +239,34 @@ func (pr *postRepository) GetPublicPostCount() (int, error) {
 
 func (pr *postRepository) FindBySlug(slug string) (*models.Post, error) {
 	post := models.Post{}
-	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM posts_schema.posts WHERE NOT hidden AND slug LIKE $1", slug).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID, &post.FeatureImgURL)
+	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM posts_schema.posts WHERE NOT hidden AND slug LIKE $1", slug).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID, &post.FeatureImgURL, &post.Subtitle, &post.Views)
 
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
+
+	post.Views += 1
+
+	err = pr.Conn.QueryRow(context.Background(), "UPDATE posts_schema.posts SET views=$1 WHERE NOT hidden AND slug LIKE $2", post.Views, slug).Scan()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return &post, nil
+}
+
+func (pr *postRepository) FindBySlugAdmin(slug string) (*models.Post, error) {
+	post := models.Post{}
+	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM posts_schema.posts WHERE slug LIKE $1", slug).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID, &post.FeatureImgURL, &post.Subtitle, &post.Views)
+
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	// Don't increment view count
+	//err = pr.Conn.QueryRow(context.Background(), "UPDATE posts_schema.posts SET views=$1 WHERE slug LIKE $2", post.Views, slug).Scan()
 
 	return &post, nil
 }
@@ -242,7 +283,7 @@ func (pr *postRepository) GetAll() ([]*models.Post, error) {
 
 	for rows.Next() {
 		p := new(models.Post)
-		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt, &p.Tags, &p.Hidden, &p.AuthorID, &p.FeatureImgURL)
+		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt, &p.Tags, &p.Hidden, &p.AuthorID, &p.FeatureImgURL, &p.Subtitle, &p.Views)
 		if err != nil {
 			log.Println(err)
 			return nil, err
@@ -269,7 +310,7 @@ func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*mo
 
 	for rows.Next() {
 		p := new(models.Post)
-		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt, &p.Tags, &p.Hidden, &p.AuthorID, &p.FeatureImgURL)
+		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt, &p.Tags, &p.Hidden, &p.AuthorID, &p.FeatureImgURL, &p.Subtitle, &p.Views)
 		if err != nil {
 			log.Println(err)
 			return nil, -1, err

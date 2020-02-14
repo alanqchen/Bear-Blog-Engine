@@ -18,6 +18,8 @@ type Post struct {
 	Hidden        bool               `json:"hidden"`
 	AuthorID      int                `json:"authorid"`
 	FeatureImgURL string             `json:"featureImgUrl"`
+	Subtitle      string             `json:"subtitle"`
+	Views         int                `json:"views"`
 }
 
 func (p *Post) MarshalJSON() ([]byte, error) {
@@ -35,7 +37,9 @@ func (p *Post) MarshalJSON() ([]byte, error) {
 			Hidden        bool                `json:"hidden"`
 			AuthorID      int                 `json:"authorid"`
 			FeatureImgURL string              `json:"featureImgUrl"`
-		}{p.ID, p.Title, p.Slug, p.Body, p.CreatedAt, nil, p.Tags, p.Hidden, p.AuthorID, p.FeatureImgURL})
+			Subtitle      string              `json:"subtitle"`
+			Views         int                 `json:"views"`
+		}{p.ID, p.Title, p.Slug, p.Body, p.CreatedAt, nil, p.Tags, p.Hidden, p.AuthorID, p.FeatureImgURL, p.Subtitle, p.Views})
 	}
 
 	return json.Marshal(struct {
@@ -49,5 +53,7 @@ func (p *Post) MarshalJSON() ([]byte, error) {
 		Hidden        bool      `json:"hidden"`
 		AuthorID      int       `json:"authorid"`
 		FeatureImgURL string    `json:"featureImgUrl"`
-	}{p.ID, p.Title, p.Slug, p.Body, p.CreatedAt, p.UpdatedAt.Time, p.Tags, p.Hidden, p.AuthorID, p.FeatureImgURL})
+		Subtitle      string    `json:"subtitle"`
+		Views         int       `json:"views"`
+	}{p.ID, p.Title, p.Slug, p.Body, p.CreatedAt, p.UpdatedAt.Time, p.Tags, p.Hidden, p.AuthorID, p.FeatureImgURL, p.Subtitle, p.Views})
 }
