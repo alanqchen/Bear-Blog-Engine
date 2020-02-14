@@ -131,8 +131,12 @@ func (pc *PostController) GetByIdAdmin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (pc *PostController) GetBySlug(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	slug := vars["slug"]
+	//vars := mux.Vars(r)
+	//slug := vars["slug"]
+	slug := r.URL.EscapedPath()
+	slugRune := []rune(slug)
+	slug = string(slugRune[14:])
+	log.Println(slug)
 	post, err := pc.PostRepository.FindBySlug(slug)
 	if err != nil {
 		NewAPIError(&APIError{false, "Could not find post", http.StatusNotFound}, w)

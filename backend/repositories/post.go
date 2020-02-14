@@ -132,7 +132,8 @@ func (pr *postRepository) FindById(id int) (*models.Post, error) {
 		return nil, err
 	}
 	post.Views += 1
-	err = pr.Conn.QueryRow(context.Background(), "UPDATE posts_schema.posts SET views=$1 WHERE NOT hidden AND id = $2", post.Views, id).Scan()
+	pr.Conn.Prepare(context.Background(), "update-views-query", "UPDATE post_schema.posts SET views=$1 WHERE id=$2")
+	_, err = pr.Conn.Exec(context.Background(), "update-views-query", post.Views, post.ID)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -239,6 +240,7 @@ func (pr *postRepository) GetPublicPostCount() (int, error) {
 
 func (pr *postRepository) FindBySlug(slug string) (*models.Post, error) {
 	post := models.Post{}
+
 	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM posts_schema.posts WHERE NOT hidden AND slug LIKE $1", slug).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID, &post.FeatureImgURL, &post.Subtitle, &post.Views)
 
 	if err != nil {
@@ -248,7 +250,8 @@ func (pr *postRepository) FindBySlug(slug string) (*models.Post, error) {
 
 	post.Views += 1
 
-	err = pr.Conn.QueryRow(context.Background(), "UPDATE posts_schema.posts SET views=$1 WHERE NOT hidden AND slug LIKE $2", post.Views, slug).Scan()
+	pr.Conn.Prepare(context.Background(), "update-views-query", "UPDATE posts_schema.posts SET views=$1 WHERE slug LIKE $2")
+	_, err = pr.Conn.Exec(context.Background(), "update-views-query", post.Views, slug)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -301,7 +304,7 @@ func (pr *postRepository) GetAll() ([]*models.Post, error) {
 func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*models.Post, int, error) {
 	var posts []*models.Post
 
-	rows, err := pr.Conn.Query(context.Background(), "SELECT * FROM posts_schema.posts WHERE id < $1 AND tags @> $2::text[] ORDER BY created_at DESC, id DESC LIMIT $3", maxID, &tags, perPage)
+	rows, err := pr.Conn.Query(context.Background(), "SELECT * FROM posts_schema.posts WHERE NOT hidden AND id < $1 AND tags @> $2::text[] ORDER BY created_at DESC, id DESC LIMIT $3", maxID, &tags, perPage)
 
 	if err != nil {
 		return nil, -1, err
