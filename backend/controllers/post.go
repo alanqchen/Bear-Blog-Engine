@@ -114,10 +114,42 @@ func (pc *PostController) GetById(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
 }
 
+func (pc *PostController) GetByIdAdmin(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
+		return
+	}
+	post, err := pc.PostRepository.FindByIdAdmin(id)
+	if err != nil {
+		NewAPIError(&APIError{false, "Could not find post", http.StatusNotFound}, w)
+		return
+	}
+
+	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
+}
+
 func (pc *PostController) GetBySlug(w http.ResponseWriter, r *http.Request) {
+	//vars := mux.Vars(r)
+	//slug := vars["slug"]
+	slug := r.URL.EscapedPath()
+	slugRune := []rune(slug)
+	slug = string(slugRune[14:])
+	log.Println(slug)
+	post, err := pc.PostRepository.FindBySlug(slug)
+	if err != nil {
+		NewAPIError(&APIError{false, "Could not find post", http.StatusNotFound}, w)
+		return
+	}
+
+	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
+}
+
+func (pc *PostController) GetBySlugAdmin(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	slug := vars["slug"]
-	post, err := pc.PostRepository.FindBySlug(slug)
+	post, err := pc.PostRepository.FindBySlugAdmin(slug)
 	if err != nil {
 		NewAPIError(&APIError{false, "Could not find post", http.StatusNotFound}, w)
 		return
@@ -149,6 +181,12 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 
 	if len(title) < 4 {
 		NewAPIError(&APIError{false, "Title is too short", http.StatusBadRequest}, w)
+		return
+	}
+
+	subtitle, err := j.GetString("subtitle")
+	if err != nil {
+		NewAPIError(&APIError{false, "Subtitle is required", http.StatusBadRequest}, w)
 		return
 	}
 
@@ -194,6 +232,8 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 		imgURL = ""
 	}
 
+	views := 0
+
 	post := &models.Post{
 		Title:         title,
 		Slug:          slug,
@@ -203,6 +243,8 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 		Hidden:        hidden,
 		AuthorID:      uid,
 		FeatureImgURL: imgURL,
+		Subtitle:      subtitle,
+		Views:         views,
 	}
 
 	err = pc.PostRepository.Create(post)
@@ -213,11 +255,12 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: Change this maybe put the user object into a context and get the author from there.
 	//u, err := pc.UserRepository.FindById(uid)
-	if err != nil {
-		NewAPIError(&APIError{false, "Content is required", http.StatusBadRequest}, w)
-		return
-	}
-
+	/*
+		if err != nil {
+			NewAPIError(&APIError{false, "Content is required", http.StatusBadRequest}, w)
+			return
+		}
+	*/
 	defer r.Body.Close()
 	NewAPIResponse(&APIResponse{Success: true, Message: "Post created", Data: post}, w, http.StatusOK)
 }
