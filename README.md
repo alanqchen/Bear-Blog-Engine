@@ -6,7 +6,7 @@ Uses Go for the backend and React for the frontend.
 **Work-In-Progress**
 
 Status:
-Looking into SSR using Next.js
+Looking into Higher Order Components
 
 ## TODO (An incomplete list):
 ### Backend
@@ -14,8 +14,6 @@ Looking into SSR using Next.js
 - ~~Add asset image url for both header and preview for posts~~
 - ~~Add search by tags~~
 - ~~Add support for hidden posts~~
-- Add view count
-- Add sub title
 
 ### Frontend
 - Post component
