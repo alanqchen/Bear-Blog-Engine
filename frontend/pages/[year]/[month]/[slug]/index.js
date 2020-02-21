@@ -10,13 +10,14 @@ const Index = props => (
       <Link href="/"><a>Goto Index</a></Link>
       <p>{props.post.data.createdAt}</p>
       <p>{props.month} {props.day}, {props.year}</p>
-      <p>Author: {props.post.data.authorid}</p>
+      <p>Author: {props.author}</p>
       
       <h1>{props.post.data.title}</h1>
+      <h3>{props.post.data.subtitle}</h3>
       <h4>Tags:</h4>
       <div>
         {props.post.data.tags.map(tag => (
-        <p>{tag}</p>
+        <p key={tag}>{tag}</p>
         ))}
       </div>
       <h4>Body</h4>
@@ -43,12 +44,15 @@ Index.getInitialProps = async ctx => {
 
   console.log(d);
   
+  let resAuthor = await fetch(`http://localhost:8080/api/v1/users/${post.data.authorid}`);
+  const author = await resAuthor.json();
 
   return {
     post: post,
     month: dateFormat(dateStr, "mmmm"),
     day: dateFormat(dateStr, "dd"),
-    year: dateFormat(dateStr, "yyyy")
+    year: dateFormat(dateStr, "yyyy"),
+    author: author.data.name
   };
 };
 

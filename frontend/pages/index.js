@@ -3,8 +3,11 @@ import Layout from '../components/publicLayout';
 import PostLink from '../components/postLink';
 import fetch from 'isomorphic-unfetch'
 
+var maxID = -1;
+
 const Index = props => (
         <Layout>
+            
             {props.posts.map(post => (
                 <li key={post.id}>
                 <Link href="/[year]/[month]/[slug]" params={{slug: post.slug}} as={`/${post.slug}`}>
@@ -12,12 +15,14 @@ const Index = props => (
                 </Link>
                 </li>
             ))}
+            <button>Trigger Paginate</button>
+            
         </Layout>
 );
 
 Index.getInitialProps = async function() {
     const jsonBody = {
-        maxID: "-1"
+        maxID: maxID
     }
     const res = await fetch('http://localhost:8080/api/v1/posts/get', {
         method: 'post',
@@ -30,6 +35,17 @@ Index.getInitialProps = async function() {
     return {
       posts: reqRes.data.map(post => post)
     };
-};
+}
 
 export default Index;
+
+/*
+export default function Blog() {
+    return (
+        <Paginate></Paginate>
+    );
+}
+*/
+
+
+  

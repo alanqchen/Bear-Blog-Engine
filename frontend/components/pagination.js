@@ -1,0 +1,101 @@
+import Link from 'next/link';
+import Layout from '../components/publicLayout';
+import PostLink from '../components/postLink';
+import fetch from 'isomorphic-unfetch'
+import dynamic from 'next/dynamic'
+/*
+const Paginate = props => (
+        <Layout>
+            {props.posts.map(post => (
+                <li key={post.id}>
+                <Link href="/[year]/[month]/[slug]" params={{slug: post.slug}} as={`/${post.slug}`}>
+                <a>{post.title}</a>
+                </Link>
+                </li>
+            ))}
+            <button>Trigger Paginate</button>
+        </Layout>
+);
+*/
+
+const Paginate = props => (
+    <Layout>
+        {props.posts}
+        <button>Trigger Paginate</button>
+    </Layout>
+);
+
+Paginate.getInitialProps = async function() {
+    const jsonBody = {
+        maxID: "-1"
+    }
+    const res = await fetch('http://localhost:8080/api/v1/posts/get', {
+        method: 'post',
+        body: JSON.stringify(jsonBody)
+    });
+    const reqRes = await res.json();
+  
+    console.log(`Show data fetched. Count: ${reqRes.pagination.perPage}`);
+  
+    return {
+      posts: reqRes.data.map(post => post)
+    };
+}
+
+export default Paginate;
+
+/*
+export default function Blog() {
+    return (
+        <Paginate></Paginate>
+    );
+}
+
+/*
+class App extends React.Component {
+    state = {
+        maxID: -1
+    }
+    static async getInitialProps() {
+        const jsonBody = {
+            maxID: this.state.maxID.toString()
+        }
+        const r = await fetch('http://localhost:8080/api/v1/posts/get', {
+            method: 'post',
+            body: JSON.stringify(jsonBody)
+        });
+        const reqRes = await res.json();
+    
+        console.log(`Show data fetched. Count: ${reqRes.pagination.perPage}`);
+    
+        return {
+        posts: reqRes.data.map(post => post)
+        };
+    }
+  
+    render() {
+        return (
+        <Layout>
+            {props.posts.map(post => (
+                <li key={post.id}>
+                <Link href="/[year]/[month]/[slug]" params={{slug: post.slug}} as={`/${post.slug}`}>
+                <a>{post.title}</a>
+                </Link>
+                </li>
+            ))}
+            <button>Trigger Paginate</button>
+        </Layout>
+        )
+    }
+
+    onAddChild = () => {
+        this.setState({
+          maxID: this.state.maxID 
+        });
+    }
+}
+
+export default App
+
+  
+*/
