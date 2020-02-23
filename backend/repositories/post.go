@@ -72,7 +72,7 @@ func (pr *postRepository) Delete(id int) error {
 		log.Println(err)
 		return err
 	}
-	log.Println("pass")
+
 	row, err := pr.Conn.Query(context.Background(), "delete-query", id)
 	defer row.Close()
 	if err != nil {

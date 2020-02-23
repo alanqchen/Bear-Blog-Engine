@@ -62,7 +62,7 @@ func (ur *userRepository) Update(u *models.User) error {
 	if err != nil {
 		return err
 	}
-	defer ur.Conn.Close(context.Background())
+	//defer ur.Conn.Close(context.Background())
 	_, err = ur.Conn.Exec(context.Background(), "update-query", u.Name, u.Email, u.Password, u.UpdatedAt, u.ID)
 	if err != nil {
 		return err
