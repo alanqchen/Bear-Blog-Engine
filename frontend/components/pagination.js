@@ -9,25 +9,12 @@ class Pagination extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            posts: [],
-            paginationData: [],
+            posts: this.props.posts,
         };
-    }
-    componentDidMount() {
-        const jsonBody = {
-            maxID: "-1"
-        }
-        fetch('http://localhost:8080/api/v1/posts/get', {
-            method: 'post',
-            body: JSON.stringify(jsonBody)
-        })
-        .then(response => response.json())
-        .then(data => this.setState({ posts: data.data, paginationData: data.pagination }));
-        //console.log(`Response: ${response}`);
     }
     render() {
         const { posts } = this.state;
-        console.log(posts);
+        console.log(this.state.posts);
         return (
             <ul>
                 {posts.map(post => (
