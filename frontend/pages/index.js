@@ -86,7 +86,7 @@ var maxID = -1;
 const Index = props => (
         
         <Layout>
-           
+           <PostsContainer></PostsContainer>
             <button>Trigger Paginate</button>
             <Container>
             <Heading>Testing Styled Components</Heading>

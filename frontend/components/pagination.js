@@ -19,7 +19,7 @@ class Pagination extends Component {
             <ul>
                 {posts.map(post => (
                 <li key={post.id}>
-                <Link href="/[year]/[month]/[slug]" params={{slug: post.slug}} as={`/${post.slug}`}>
+                <Link href="/[year]/[month]/[slug]" as={`/${post.slug}`}>
                 <a>{post.title}</a>
                 </Link>
                 </li>

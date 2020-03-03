@@ -3,74 +3,62 @@ import Layout from '../components/publicLayout';
 import PostLink from '../components/postLink';
 import fetch from 'isomorphic-unfetch'
 import dynamic from 'next/dynamic'
-import React, { Component, Children } from 'react';
-import pagination from '../components/pagination'
+import React, { Component, Children, useEffect, useState } from 'react';
+import Pagination from '../components/pagination'
 
-class PostsContainer extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            children: [],
-            currPosts: [],
-            currMaxId: "-1",
-            numChildren: 1
-        };
+function PostsContainer() {
+    const [tempID, setTempID] = useState(-1);
+    const [minID, setMinID] = useState(-1);
+    const [children, setChildren] = useState([]);
+    const [success, setSuccess] = useState(true);
+    const [posts, setPosts] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    }
+    const loadMorePosts = () => {
+        console.log("Loading more posts");
+        console.log(tempID);
+        setMinID(tempID);
+    };
 
-    createPage() {
+    useEffect(() => {
         const jsonBody = {
-            maxID: this.state.currMaxId
+            maxID: minID.toString()
         }
         fetch('http://localhost:8080/api/v1/posts/get', {
             method: 'post',
             body: JSON.stringify(jsonBody)
         })
-        .then(response => response.json())
-        .then(data => this.state({
-            currPosts: data.data, 
-            currMaxId: data.pagination.minID.toString(),
-            children: [
-                ...children,
-                <pagination posts={this.state.currPosts}/>
-            ]
-        }));
-        console.log(this.props.children);
-    }
-    
-
-    render() {
-        const children = [];
-        const posts = [];
-        const maxID = "-1";
-        let postsData;
-        /*
-        for (var i = 0; i < this.state.numChildren; i += 1) {
-            const jsonBody = {
-                maxID: maxID
+        .then(res => res.json())
+        .then(response => {
+            if(response.success) {
+                setPosts(response.data);
+                setTempID(response.pagination.minID);
+                setChildren(oldChildren => [...oldChildren, <Pagination posts={response.data}/>])
             }
-            fetch('http://localhost:8080/api/v1/posts/get', {
-                method: 'post',
-                body: JSON.stringify(jsonBody)
-            })
-            .then(response => response.json())
-            .then(data => {
-                posts = data.data;
-                maxID = data.pagination.minID.toString;
-            });
-          
+            setIsLoading(false);
+            setSuccess(response.success);
 
-            children.push(<pagination key={i} posts={posts}/>);
-        };
-        */
+        })
+        .catch(error => console.log(error));
+    }, [minID]);
 
-        return (
-        <PostsContainer addChild={this.onAddPost}>
-            {children}
-        </PostsContainer>
-        );
+    return (
+        <div>
+            {isLoading && <p>Wait I'm Loading comments for you</p>}
+            <h1>a</h1>
+            {children.map((post, i) => (
+                // Without the `key`, React will fire a key warning
+                <React.Fragment key={i}>
+                    {post}
+                </React.Fragment>
+            ))}
 
-    }
+            {success && posts.length !== 0 && (
+                <button onClick={loadMorePosts}>Load More Posts</button>
+            )}
+
+        </div>
+    )
 }
 
 

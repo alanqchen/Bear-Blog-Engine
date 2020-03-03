@@ -13,6 +13,7 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/util"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgtype"
+	"github.com/jackc/pgx/v4"
 )
 
 type PostController struct {
@@ -77,7 +78,7 @@ func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
 	perPageInt := 10
 	posts, minID, err := pc.PostRepository.Paginate(maxID, perPageInt, tagsSlice)
 
-	if err != nil {
+	if err != nil && err != pgx.ErrNoRows {
 		log.Println(err)
 		NewAPIError(&APIError{false, "Could not fetch posts", http.StatusBadRequest}, w)
 		return
