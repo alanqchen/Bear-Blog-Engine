@@ -314,6 +314,7 @@ func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*mo
 	for rows.Next() {
 		p := new(models.Post)
 		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt, &p.Tags, &p.Hidden, &p.AuthorID, &p.FeatureImgURL, &p.Subtitle, &p.Views)
+
 		if err != nil {
 			log.Println(err)
 			return nil, -1, err

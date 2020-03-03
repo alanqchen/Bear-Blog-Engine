@@ -12,6 +12,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import PostsContainer from '../components/postsContainer'
 
 const Container = styled.div`
   width: 960px;
@@ -85,7 +86,7 @@ var maxID = -1;
 const Index = props => (
         
         <Layout>
-           <Pagination></Pagination>
+           <PostsContainer></PostsContainer>
             <button>Trigger Paginate</button>
             <Container>
             <Heading>Testing Styled Components</Heading>
@@ -114,6 +115,7 @@ Index.getInitialProps = async function() {
     return {
       posts: reqRes.data.map(post => post)
     };
+    
 }
 
 export default Index;
