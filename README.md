@@ -25,6 +25,7 @@ Looking into Higher Order Components
 *Later down the line*
 - Comment support?
 - Search by month/year
+- Add state persistence
 
 ## Resources
 Editor: Atlassian https://www.npmjs.com/package/@atlaskit/editor-core
