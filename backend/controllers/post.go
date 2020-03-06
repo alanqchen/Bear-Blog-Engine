@@ -230,7 +230,7 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 
 	imgURL, err := j.GetString("image-url")
 	if err != nil {
-		imgURL = ""
+		imgURL = "http://localhost:8080/assets/images/feature-default.png"
 	}
 
 	views := 0
@@ -273,12 +273,12 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	vars := mux.Vars(r)
-	postId, err := strconv.Atoi(vars["id"])
+	postID, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
 		return
 	}
-	post, err := pc.PostRepository.FindById(postId)
+	post, err := pc.PostRepository.FindById(postID)
 	if err != nil {
 		// post was not found
 		NewAPIError(&APIError{false, "Could not find post", http.StatusNotFound}, w)
@@ -335,6 +335,11 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	imgURL, err := j.GetString("image-url")
+	if err != nil {
+		imgURL = "http://localhost:8080/assets/images/feature-default.png"
+	}
+
 	//post.UserID = uid
 	post.UpdatedAt = pgtype.Timestamptz{Time: time.Now(), Status: pgtype.Present}
 	post.Title = title
@@ -342,6 +347,7 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 	post.Slug = slug
 	post.Hidden = hidden
 	post.Tags = tags
+	post.FeatureImgURL = imgURL
 	//post.ID = postId
 
 	err = pc.PostRepository.Update(post)

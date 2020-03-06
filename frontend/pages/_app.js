@@ -1,11 +1,11 @@
 import NextApp from 'next/app'
+import Head from 'next/head';
 import React from 'react'
 import '../assests/css/fonts.css'
 import { ThemeProvider } from 'styled-components'
-
-const theme = {
-  primary: 'green',
-}
+import { ThemeProvider as MUIThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from "@material-ui/core/CssBaseline"
+import theme from '../assests/theme/theme'
 
 export default class App extends NextApp {
   // remove it here
@@ -19,9 +19,18 @@ export default class App extends NextApp {
     const { Component, pageProps } = this.props
 
     return (
-      <ThemeProvider theme={theme}>
-        <Component {...pageProps} />
-      </ThemeProvider>
+      <React.Fragment>
+        <Head>
+          <title>Bear Post</title>
+          <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+        </Head>
+        <MUIThemeProvider theme={theme}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </MUIThemeProvider>
+      </React.Fragment>
     )
   }
 }

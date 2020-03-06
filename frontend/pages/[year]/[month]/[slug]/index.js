@@ -3,10 +3,15 @@ import { useRouter } from 'next/router';
 import Layout from '../../../../components/publicLayout'
 import fetch from 'isomorphic-unfetch'
 import dateFormat from 'dateformat'
+import Error from 'next/error'
 
-const Index = props => (
-  
-    <div>
+const Index = ({errorCode, props}) => {
+  console.log(errorCode);
+  if (errorCode) {
+    return <Error statusCode={errorCode} />
+  }
+  return (
+    <Layout>
       <Link href="/"><a>Goto Index</a></Link>
       <p>{props.post.data.createdAt}</p>
       <p>{props.month} {props.day}, {props.year}</p>
@@ -23,20 +28,28 @@ const Index = props => (
       <h4>Body</h4>
       <p>{props.post.data.body}</p>
       <p>Views: {props.post.data.views}</p>
-    </div>
+    </Layout>
+  );
+    
   
-);
+};
 
 Index.getInitialProps = async ctx => {
 
   let res = await fetch(`http://localhost:8080/api/v1/posts${ctx.asPath}`);
+
   const post = await res.json();
 
-  if (!post.status && res) {
-    res.statusCode = 404;
-  }
+  const errorCode = post.status > 200 ? post.status : false
+  
+  console.log(errorCode);
 
-  console.log(`Show data fetched. Count: ${post.data.id}`);
+  if(errorCode) {
+    console.log("bad slug");
+    return {errorCode, post: post};
+  }
+  
+
   let dateStr = post.data.createdAt;
   dateStr = dateStr.slice(0, dateStr.length-3) + dateStr.slice(dateStr.length-2);
   console.log(dateStr);
@@ -48,11 +61,14 @@ Index.getInitialProps = async ctx => {
   const author = await resAuthor.json();
 
   return {
-    post: post,
-    month: dateFormat(dateStr, "mmmm"),
-    day: dateFormat(dateStr, "dd"),
-    year: dateFormat(dateStr, "yyyy"),
-    author: author.data.name
+    errorCode,
+    props: {
+      post: post,
+      month: dateFormat(dateStr, "mmmm"),
+      day: dateFormat(dateStr, "dd"),
+      year: dateFormat(dateStr, "yyyy"),
+      author: author.data.name
+    }
   };
 };
 

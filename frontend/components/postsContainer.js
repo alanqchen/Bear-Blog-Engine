@@ -5,6 +5,8 @@ import fetch from 'isomorphic-unfetch'
 import dynamic from 'next/dynamic'
 import React, { Component, Children, useEffect, useState } from 'react';
 import Pagination from '../components/pagination'
+import Spinner from '@atlaskit/spinner';
+import { Waypoint } from 'react-waypoint';
 
 function PostsContainer() {
     const [tempID, setTempID] = useState(-1);
@@ -17,6 +19,7 @@ function PostsContainer() {
     const loadMorePosts = () => {
         console.log("Loading more posts");
         console.log(tempID);
+        setIsLoading(true);
         setMinID(tempID);
     };
 
@@ -43,8 +46,8 @@ function PostsContainer() {
     }, [minID]);
 
     return (
-        <div>
-            {isLoading && <p>Wait I'm Loading comments for you</p>}
+        <>
+            
             <h1>a</h1>
             {children.map((post, i) => (
                 // Without the `key`, React will fire a key warning
@@ -52,12 +55,15 @@ function PostsContainer() {
                     {post}
                 </React.Fragment>
             ))}
-
+            {success && <Waypoint onEnter={loadMorePosts}></Waypoint>}
+            {isLoading && <Spinner invertColor="true" size="xlarge"/>}
+            {/*}
             {success && posts.length !== 0 && (
                 <button onClick={loadMorePosts}>Load More Posts</button>
             )}
+            */}
 
-        </div>
+        </>
     )
 }
 

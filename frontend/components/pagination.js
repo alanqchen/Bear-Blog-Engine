@@ -1,9 +1,60 @@
 import Link from 'next/link';
+import styled from 'styled-components';
+import { makeStyles } from '@material-ui/core/styles';
 import Layout from '../components/publicLayout';
 import PostLink from '../components/postLink';
 import fetch from 'isomorphic-unfetch'
 import dynamic from 'next/dynamic'
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
 import React, { Component } from 'react';
+
+const useStyles = makeStyles({
+root: {
+    minWidth: 275,
+},
+bullet: {
+    display: 'inline-block',
+    margin: '0 2px',
+    transform: 'scale(0.8)',
+},
+title: {
+    fontSize: 14,
+},
+pos: {
+    marginBottom: 12,
+},
+});
+
+const StyledCard = styled(Card)`
+    margin-bottom: 10px;
+    transition: transform 2s ease-in-out;
+    &:hover {
+        cursor: pointer;
+        transform: scale(1.008);
+    }
+`
+
+const PostCardLink = React.forwardRef((props, ref) => (
+<a ref={ref} {...props}>
+    
+</a>
+))
+    
+const PostCard = ({ post }) => {
+    return(
+        <StyledCard>
+            <CardContent>
+                <img src={post.featureImgUrl}></img>
+                <Typography color="textPrimary" gutterBottom>
+                    {post.title}
+                </Typography>
+            </CardContent>
+        </StyledCard>
+    )
+}
 
 class Pagination extends Component {
     constructor(props) {
@@ -14,76 +65,21 @@ class Pagination extends Component {
     }
     render() {
         const { posts } = this.state;
+        if( posts == null) return null;
         console.log(this.state.posts);
         return (
-            <ul>
+            <>
                 {posts.map(post => (
-                <li key={post.id}>
+                <React.Fragment key={post.id}>
                 <Link href="/[year]/[month]/[slug]" as={`/${post.slug}`}>
-                <a>{post.title}</a>
+                    <PostCardLink post={post}>
+                        <PostCard post={post}></PostCard>
+                    </PostCardLink>
                 </Link>
-                </li>
+                </React.Fragment>
                 ))}
-            </ul>
+            </>
         );
     }
 }
 export default Pagination;
-
-
-
-/*
-export default function Blog() {
-    return (
-        <Paginate></Paginate>
-    );
-}
-
-/*
-class App extends React.Component {
-    state = {
-        maxID: -1
-    }
-    static async getInitialProps() {
-        const jsonBody = {
-            maxID: this.state.maxID.toString()
-        }
-        const r = await fetch('http://localhost:8080/api/v1/posts/get', {
-            method: 'post',
-            body: JSON.stringify(jsonBody)
-        });
-        const reqRes = await res.json();
-    
-        console.log(`Show data fetched. Count: ${reqRes.pagination.perPage}`);
-    
-        return {
-        posts: reqRes.data.map(post => post)
-        };
-    }
-  
-    render() {
-        return (
-        <Layout>
-            {props.posts.map(post => (
-                <li key={post.id}>
-                <Link href="/[year]/[month]/[slug]" params={{slug: post.slug}} as={`/${post.slug}`}>
-                <a>{post.title}</a>
-                </Link>
-                </li>
-            ))}
-            <button>Trigger Paginate</button>
-        </Layout>
-        )
-    }
-
-    onAddChild = () => {
-        this.setState({
-          maxID: this.state.maxID 
-        });
-    }
-}
-
-export default App
-
-  
-*/
