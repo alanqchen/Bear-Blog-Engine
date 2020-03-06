@@ -248,7 +248,7 @@ func (pr *postRepository) FindBySlug(slug string) (*models.Post, error) {
 		return nil, err
 	}
 
-	post.Views += 1
+	post.Views++
 
 	pr.Conn.Prepare(context.Background(), "update-views-query", "UPDATE posts_schema.posts SET views=$1 WHERE slug LIKE $2")
 	_, err = pr.Conn.Exec(context.Background(), "update-views-query", post.Views, slug)
