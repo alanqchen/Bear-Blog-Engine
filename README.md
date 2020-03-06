@@ -16,16 +16,16 @@ Looking into Higher Order Components
 - ~~Add support for hidden posts~~
 
 ### Frontend
-- Post component
-- Sidebar component
+- Post component (Working on styling)
+- Search component
 - Admin login
 - Admin dashboard
 - Etc. (lots to do here)
 
 *Later down the line*
-- Comment support?
-- Search by month/year
-- Add state persistence
+- Comment support? (Very low-priority)
+- Search by month/year (Need to add backend route)
+- Add state persistence (Low-priority)
 
 ## Resources
 Editor: Atlassian https://www.npmjs.com/package/@atlaskit/editor-core
