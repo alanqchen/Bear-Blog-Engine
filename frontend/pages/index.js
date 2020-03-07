@@ -141,18 +141,14 @@ function HideOnScroll(props) {
 const Index = props => (
         
         <Layout>
-          
-          
-            
-          
-            <PostsContainer></PostsContainer>
-          
+             
+            <PostsContainer></PostsContainer>        
 
         </Layout>
         
 );
 
-
+/*
 Index.getInitialProps = async function() {
     
     const jsonBody = {
@@ -171,6 +167,6 @@ Index.getInitialProps = async function() {
     };
     
 }
-
+*/
 export default Index;
   

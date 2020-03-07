@@ -55,7 +55,7 @@ function PostsContainer() {
                     {post}
                 </React.Fragment>
             ))}
-            {success && <Waypoint onEnter={loadMorePosts}></Waypoint>}
+            {!isLoading && success && <Waypoint onEnter={loadMorePosts}></Waypoint>}
             {isLoading && <Spinner invertColor="true" size="xlarge"/>}
             {/*}
             {success && posts.length !== 0 && (

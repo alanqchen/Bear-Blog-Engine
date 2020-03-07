@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -71,7 +72,21 @@ func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
 
 	if maxID == -1 {
 		maxID, _ = pc.PostRepository.GetLastID()
-		maxID += 1
+		maxID++
+	}
+
+	if len(tagsSlice) == 0 {
+		resStatus, resCache := pc.checkCache(maxIDString)
+		if resStatus {
+			var res APIResponse
+			err := json.Unmarshal(resCache, &res)
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Println("[INFO] Returned result from cache")
+			NewAPIResponse(&res, w, http.StatusOK)
+			return
+		}
 	}
 
 	// May add changing num posts per page in the future
@@ -94,6 +109,26 @@ func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
 		perPageInt,
 		minID,
 		tagsSlice,
+	}
+
+	if len(tagsSlice) == 0 {
+		//Add query result to Redis cache, only if no tags were searched for
+		jPosts, err := json.Marshal(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator})
+		if err != nil {
+			log.Println("[WARN] Failed to add posts to cache")
+			log.Println(err)
+			// Still send result, but failed to add to cache
+			NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
+			return
+		}
+		// Add query result to Redis cache, only if no tags were searched for
+		//pc.App.Redis.Set(maxIDString, []byte(jPosts), 0)
+		val := pc.App.Redis.HSet("page-hash", maxIDString, []byte(jPosts))
+		if val.Err() != nil {
+			log.Println("[WARN] Failed to add posts to cache")
+			log.Println(err)
+		}
+		log.Println("Query result added to cache")
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
@@ -262,6 +297,8 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	*/
+	pc.flushCache()
+
 	defer r.Body.Close()
 	NewAPIResponse(&APIResponse{Success: true, Message: "Post created", Data: post}, w, http.StatusOK)
 }
@@ -355,6 +392,7 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Could not update post", http.StatusBadRequest}, w)
 		return
 	}
+	pc.flushCache()
 
 	NewAPIResponse(&APIResponse{Success: true, Message: "Post updated", Data: post}, w, http.StatusOK)
 }
@@ -379,4 +417,31 @@ func (pc *PostController) Delete(w http.ResponseWriter, r *http.Request) {
 		}
 	*/
 	NewAPIResponse(&APIResponse{Success: true, Data: id}, w, http.StatusOK)
+}
+
+// False -> pagination not in cache
+// True -> pagination in cache
+func (pc *PostController) checkCache(key string) (bool, []byte) {
+
+	//val, err := pc.App.Redis.Get(key).Result()
+	val := pc.App.Redis.HGet("page-hash", key)
+	if val.Val() == "" {
+		log.Println("[INFO] Key " + key + " not found in cache")
+		return false, []byte("")
+	} else if val.Err() != nil {
+		panic(val.Err())
+	}
+	log.Println("[INFO] Key " + key + " found in cache")
+	return true, []byte(val.Val())
+}
+
+func (pc *PostController) flushCache() {
+
+	err := pc.App.Redis.Del("page-hash")
+	if err.Err() != nil {
+		panic(err.Err())
+	}
+	log.Println(err.Val())
+	log.Println("[INFO] Flushed pagination hash")
+	return
 }

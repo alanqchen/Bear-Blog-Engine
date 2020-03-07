@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/alanqchen/Bear-Post/backend/config"
@@ -20,14 +21,12 @@ func NewRedis(dbConfig config.RedisConfig) (*Redis, error) {
 		Password: dbConfig.Password,
 		DB:       0,
 	})
-	fmt.Println(dbConfig.Host)
-	fmt.Println(dbConfig.Port)
-	fmt.Println("[LOG] Pinging redis...")
+	log.Println("Pinging redis...")
 	_, err := client.Ping().Result()
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
 	}
-	fmt.Println("[LOG] Ping Successful")
+	log.Println("Ping Successful")
 	return &Redis{client}, err
 }
