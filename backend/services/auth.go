@@ -384,14 +384,14 @@ func getPrivateKey(jwtConfig *config.JWTConfig) *rsa.PrivateKey {
 	pemfileinfo, _ := privateKeyFile.Stat()
 	var size int64 = pemfileinfo.Size()
 	pembytes := make([]byte, size)
-	log.Println("Read file")
+	// Read file
 	buffer := bufio.NewReader(privateKeyFile)
 	_, err = buffer.Read(pembytes)
-	log.Println("Decode")
+	// Decode
 	data, _ := pem.Decode([]byte(pembytes))
-	log.Println("Close")
+	// Close file
 	privateKeyFile.Close()
-	log.Println("Parse")
+	//Parse key
 	privateKeyImported, err := x509.ParsePKCS1PrivateKey(data.Bytes)
 
 	if err != nil {
@@ -423,7 +423,7 @@ func getPublicKey(jwtConfig *config.JWTConfig) *rsa.PublicKey {
 
 	publicKeyFile.Close()
 
-	log.Println("Parsing Public Key...")
+	// Parse public key
 
 	publicKeyImported, err := x509.ParsePKIXPublicKey(data.Bytes)
 

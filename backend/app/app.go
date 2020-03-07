@@ -18,18 +18,18 @@ type App struct {
 }
 
 func New(appConfig config.Config) (*App, *database.Postgres) {
-	fmt.Println("Starting Postgres")
+	log.Println("Starting Postgres")
 	db, err := database.NewPostgres(appConfig.ProstgreSQL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Starting Redis")
+	log.Println("Starting Redis")
 	redis, err := database.NewRedis(appConfig.RedisDB)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Databases started succesfully")
+	log.Println("Databases started succesfully")
 	return &App{appConfig, db, redis}, db
 }
 
