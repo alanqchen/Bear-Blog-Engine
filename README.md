@@ -14,7 +14,7 @@ Looking into Higher Order Components
 - ~~Add asset image url for both header and preview for posts~~
 - ~~Add search by tags~~
 - ~~Add support for hidden posts~~
-- Add cache in Redis for pagination pages (high-priority)
+- ~~Add cache in Redis for pagination pages (high-priority)~~
 
 ### Frontend
 - Post component (Working on styling)
