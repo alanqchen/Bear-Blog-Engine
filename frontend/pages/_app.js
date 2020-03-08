@@ -24,7 +24,7 @@ export default class App extends NextApp {
           <title>Bear Post</title>
           <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
         </Head>
-        <MUIThemeProvider theme={theme}>
+        <MUIThemeProvider theme={theme} injectFirst>
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <Component {...pageProps} />

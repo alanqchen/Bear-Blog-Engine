@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import Layout from '../../../../components/publicLayout'
+import Layout from '../../../../components/postLayout'
 import fetch from 'isomorphic-unfetch'
 import dateFormat from 'dateformat'
 import Error from 'next/error'

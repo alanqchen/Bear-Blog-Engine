@@ -3,37 +3,8 @@ import styled from 'styled-components';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import Slide from '@material-ui/core/Slide';
 import {AppBar, Toolbar, IconButton, Typography, Hidden, CssBaseline} from '@material-ui/core'
-import Select from '@atlaskit/select';
 
-const TagSelect = ({className, children}) => (
-  <Select
-    className={"multi-select" + className}
-    classNamePrefix="react-select"
-    options={[
-      { label: 'Travel', value: 'adelaide' },
-      { label: 'Coasters', value: 'brisbane' },
-      { label: 'Technology', value: 'canberra' },
-      { label: 'Coding', value: 'darwin' },
-      { label: 'Projects', value: 'hobart' },
-    ]}
-    isMulti
-    isSearchable={false}
-    placeholder="Choose tags to search"
-  />
-);
-
-const StyledTagSelect = styled(TagSelect)`
-  width: 95%;
-  max-width: 900px;
-  margin-bottom: 20px;
-  color: white !important;
-  & > * {
-    background-color: #17223b !important;
-    color: white;
-  }
-`
-
-const publicLayoutStyle = {
+const postLayoutStyle = {
 
   margin: 20,
   padding: 20,
@@ -77,17 +48,14 @@ const CenteredContainer = ({className, children}) => {
 const StyledCenteredContainer = styled(CenteredContainer)`
   display: flex;
   flex-direction: column;
-  align-items: center;
 `
-
-const publicLayout = (props) => (
-  <div style={publicLayoutStyle}>
+const postLayout = (props) => (
+  <div style={postLayoutStyle}>
     <NavBar></NavBar>
     <StyledCenteredContainer>
-      <StyledTagSelect></StyledTagSelect>
       {props.children}
     </StyledCenteredContainer>
   </div>
 );
 
-export default publicLayout;
+export default postLayout;
