@@ -7,6 +7,21 @@ import React, { Component, Children, useEffect, useState } from 'react';
 import Pagination from '../components/pagination'
 import Spinner from '@atlaskit/spinner';
 import { Waypoint } from 'react-waypoint';
+import styled from 'styled-components'
+
+const PostContainer = ({className, children}) => {
+    return (
+      <div className={className}>
+        {children}
+      </div>
+    );
+    
+  }
+  
+  const StyledPost = styled(PostContainer)`
+    width: 95%;
+    max-width: 900px;
+  `
 
 function PostsContainer() {
     const [tempID, setTempID] = useState(-1);
@@ -47,13 +62,12 @@ function PostsContainer() {
 
     return (
         <>
-            
-            <h1>a</h1>
+
             {children.map((post, i) => (
                 // Without the `key`, React will fire a key warning
-                <React.Fragment key={i}>
+                <StyledPost key={i}>
                     {post}
-                </React.Fragment>
+                </StyledPost>
             ))}
             {!isLoading && success && <Waypoint onEnter={loadMorePosts}></Waypoint>}
             {isLoading && <Spinner invertColor="true" size="xlarge"/>}

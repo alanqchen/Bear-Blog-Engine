@@ -30,7 +30,7 @@ pos: {
 
 const StyledCard = styled(Card)`
     margin-bottom: 10px;
-    transition: transform 2s ease-in-out;
+    transition: transform 0.2s ease-in-out !important;
     &:hover {
         cursor: pointer;
         transform: scale(1.008);
