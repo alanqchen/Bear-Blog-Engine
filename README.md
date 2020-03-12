@@ -18,7 +18,7 @@ Looking into Higher Order Components
 
 ### Frontend
 - Post component (Working on styling)
-- Search component
+- Search component (In progress)
 - Admin login
 - Admin dashboard
 - Etc. (lots to do here)
