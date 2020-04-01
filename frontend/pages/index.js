@@ -1,9 +1,4 @@
-import Link from 'next/link';
 import Layout from '../components/publicLayout';
-import PostLink from '../components/postLink';
-import fetch from 'isomorphic-unfetch'
-
-import Pagination from '../components/pagination';
 import styled from 'styled-components'
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -16,8 +11,6 @@ import Slide from '@material-ui/core/Slide';
 import Grid from '@material-ui/core/Grid';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import {AppBar, Toolbar, IconButton, Typography, Hidden, CssBaseline} from '@material-ui/core'
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import PostsContainer from '../components/postsContainer'
 
 const Container = styled.div`
@@ -140,33 +133,11 @@ function HideOnScroll(props) {
 
 const Index = props => (
         
-        <Layout>
-             
-            <PostsContainer></PostsContainer>        
-
-        </Layout>
+  <Layout> 
+      <PostsContainer></PostsContainer>        
+  </Layout>
         
 );
 
-/*
-Index.getInitialProps = async function() {
-    
-    const jsonBody = {
-        maxID: "-1"
-    }
-    const res = await fetch('http://localhost:8080/api/v1/posts/get', {
-        method: 'post',
-        body: JSON.stringify(jsonBody)
-    });
-    const reqRes = await res.json();
-  
-    
-  
-    return {
-      posts: reqRes.data.map(post => post)
-    };
-    
-}
-*/
 export default Index;
   

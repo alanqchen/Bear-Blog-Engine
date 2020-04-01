@@ -4,6 +4,7 @@ import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import Slide from '@material-ui/core/Slide';
 import {AppBar, Toolbar, IconButton, Typography, Hidden, CssBaseline} from '@material-ui/core'
 import Select from '@atlaskit/select';
+import SCtheme from '../assests/theme/SCtheme'
 
 /* These are just placeholder values for now */
 const TagSelect = ({className, children}) => (
@@ -29,8 +30,14 @@ const StyledTagSelect = styled(TagSelect)`
   margin-bottom: 20px;
   color: white !important;
   & > * {
+    background-color: ${SCtheme.backgroundDarkLight};
+    color: white;
+    border-color: ${SCtheme.backgroundDarkAlt};
+  }
+  & > * : hover {
     background-color: #17223b !important;
     color: white;
+    border-color: ${SCtheme.backgroundDarkAlt};
   }
 `
 
@@ -79,6 +86,7 @@ const StyledCenteredContainer = styled(CenteredContainer)`
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: #0e0e10;
 `
 
 const publicLayout = (props) => (

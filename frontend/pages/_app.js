@@ -2,10 +2,17 @@ import NextApp from 'next/app'
 import Head from 'next/head';
 import React from 'react'
 import '../assests/css/fonts.css'
-import { ThemeProvider } from 'styled-components'
+import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import { ThemeProvider as MUIThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from "@material-ui/core/CssBaseline"
-import theme from '../assests/theme/theme'
+import theme from '../assests/theme/MUItheme'
+import SCtheme from '../assests/theme/SCtheme'
+
+const GlobalStyle = createGlobalStyle`
+  body {
+    background-color: ${SCtheme.backgroundDark};
+  }
+`
 
 export default class App extends NextApp {
   // remove it here
@@ -25,7 +32,8 @@ export default class App extends NextApp {
           <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
         </Head>
         <MUIThemeProvider theme={theme} injectFirst>
-          <ThemeProvider theme={theme}>
+          <ThemeProvider theme={SCtheme}>
+            <GlobalStyle/>
             <CssBaseline />
             <Component {...pageProps} />
           </ThemeProvider>
