@@ -15,6 +15,23 @@ const theme = createMuiTheme({
         main: red.A400,
       },  
     },
+    overrides: {
+      MuiTypography: {
+        root: {
+          color: '#ffffff',
+        },
+        colorTextPrimary: {
+          color: '#cfcfcf',
+        },
+      },
+      MuiToolbar: {
+        root: {
+          color: "#d32f2f"
+        }
+      }
+      
+    },
   });
+  
   
   export default theme;

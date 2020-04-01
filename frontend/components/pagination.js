@@ -10,6 +10,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import React, { Component } from 'react';
+import SCtheme from '../assests/theme/SCtheme'
 
 const useStyles = makeStyles({
 root: {
@@ -30,6 +31,7 @@ pos: {
 
 const StyledCard = styled(Card)`
     margin-bottom: 10px;
+    background-color: ${SCtheme.backgroundDarkAlt};
     transition: transform 0.2s ease-in-out !important;
     &:hover {
         cursor: pointer;

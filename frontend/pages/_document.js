@@ -2,7 +2,8 @@ import React from 'react'
 import NextDocument, { Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet as StyledComponentSheets } from 'styled-components'
 import { ServerStyleSheets as MaterialUiServerStyleSheets } from '@material-ui/styles'
-import theme from '../assests/theme/theme'
+import theme from '../assests/theme/MUItheme'
+import SCtheme from '../assests/theme/SCtheme'
 
 export default class Document extends NextDocument {
   render() {
