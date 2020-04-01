@@ -6,6 +6,14 @@ A Modern Blog Engine.
 Uses Go for the backend and React (Next) for the frontend.
 Databases used are PostgreSQL and Redis.
 
+Status:
+Styling post cards in index page
+
+
+### Q: Why not a static blog?
+### A: A dynamic blog allows me to learn more.
+A dynamic blog gives me the opportunity to learn working with databases and React. This is my first large project working with these, so will a static blog has lots of advantages, I feel that a dynamic blog is better for personal development.
+
 ## Compiling and Running
 In the backend directory, run
 ```go run main.go```
@@ -13,14 +21,6 @@ In the backend directory, run
 In the frontend directory, run
 ```npm run dev```
 for development mode.
-
-
-### Q: Why not a static blog?
-### A: A dynamic blog allows me to learn more.
-A dynamic blog gives me the opportunity to learn working with databases and React. This is my first large project working with these, so will a static blog has lots of advantages, I feel that a dynamic blog is better for personal development.
-
-Status:
-Styling post cards in index page
 
 ## TODO (An incomplete list):
 ### Backend
