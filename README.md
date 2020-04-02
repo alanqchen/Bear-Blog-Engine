@@ -32,3 +32,5 @@ Looking into Higher Order Components
 Editor: Atlassian https://www.npmjs.com/package/@atlaskit/editor-core
 
 Highlight.js in react: https://github.com/highlightjs/highlight.js/issues/925
+
+(For my web server): https://www.varnish-software.com/wiki/content/tutorials/varnish/varnish_ubuntu.html
