@@ -30,3 +30,4 @@ Looking into Higher Order Components
 
 ## Resources
 Editor: Atlassian https://www.npmjs.com/package/@atlaskit/editor-core
+Highlight.js in react: https://github.com/highlightjs/highlight.js/issues/925
