@@ -9,6 +9,9 @@ import (
 type PostgreSQLConfig struct {
 	Host     string `json:"host"`
 	Port     string `json:"port"`
+	User     string `json:"user"`
+	Password string `json:"password"`
+	Database string `json:"database"`
 	Timezone string `json:"timezone"`
 }
 
@@ -25,11 +28,11 @@ type RedisConfig struct {
 }
 
 type Config struct {
-	Env         string           `json:"env"`
-	ProstgreSQL PostgreSQLConfig `json:"postgreSQL"`
-	JWT         JWTConfig        `json:"jwt"`
-	RedisDB     RedisConfig      `json:"RedisDB"`
-	Port        int              `json:"port"`
+	Env        string           `json:"env"`
+	PostgreSQL PostgreSQLConfig `json:"postgreSQL"`
+	JWT        JWTConfig        `json:"jwt"`
+	RedisDB    RedisConfig      `json:"RedisDB"`
+	Port       int              `json:"port"`
 	// TODO
 }
 
