@@ -67,4 +67,4 @@ alter table user_schema."user"
 		primary key (id);
 ```
 ## App Config 
-In `config/app-template.json` there is a template for `app.json` which needs to be filled with the information of your databases.
+In `config/app-template.json` there is a template for `config/app.json` which needs to be filled with the information of your databases.
