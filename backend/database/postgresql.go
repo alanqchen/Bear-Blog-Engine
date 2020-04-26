@@ -15,14 +15,19 @@ type Postgres struct {
 }
 
 func NewPostgres(dbConfig config.PostgreSQLConfig) (*Postgres, error) {
-	databaseURL := fmt.Sprintf("%s:%s", dbConfig.Host, dbConfig.Port) //postgresql://localhost:5432
-	conn, err := pgx.Connect(context.Background(), databaseURL)
+	databaseDSN := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s", dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.Database)
+	connConfig, err := pgx.ParseConfig(databaseDSN)
+	if err != nil {
+		log.Printf("[FATAL] Unable to parse to DSN: %v\n", err)
+		os.Exit(1)
+	}
+	conn, err := pgx.ConnectConfig(context.Background(), connConfig)
 	if err != nil {
 		log.Printf("[FATAL] Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
 	// Set connection timezone to the one in config
-	_, err = conn.Prepare(context.Background(), "timezone-query", "DELETE FROM posts_schema.posts WHERE id=$1")
+	_, err = conn.Prepare(context.Background(), "timezone-query", "DELETE FROM post_schema.post WHERE id=$1")
 	if err != nil {
 		log.Printf("[FATAL] Failed to prepare timezone query: %v\n", err)
 		os.Exit(1)

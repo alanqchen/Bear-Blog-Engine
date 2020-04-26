@@ -19,7 +19,7 @@ type App struct {
 
 func New(appConfig config.Config) (*App, *database.Postgres) {
 	log.Println("Starting Postgres")
-	db, err := database.NewPostgres(appConfig.ProstgreSQL)
+	db, err := database.NewPostgres(appConfig.PostgreSQL)
 	if err != nil {
 		log.Fatal(err)
 	}

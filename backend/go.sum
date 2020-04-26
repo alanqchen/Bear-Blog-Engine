@@ -2,6 +2,7 @@ github.com/DataDog/zstd v1.4.4 h1:+IawcoXhCBylN7ccwdwf8LOH2jKq7NavGpEPanrlTzE=
 github.com/DataDog/zstd v1.4.4/go.mod h1:1jcaCB/ufaK+sKp1NBhlGmpz41jOoPQ35bpF36t7BBo=
 github.com/SlyMarbo/gmail v0.0.0-20170317233059-3ec3141ee13b h1:z8jRcfsRXi4gmL85SPQvgafFRUvR5k0LPU4RUSPpvro=
 github.com/SlyMarbo/gmail v0.0.0-20170317233059-3ec3141ee13b/go.mod h1:rmnWBw/y22Ohv+uLY5cBZCa620ZH/ID3TehrUssWHWA=
+github.com/alanqchen/Bear-Post v0.0.0-20200424043756-874d507e81fc h1:ApfnnUuJTDoZpcE9e6cJPyEoXmz8Fs5rOp7Y5E/aN0Y=
 github.com/alanqchen/MGBlog v0.0.0-20200211215356-bd380ca45d01 h1:CmzCz3GY9DUdzq5LugxWUms9cEEMobA3wFH3LPLAZDU=
 github.com/alanqchen/MGBlog/backend v0.0.0-20200211215356-bd380ca45d01 h1:ndTonS1nyNAFX1tQRCZG+FLWDFcjGc4tgdXCkIzpl3U=
 github.com/alanqchen/MGBlog/backend v0.0.0-20200211215356-bd380ca45d01/go.mod h1:nNjBm99wxv0w8ocqlTuCPSw1pu5zXC1hQ/HS6boJe9M=
