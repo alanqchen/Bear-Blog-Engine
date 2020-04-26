@@ -45,3 +45,24 @@ alter table post_schema.post
 	add constraint post_pk
 		primary key (id);
 ```
+
+Create the user table:
+```sql
+create table user_schema."user"
+(
+	id integer not null,
+	name text not null,
+	email text not null,
+	password text not null,
+	admin boolean default false not null,
+	created_at timestamptz not null,
+	updated_at timestamptz default null
+);
+
+create unique index user_id_uindex
+	on user_schema."user" (id);
+
+alter table user_schema."user"
+	add constraint user_pk
+		primary key (id);
+```
