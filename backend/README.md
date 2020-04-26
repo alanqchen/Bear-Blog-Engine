@@ -66,3 +66,5 @@ alter table user_schema."user"
 	add constraint user_pk
 		primary key (id);
 ```
+## App Config 
+In `config/app-template.json` there is a template for `app.json` which needs to be filled with the information of your databases.
