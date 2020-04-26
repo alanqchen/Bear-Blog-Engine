@@ -1,5 +1,7 @@
 **Work-In-Progress**
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/alanqchen/bear-post)](https://goreportcard.com/report/github.com/alanqchen/bear-post)
+
 # Bear Post
 A Modern Blog Engine.
 
