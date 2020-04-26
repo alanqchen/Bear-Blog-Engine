@@ -68,3 +68,6 @@ alter table user_schema."user"
 ```
 ## App Config 
 In `config/app-template.json` there is a template for `config/app.json` which needs to be filled with the information of your databases.
+
+## Running
+`go run main.go`
