@@ -71,3 +71,7 @@ In `config/app-template.json` there is a template for `config/app.json` which ne
 
 ## Running
 `go run main.go`
+
+## Endpoints
+
+To-be-filled
