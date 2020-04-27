@@ -11,6 +11,8 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env:
+      working-directory: ./backend
     steps:
 
     - name: Set up Go 1.14
@@ -29,6 +31,8 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
+      working-directory: ${{ env.working-directory }}
 
     - name: Build
       run: go build -v .
+      working-directory: ${{ env.working-directory }}
