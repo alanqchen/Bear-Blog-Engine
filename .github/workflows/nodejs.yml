@@ -28,10 +28,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-      working-directory: ${{ working-directory }}
+      working-directory: ${{ env.working-directory }}
     - run: npm run build --if-present
-      working-directory: ${{ working-directory }}
+      working-directory: ${{ env.working-directory }}
     - run: npm test
-      working-directory: ${{ working-directory }}
+      working-directory: ${{ env.working-directory }}
       env:
         CI: true
