@@ -1,10 +1,9 @@
 import Link from 'next/link';
-import Layout from '../components/publicLayout';
-import PostLink from '../components/postLink';
+import Layout from '../../components/PublicLayout/publicLayout';
 import fetch from 'isomorphic-unfetch'
 import dynamic from 'next/dynamic'
 import React, { Component, Children, useEffect, useState } from 'react';
-import Pagination from '../components/pagination'
+import Page from '../Posts/Page/page'
 import Spinner from '@atlaskit/spinner';
 import { Waypoint } from 'react-waypoint';
 import styled from 'styled-components'
@@ -51,7 +50,7 @@ function PostsContainer() {
             if(response.success) {
                 setPosts(response.data);
                 setTempID(response.pagination.minID);
-                setChildren(oldChildren => [...oldChildren, <Pagination posts={response.data}/>])
+                setChildren(oldChildren => [...oldChildren, <Page posts={response.data}/>])
             }
             setIsLoading(false);
             setSuccess(response.success);

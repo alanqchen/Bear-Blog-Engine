@@ -1,4 +1,4 @@
-import Header from './header'
+import Header from '../Header/header'
 import styled from 'styled-components';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import Slide from '@material-ui/core/Slide';

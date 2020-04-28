@@ -264,7 +264,7 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	imgURL, err := j.GetString("image-url")
-	if err != nil {
+	if err != nil || imgURL == "" {
 		imgURL = "http://localhost:8080/assets/images/feature-default.png"
 	}
 

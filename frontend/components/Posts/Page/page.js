@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import styled from 'styled-components';
 import { makeStyles } from '@material-ui/core/styles';
-import Layout from '../components/publicLayout';
-import PostLink from '../components/postLink';
+import Layout from '../../PublicLayout/publicLayout';
 import fetch from 'isomorphic-unfetch'
 import dynamic from 'next/dynamic'
 import Card from '@material-ui/core/Card';
@@ -10,7 +9,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import React, { Component } from 'react';
-import SCtheme from '../assests/theme/SCtheme'
+import SCtheme from '../../../assests/theme/SCtheme'
 
 const useStyles = makeStyles({
 root: {
