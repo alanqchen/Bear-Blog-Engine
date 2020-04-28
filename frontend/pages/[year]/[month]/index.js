@@ -1,4 +1,4 @@
-import Layout from '../../../components/publicLayout';
+import Layout from '../../../components/PublicLayout/publicLayout';
 
 const Index = props => (
     <Layout>
