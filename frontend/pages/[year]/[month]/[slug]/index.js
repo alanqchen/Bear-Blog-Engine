@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import Layout from '../../../../components/postLayout'
+import Layout from '../../../../components/PostLayout/postLayout'
 import fetch from 'isomorphic-unfetch'
 import dateFormat from 'dateformat'
 import Error from 'next/error'
@@ -13,6 +13,7 @@ const Index = ({errorCode, props}) => {
   return (
     <Layout>
       <Link href="/"><a>Goto Index</a></Link>
+      <img src={props.post.data.featureImgUrl}></img>
       <p>{props.post.data.createdAt}</p>
       <p>{props.month} {props.day}, {props.year}</p>
       <p>Author: {props.author}</p>

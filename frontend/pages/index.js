@@ -1,4 +1,4 @@
-import Layout from '../components/publicLayout';
+import Layout from '../components/PublicLayout/publicLayout';
 import styled from 'styled-components'
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -11,7 +11,7 @@ import Slide from '@material-ui/core/Slide';
 import Grid from '@material-ui/core/Grid';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import {AppBar, Toolbar, IconButton, Typography, Hidden, CssBaseline} from '@material-ui/core'
-import PostsContainer from '../components/postsContainer'
+import PostsContainer from '../components/Posts/postsContainer'
 
 const Container = styled.div`
   width: 960px;
