@@ -1,0 +1,22 @@
+{
+    "env": "local",
+    "postgreSQL": {
+        "host": "postgres",
+        "port": "5432",
+        "user": "bearpost",
+        "password": "bearpost",
+        "database": "bearpost",
+        "timezone": "America/New_York"
+    },
+    "RedisDB": {
+        "host": "redis",
+        "port": 6379,
+        "password": "bearpost"
+    },
+    "jwt": {
+        "secret": "secret",
+        "public_key": "config/api.rsa.pub",
+        "private_key": "config/api.rsa"
+    },
+    "port": 8080
+}
