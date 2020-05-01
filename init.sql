@@ -1,5 +1,5 @@
-create schema post_schema
-create schema user_schema
+create schema post_schema;
+create schema user_schema;
 
 create table post_schema.post
 (

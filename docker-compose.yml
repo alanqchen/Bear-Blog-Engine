@@ -26,9 +26,7 @@ services:
     ################################################################################
     postgres:
         image: postgres:latest
-        env_file: 
-            - postgres.env
-        container_name: bearpost_postgre
+        container_name: bearpost_postgres
         restart: always
         environment:
             POSTGRES_USER: bearpost
@@ -38,7 +36,7 @@ services:
             - 5432
         volumes: 
             - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-            - bearpost_postgre_data:/var/lib/postgresql/data
+            - bearpost_postgres_data:/var/lib/postgresql/data
         networks: 
             - default
     
@@ -48,6 +46,7 @@ services:
     redis:
         image: redis:latest
         container_name: bearpost_redis
+        command: redis-server --requirepass bearpost
         ports: 
             - 6379
         volumes: 
@@ -58,7 +57,7 @@ services:
             net.core.somaxconn: '511'
 
 volumes:
-    bearpost_postgre_data:
+    bearpost_postgres_data:
         driver: local
     bearpost_api_data:
         driver: local
