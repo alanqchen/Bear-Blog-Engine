@@ -5,7 +5,10 @@
 * Redis
 * Go
 
-## PostgreSQL Setup
+## Manual PostgreSQL Setup
+
+While using docker compose is the recommended, listed is the set of sql commands to set up the PostgreSQL database manually.
+
 Create the database:
 ```sql
 create database bearpost with owner <username>
