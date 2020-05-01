@@ -15,6 +15,7 @@ LABEL Name=bear-post Version=0.0.1
 
 # Copy go mod and sum files
 COPY backend/go.mod backend/go.sum backend/config/app.json ./
+COPY backend/config/app.json ./config/app.json
 
 # Download dependencies
 RUN go mod download
