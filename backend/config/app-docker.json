@@ -1,17 +1,17 @@
 {
     "env": "local",
     "postgreSQL": {
-        "host": "<HOST URL>",
-        "port": "<PORT>",
-        "user": "<USERNAME>",
-        "password": "<PASSWORD>",
-        "database": "<DATABASE NAME>",
-        "timezone": "<TIMEZONE>"
+        "host": "postgres",
+        "port": "5432",
+        "user": "bearpost",
+        "password": "bearpost",
+        "database": "bearpost",
+        "timezone": "America/New_York"
     },
     "RedisDB": {
-        "host": "<HOST URL>",
-        "port": "<PORT (NUMBER, NOT STRING)>",
-        "password": "<PASSWORD>"
+        "host": "redis",
+        "port": 6379,
+        "password": "bearpost"
     },
     "jwt": {
         "secret": "secret",
