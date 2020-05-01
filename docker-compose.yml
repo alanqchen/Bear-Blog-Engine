@@ -6,7 +6,7 @@ services:
     ################################################################################
     api:
         build:
-            context: .
+            context: backend
             dockerfile: Dockerfile
         container_name: bearpost_api
         working_dir: /go/src/github.com/alanqchen/bear-post
@@ -16,9 +16,8 @@ services:
             - 8080:8080
         environment: 
             - GOPATH=/go
-            - REDIS_URL: redis:6379
         depends_on: 
-            - postgre
+            - postgres
             - redis
         networks:
             - api_network
@@ -27,10 +26,10 @@ services:
     ################################################################################
     ##                               PostgreSQL
     ################################################################################
-    postgre:
-        image: postgre
+    postgres:
+        image: postgres:latest
         env_file: 
-            - postgre.env
+            - postgres.env
         container_name: bearpost_postgre
         restart: always
         ports:
@@ -39,13 +38,13 @@ services:
             - ./init.sql:/docker-entrypoint-initdb.d/init.sql
             - bearpost_postgre_data:/var/lib/postgresql/data
         networks: 
-            - postgre_network
+            - postgres_network
     
     ################################################################################
     ##                                 Redis
     ################################################################################
     redis:
-        image: redis:apline
+        image: redis:latest
         container_name: bearpost_redis
         ports: 
             - 6379:6379
@@ -64,6 +63,6 @@ volumes:
 
 networks:
     api_network:
-    postgre_network:
+    postgres_network:
     redis_network:
     
