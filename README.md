@@ -50,7 +50,7 @@ openssl rsa -in api.rsa -pubout > api.rsa.pub
 Now you can go back to `/path/to/bearpost` and build the image using docker-compose:
 ```
 cd /path/to/bearpost
-docker-composer up
+docker-compose up
 ```
 
 Note that the image for the frontend is still in the works.
