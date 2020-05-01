@@ -6,49 +6,53 @@ services:
     ################################################################################
     api:
         build:
-            context: ./
+            context: .
             dockerfile: Dockerfile
         container_name: bearpost_api
         working_dir: /go/src/github.com/alanqchen/bear-post
+        restart: unless-stopped
         command: go run main.go
         ports: 
             - 8080:8080
         environment: 
             - GOPATH=/go
+            - REDIS_URL: redis:6379
+        depends_on: 
+            - postgre
+            - redis
         networks:
-            - bearpost_network
+            - api_network
         volumes: 
             - bearpost_api_data:/go/src
     ################################################################################
     ##                               PostgreSQL
     ################################################################################
     postgre:
-        image: bearpost/postgre:latest
+        image: postgre
+        env_file: 
+            - postgre.env
         container_name: bearpost_postgre
         restart: always
         ports:
             - 5432:5432
-        labels:
-            - "com.centurylinklabs.watchtower.enable=true"
         volumes: 
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
             - bearpost_postgre_data:/var/lib/postgresql/data
         networks: 
-            - bearpost_network
+            - postgre_network
     
     ################################################################################
     ##                                 Redis
     ################################################################################
     redis:
-        image: bearpost/redis:latest
+        image: redis:apline
         container_name: bearpost_redis
         ports: 
             - 6379:6379
-        labels:
-            - "com.centurylinklabs.watchtower.enable=true"
         volumes: 
             - bearpost_redis_data:/data
         networks: 
-            - bearpost_network
+            - redis_network
 
 volumes:
     bearpost_postgre_data:
@@ -59,5 +63,7 @@ volumes:
         driver: local
 
 networks:
-    bearpost_network:
-        driver: bridge
+    api_network:
+    postgre_network:
+    redis_network:
+    
