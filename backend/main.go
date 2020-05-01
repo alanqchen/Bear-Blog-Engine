@@ -18,7 +18,7 @@ import (
 func main() {
 	log.Println("Starting up")
 	var cfg config.Config
-
+	log.Println("Looking for app.json")
 	if _, err := os.Stat("config/app.json"); !os.IsNotExist(err) {
 		cfg, err = config.New("config/app.json")
 	} else if _, err := os.Stat("../app.json"); !os.IsNotExist(err) {

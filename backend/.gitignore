@@ -1,4 +1,5 @@
 # Config
+main
 config/app-production.json
 config/api.rsa.pub
 config/api.rsa
