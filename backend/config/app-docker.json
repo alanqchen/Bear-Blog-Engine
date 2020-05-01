@@ -1,0 +1,22 @@
+{
+    "env": "local",
+    "postgreSQL": {
+        "host": "<HOST URL>",
+        "port": "<PORT>",
+        "user": "<USERNAME>",
+        "password": "<PASSWORD>",
+        "database": "<DATABASE NAME>",
+        "timezone": "<TIMEZONE>"
+    },
+    "RedisDB": {
+        "host": "<HOST URL>",
+        "port": "<PORT (NUMBER, NOT STRING)>",
+        "password": "<PASSWORD>"
+    },
+    "jwt": {
+        "secret": "secret",
+        "public_key": "config/api.rsa.pub",
+        "private_key": "config/api.rsa"
+    },
+    "port": 8080
+}
