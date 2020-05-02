@@ -19,7 +19,7 @@ A: A dynamic blog gives me the opportunity to learn working with databases and R
 
 ### Docker Compse (Recommened)
 
-First, navigate to the directory where you'll store the config and docker files:
+First, navigate to the directory where you'll store the docker files:
 
 ```
 cd /path/to/bearpost

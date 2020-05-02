@@ -20,6 +20,22 @@ services:
         volumes: 
             - bearpost_api_data:/go/src
     ################################################################################
+    ##                               Frontend
+    ################################################################################
+    frontend:
+        build:
+            context: .
+            dockerfile: Dockerfile.frontend
+        ports:
+            - 3000
+        depends_on:
+            - api
+        volumes:
+            - bearpost_frontend_data:/app
+            - bearpost_frontend_data:/app/node_modules
+            - bearpost_frontend_data:/app/.next
+            
+    ################################################################################
     ##                               PostgreSQL
     ################################################################################
     postgres:
@@ -60,6 +76,8 @@ volumes:
     bearpost_api_data:
         driver: local
     bearpost_redis_data:
+        driver: local
+    bearpost_frontend_data:
         driver: local
 
 networks:

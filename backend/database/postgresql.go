@@ -33,6 +33,7 @@ func NewPostgres(dbConfig config.PostgreSQLConfig) (*Postgres, error) {
 	//	log.Printf("[FATAL] Failed to prepare timezone query: %v\n", err)
 	//	os.Exit(1)
 	//}
+	/*
 	_, err = conn.Exec(context.Background(), "SET TIME ZONE "+quoteIdentifier(dbConfig.Timezone))
 	//defer rows.Close()
 	if err != nil {
@@ -44,6 +45,7 @@ func NewPostgres(dbConfig config.PostgreSQLConfig) (*Postgres, error) {
 		log.Printf("[WARN] Failed to reload Postgre config: %v\n", err)
 
 	}
+	*/
 
 	return &Postgres{conn}, nil
 }
