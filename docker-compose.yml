@@ -5,9 +5,7 @@ services:
     ##                                  API
     ################################################################################
     api:
-        build:
-            context: .
-            dockerfile: Dockerfile
+        image: aqchen/bearpost-api
         container_name: bearpost_api
         restart: unless-stopped
         ports: 
