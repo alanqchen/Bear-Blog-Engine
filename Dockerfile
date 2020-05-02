@@ -6,6 +6,8 @@ WORKDIR /backend
 RUN apk update && apk upgrade && \
     apk add --no-cache bash git openssh openssl
 
+RUN mkdir config
+
 RUN openssl genrsa -out config/api.rsa 4096
 RUN openssl rsa -in api.rsa -pubout > config/api.rsa.pub
 
