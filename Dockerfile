@@ -9,7 +9,7 @@ RUN apk update && apk upgrade && \
 RUN mkdir config
 
 RUN openssl genrsa -out config/api.rsa 4096
-RUN openssl rsa -in api.rsa -pubout > config/api.rsa.pub
+RUN openssl rsa -in config/api.rsa -pubout > config/api.rsa.pub
 
 # Add Info
 LABEL maintainer="Alan Chen <chen.8943@osu.edu>"
