@@ -16,20 +16,22 @@ services:
             - postgres
             - redis
         networks:
-            - default
+            - bearpost_default
         volumes: 
             - bearpost_api_data:/go/src
     ################################################################################
     ##                               Frontend
     ################################################################################
     frontend:
-        build:
-            context: .
-            dockerfile: Dockerfile.frontend
+        image: aqchen/bearpost-frontend
+        container_name: bearpost_frontend
+        restart: unless-stopped
         ports:
             - 3000
         depends_on:
             - api
+        networks:
+            - bearpost_default
         volumes:
             - bearpost_frontend_data:/app
             - bearpost_frontend_data:/app/node_modules
@@ -52,7 +54,7 @@ services:
             - ./init.sql:/docker-entrypoint-initdb.d/init.sql
             - bearpost_postgres_data:/var/lib/postgresql/data
         networks: 
-            - default
+            - bearpost_default
     
     ################################################################################
     ##                                 Redis
@@ -66,10 +68,24 @@ services:
         volumes: 
             - bearpost_redis_data:/data
         networks: 
-            - default
+            - bearpost_default
         sysctls:
             net.core.somaxconn: '511'
-
+    
+    ################################################################################
+    ##                                 NGINX (WIP)
+    ################################################################################
+    # 
+    #nginx: 
+    #    image: nginx:latest
+    #    container_name: bearpost_nginx
+    #    environment:
+    #        - ENV=production
+    #        - APPLICATION_URL=http://ismydependencysafe
+    #    volumes:
+    #      - ./nginx.conf:/etc/nginx/nginx.conf
+    #      - certificates:/etc/letsencrypt/
+    
 volumes:
     bearpost_postgres_data:
         driver: local
@@ -79,8 +95,10 @@ volumes:
         driver: local
     bearpost_frontend_data:
         driver: local
+    bearpost_certificates:
+        driver: local
 
 networks:
-    default:
+    bearpost_default:
     
 
