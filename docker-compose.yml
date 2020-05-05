@@ -72,20 +72,6 @@ services:
         sysctls:
             net.core.somaxconn: '511'
     
-    ################################################################################
-    ##                                 NGINX (WIP)
-    ################################################################################
-    # 
-    #nginx: 
-    #    image: nginx:latest
-    #    container_name: bearpost_nginx
-    #    environment:
-    #        - ENV=production
-    #        - APPLICATION_URL=http://ismydependencysafe
-    #    volumes:
-    #      - ./nginx.conf:/etc/nginx/nginx.conf
-    #      - certificates:/etc/letsencrypt/
-    
 volumes:
     bearpost_postgres_data:
         driver: local
