@@ -27,7 +27,7 @@ services:
         container_name: bearpost_frontend
         restart: unless-stopped
         ports:
-            - 3000
+            - 3000:3000
         depends_on:
             - api
         networks:
@@ -36,6 +36,11 @@ services:
             - bearpost_frontend_data:/app
             - bearpost_frontend_data:/app/node_modules
             - bearpost_frontend_data:/app/.next
+        networks:
+            bearpost_default:
+                aliases:
+                    - bearpost_frontend
+
             
     ################################################################################
     ##                               PostgreSQL
