@@ -17,47 +17,30 @@ A: A dynamic blog gives me the opportunity to learn working with databases and R
 
 ## Compiling and Running
 
-### Docker Compse
+### Docker Compse (Recommened)
 
-Since some files need to be created by you, you'll have to build the api image yourself.
-
-First, navigate to the directory where you'll store the config and docker files:
+First, navigate to the directory where you'll store the docker files:
 
 ```
 cd /path/to/bearpost
 ```
-Next, copy `Dockerfile` and `docker-compose.yml` into the directory. Then create the `backend` sub-directory and move to it:
-```
-mkdir backend
-cd backend
-```
-Copy `backend/main.go`, `backend/go.mod`, and `backend/go.sum` into the `backend` directory. Then create the `config` sub-directory in
-the `backend` directory and switch to it:
-```
-mkdir config
-cd config
-```
 
-Use the given `backend/config/app-template.json` to make `app.json` in the directory and fill it out with the infomation of your own databases. 
+Then download/copy the files in the [templates directory](templates), except for README.md, into the same directory.
 
+Run `docker-compose up` and the backend should start.
 
-Then, create the keys in the `config` directory:
+Note that the image for the frontend is still in the works.
+
+### Cloning / External Databases
+
+Clone the repository. Rename `backend/config/app.json` to `backend/config/app-production.json`. Fill it out with the information of your databases, if external.
+
+Navigate to `backend/config/` and generate the keys:
+
 ```
 openssl genrsa -out api.rsa
 openssl rsa -in api.rsa -pubout > api.rsa.pub
 ```
-
-Now you can go back to `/path/to/bearpost` and build the image using docker-compose:
-```
-cd /path/to/bearpost
-docker-compose up
-```
-
-Note that the image for the frontend is still in the works.
-
-### Cloning
-
-Alternatively, you can clone the whole repository. Note that in `backend/config` you still need to fill out `app-template.json` and generate the keys.
 
 In the `backend` directory, run
 ```go run main.go```
@@ -93,3 +76,7 @@ Editor: Atlassian https://www.npmjs.com/package/@atlaskit/editor-core
 Highlight.js in react: https://github.com/highlightjs/highlight.js/issues/925
 
 (For my web server): https://www.varnish-software.com/wiki/content/tutorials/varnish/varnish_ubuntu.html
+
+Algolia: https://www.algolia.com/doc/
+
+

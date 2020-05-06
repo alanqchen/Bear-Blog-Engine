@@ -23,14 +23,15 @@ services:
     ##                               Frontend
     ################################################################################
     frontend:
-        build:
-            context: .
-            dockerfile: Dockerfile.frontend
-        container_name: bearpost_frontend 
+        image: aqchen/bearpost-frontend
+        container_name: bearpost_frontend
+        restart: unless-stopped
         ports:
             - 3000:3000
         depends_on:
             - api
+        networks:
+            - bearpost_default
         volumes:
             - bearpost_frontend_data:/app
             - bearpost_frontend_data:/app/node_modules
@@ -39,7 +40,7 @@ services:
             bearpost_default:
                 aliases:
                     - bearpost_frontend
-       
+
             
     ################################################################################
     ##                               PostgreSQL
@@ -75,7 +76,7 @@ services:
             - bearpost_default
         sysctls:
             net.core.somaxconn: '511'
-
+    
 volumes:
     bearpost_postgres_data:
         driver: local
@@ -84,6 +85,8 @@ volumes:
     bearpost_redis_data:
         driver: local
     bearpost_frontend_data:
+        driver: local
+    bearpost_certificates:
         driver: local
 
 networks:
