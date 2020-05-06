@@ -5,9 +5,7 @@ services:
     ##                                  API
     ################################################################################
     api:
-        build:
-            context: .
-            dockerfile: Dockerfile
+        image: aqchen/bearpost-api
         container_name: bearpost_api
         restart: unless-stopped
         ports: 
@@ -18,9 +16,31 @@ services:
             - postgres
             - redis
         networks:
-            - default
+            - bearpost_default
         volumes: 
             - bearpost_api_data:/go/src
+    ################################################################################
+    ##                               Frontend
+    ################################################################################
+    frontend:
+        build:
+            context: .
+            dockerfile: Dockerfile.frontend
+        container_name: bearpost_frontend 
+        ports:
+            - 3000:3000
+        depends_on:
+            - api
+        volumes:
+            - bearpost_frontend_data:/app
+            - bearpost_frontend_data:/app/node_modules
+            - bearpost_frontend_data:/app/.next
+        networks:
+            bearpost_default:
+                aliases:
+                    - bearpost_frontend
+       
+            
     ################################################################################
     ##                               PostgreSQL
     ################################################################################
@@ -38,7 +58,7 @@ services:
             - ./init.sql:/docker-entrypoint-initdb.d/init.sql
             - bearpost_postgres_data:/var/lib/postgresql/data
         networks: 
-            - default
+            - bearpost_default
     
     ################################################################################
     ##                                 Redis
@@ -52,7 +72,7 @@ services:
         volumes: 
             - bearpost_redis_data:/data
         networks: 
-            - default
+            - bearpost_default
         sysctls:
             net.core.somaxconn: '511'
 
@@ -63,8 +83,10 @@ volumes:
         driver: local
     bearpost_redis_data:
         driver: local
+    bearpost_frontend_data:
+        driver: local
 
 networks:
-    default:
+    bearpost_default:
     
 
