@@ -23,5 +23,5 @@ RUN go build -o bearpost/backend/main .
 EXPOSE 8080
 
 # Run executable
-CMD [ "backend/main" ]
+CMD [ "/bearpost/backend/main" ]
 
