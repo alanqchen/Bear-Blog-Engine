@@ -10,6 +10,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import React, { Component } from 'react';
 import SCtheme from '../../../assests/theme/SCtheme'
+import API from '../../../api';
 
 const useStyles = makeStyles({
 root: {
@@ -48,7 +49,7 @@ const PostCard = ({ post }) => {
     return(
         <StyledCard>
             <CardContent>
-                <img src={post.featureImgUrl}></img>
+                <img src={API.url + post.featureImgUrl}></img>
                 <Typography color="textPrimary" gutterBottom>
                     {post.title}
                 </Typography>

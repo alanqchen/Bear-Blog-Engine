@@ -7,6 +7,7 @@ import Page from '../Posts/Page/page'
 import Spinner from '@atlaskit/spinner';
 import { Waypoint } from 'react-waypoint';
 import styled from 'styled-components'
+import API from '../../api'
 
 const PostContainer = ({className, children}) => {
     return (
@@ -41,7 +42,7 @@ function PostsContainer() {
         const jsonBody = {
             maxID: minID.toString()
         }
-        fetch('http://localhost:8080/api/v1/posts/get', {
+        fetch(API.url+'/api/v1/posts/get', {
             method: 'post',
             body: JSON.stringify(jsonBody)
         })

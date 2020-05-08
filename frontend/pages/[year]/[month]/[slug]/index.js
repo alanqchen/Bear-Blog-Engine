@@ -4,6 +4,7 @@ import Layout from '../../../../components/PostLayout/postLayout'
 import fetch from 'isomorphic-unfetch'
 import dateFormat from 'dateformat'
 import Error from 'next/error'
+import API from '../../../../api'
 
 const Index = ({errorCode, props}) => {
   console.log(errorCode);
@@ -37,7 +38,7 @@ const Index = ({errorCode, props}) => {
 
 Index.getInitialProps = async ctx => {
 
-  let res = await fetch(`http://localhost:8080/api/v1/posts${ctx.asPath}`);
+  let res = await fetch(`${API.url}/api/v1/posts${ctx.asPath}`);
 
   const post = await res.json();
 
@@ -58,7 +59,7 @@ Index.getInitialProps = async ctx => {
 
   console.log(d);
   
-  let resAuthor = await fetch(`http://localhost:8080/api/v1/users/${post.data.authorid}`);
+  let resAuthor = await fetch(`${API.url}/api/v1/users/${post.data.authorid}`);
   const author = await resAuthor.json();
 
   return {
