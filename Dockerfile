@@ -11,8 +11,8 @@ RUN openssl rsa -in config/api.rsa -pubout > config/api.rsa.pub
 LABEL maintainer="Alan Chen <chen.8943@osu.edu>"
 LABEL Name=bear-post Version=0.0.1
 # Copy go mod and sum files
-COPY backend/go.mod backend/go.sum backend/config/app.json ./
-COPY backend/config/app.json ./config/app.json
+COPY backend/go.mod backend/go.sum backend/config/app-docker.json ./
+COPY backend/config/app-docker.json ./config/app.json
 # Download dependencies
 RUN go mod download
 # Copy source to working directory in container
