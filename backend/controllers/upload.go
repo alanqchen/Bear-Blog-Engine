@@ -83,7 +83,8 @@ func (uc *UploadController) UploadImage(w http.ResponseWriter, r *http.Request) 
 	Buf.Reset()
 
 	// TODO: Remove hardcoded url
-	imageSrc := util.GetRequestScheme(r) + r.Host + "/assets/images/" + fileName + ext
+	// imageSrc := util.GetRequestScheme(r) + r.Host + "/assets/images/" + fileName + ext
+	imageSrc := "/assets/images/" + fileName + ext
 
 	data := UploadImageResponse{imageSrc}
 
