@@ -374,7 +374,7 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 
 	imgURL, err := j.GetString("image-url")
 	if err != nil {
-		imgURL = "http://localhost:8080/assets/images/feature-default.png"
+		imgURL = "/assets/images/feature-default.png"
 	}
 
 	//post.UserID = uid
