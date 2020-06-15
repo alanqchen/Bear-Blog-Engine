@@ -25,6 +25,7 @@ type PostRepository interface {
 	GetPublicPostCount() (int, error)
 	ResetSeq() error
 	GetLastID() (int, error)
+	SearchQuery() ([]*models.Post, error)
 }
 
 type postRepository struct {
@@ -260,6 +261,7 @@ func (pr *postRepository) FindBySlug(slug string) (*models.Post, error) {
 	return &post, nil
 }
 
+// Returns a single post matching the slug, including hidden posts. There should not be multiple posts with the same slug.
 func (pr *postRepository) FindBySlugAdmin(slug string) (*models.Post, error) {
 	post := models.Post{}
 	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM post_schema.post WHERE slug LIKE $1", slug).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID, &post.FeatureImgURL, &post.Subtitle, &post.Views)
@@ -277,7 +279,7 @@ func (pr *postRepository) FindBySlugAdmin(slug string) (*models.Post, error) {
 func (pr *postRepository) GetAll() ([]*models.Post, error) {
 	var posts []*models.Post
 
-	rows, err := pr.Conn.Query(context.Background(), "SELECT * From post_schema.post")
+	rows, err := pr.Conn.Query(context.Background(), "SELECT * FROM post_schema.post")
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -354,4 +356,32 @@ func (pr *postRepository) GetLastID() (int, error) {
 	}
 
 	return lastID, nil
+}
+
+// Searches using title and tags. Returns results ordered by view count in descending order.
+func (pr *postRepository) SearchQuery(title string, tags []string) ([]*models.Post, error) {
+	var posts []*models.Post
+
+	rows, err := pr.Conn.Query(context.Background(), "SELECT * FROM post_schema.post WHERE NOT hidden AND LOWER(title) LIKE LOWER('%' || $1 || '%') AND tags @> '$2' ORDER BY views DESC;", title, tags)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		p := new(models.Post)
+		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt, &p.Tags, &p.Hidden, &p.AuthorID, &p.FeatureImgURL, &p.Subtitle, &p.Views)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+		posts = append(posts, p)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
 }

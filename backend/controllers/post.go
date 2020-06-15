@@ -419,6 +419,12 @@ func (pc *PostController) Delete(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: id}, w, http.StatusOK)
 }
 
+// TODO: add search function
+func (pc *PostController) Search(title string, tags []string) *models.Post {
+
+	return nil
+}
+
 // False -> pagination not in cache
 // True -> pagination in cache
 func (pc *PostController) checkCache(key string) (bool, []byte) {
