@@ -14,7 +14,7 @@ const Index = ({errorCode, props}) => {
   return (
     <Layout>
       <Link href="/"><a>Goto Index</a></Link>
-      <img src={props.post.data.featureImgUrl}></img>
+      <img src={API.url + props.post.data.featureImgUrl}></img>
       <p>{props.post.data.createdAt}</p>
       <p>{props.month} {props.day}, {props.year}</p>
       <p>Author: {props.author}</p>

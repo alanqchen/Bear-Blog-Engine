@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import React, { Component } from 'react';
 import SCtheme from '../../../assests/theme/SCtheme'
 import API from '../../../api';
+import {PostCard} from './PostCard/postCard'
 
 const useStyles = makeStyles({
 root: {
@@ -29,34 +30,11 @@ pos: {
 },
 });
 
-const StyledCard = styled(Card)`
-    margin-bottom: 10px;
-    background-color: ${SCtheme.backgroundDarkAlt};
-    transition: transform 0.2s ease-in-out !important;
-    &:hover {
-        cursor: pointer;
-        transform: scale(1.008);
-    }
-`
-
 const PostCardLink = React.forwardRef((props, ref) => (
 <a ref={ref} {...props}>
     
 </a>
 ))
-    
-const PostCard = ({ post }) => {
-    return(
-        <StyledCard>
-            <CardContent>
-                <img src={API.url + post.featureImgUrl}></img>
-                <Typography color="textPrimary" gutterBottom>
-                    {post.title}
-                </Typography>
-            </CardContent>
-        </StyledCard>
-    )
-}
 
 class Pagination extends Component {
     constructor(props) {

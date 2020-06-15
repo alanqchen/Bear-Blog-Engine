@@ -61,6 +61,7 @@ func NewRouter(a *app.App) *mux.Router {
 	api.HandleFunc("/posts", middleware.Logger(middleware.RequireAuthentication(a, pc.Create, true))).Methods(http.MethodPost)
 	api.HandleFunc("/posts/{id}", middleware.Logger(middleware.RequireAuthentication(a, pc.Update, true))).Methods(http.MethodPut)
 	api.HandleFunc("/posts/delete/{id}", middleware.Logger(middleware.RequireAuthentication(a, pc.Delete, true))).Methods(http.MethodPost)
+	//api.HandleFunc("/posts/search", middleware.Logger(pc.Search)).Methods(http.MethodGet)
 	log.Println("Created posts routes")
 	// Authentication
 	auth := api.PathPrefix("/auth").Subrouter()
