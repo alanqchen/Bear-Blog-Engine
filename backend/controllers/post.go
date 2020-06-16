@@ -141,7 +141,7 @@ func (pc *PostController) GetById(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
 		return
 	}
-	post, err := pc.PostRepository.FindById(id)
+	post, err := pc.PostRepository.FindByID(id)
 	if err != nil {
 		NewAPIError(&APIError{false, "Could not find post", http.StatusNotFound}, w)
 		return
@@ -157,7 +157,7 @@ func (pc *PostController) GetByIdAdmin(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
 		return
 	}
-	post, err := pc.PostRepository.FindByIdAdmin(id)
+	post, err := pc.PostRepository.FindByIDAdmin(id)
 	if err != nil {
 		NewAPIError(&APIError{false, "Could not find post", http.StatusNotFound}, w)
 		return
@@ -315,7 +315,7 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
 		return
 	}
-	post, err := pc.PostRepository.FindById(postID)
+	post, err := pc.PostRepository.FindByID(postID)
 	if err != nil {
 		// post was not found
 		NewAPIError(&APIError{false, "Could not find post", http.StatusNotFound}, w)
@@ -419,10 +419,46 @@ func (pc *PostController) Delete(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: id}, w, http.StatusOK)
 }
 
-// TODO: add search function
-func (pc *PostController) Search(title string, tags []string) *models.Post {
+// Search for posts using title and tags. Will not return nil data if search is successful.
+func (pc *PostController) Search(w http.ResponseWriter, r *http.Request) {
+	j, err := GetJSON(r.Body)
+	if err != nil {
+		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
+		return
+	}
 
-	return nil
+	title, err := j.GetString("title")
+	if err != nil {
+		NewAPIError(&APIError{false, "Title is required", http.StatusBadRequest}, w)
+		return
+	}
+
+	if title == "" {
+		NewAPIError(&APIError{false, "Title cannot be empty", http.StatusBadRequest}, w)
+		return
+	}
+
+	tags, err := j.GetStringArray("tags")
+	if err != nil {
+		NewAPIError(&APIError{false, "Missing tags key", http.StatusBadRequest}, w)
+		return
+	}
+
+	results, err := pc.PostRepository.SearchQuery(title, tags)
+
+	if err != nil {
+		NewAPIError(&APIError{false, "Failed to search", http.StatusBadRequest}, w)
+		return
+	}
+
+	// If result is nil, set to empty array
+	if results == nil {
+		results = []*models.Post{}
+	}
+
+	NewAPIResponse(&APIResponse{Success: true, Message: "Successful search", Data: results}, w, http.StatusOK)
+
+	return
 }
 
 // False -> pagination not in cache

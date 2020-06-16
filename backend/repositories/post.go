@@ -10,11 +10,12 @@ import (
 	"github.com/jackc/pgx/v4"
 )
 
+// PostRepository interface
 type PostRepository interface {
 	Create(p *models.Post) error
 	GetAll() ([]*models.Post, error)
-	FindById(id int) (*models.Post, error)
-	FindByIdAdmin(id int) (*models.Post, error)
+	FindByID(id int) (*models.Post, error)
+	FindByIDAdmin(id int) (*models.Post, error)
 	FindBySlug(slug string) (*models.Post, error)
 	FindBySlugAdmin(slug string) (*models.Post, error)
 	Exists(slug string) bool
@@ -25,13 +26,14 @@ type PostRepository interface {
 	GetPublicPostCount() (int, error)
 	ResetSeq() error
 	GetLastID() (int, error)
-	SearchQuery() ([]*models.Post, error)
+	SearchQuery(string, []string) ([]*models.Post, error)
 }
 
 type postRepository struct {
 	*database.Postgres
 }
 
+// NewPostRepository - creates a post repository instance
 func NewPostRepository(db *database.Postgres) PostRepository {
 	return &postRepository{db}
 }
@@ -125,14 +127,14 @@ func (pr *postRepository) createWithSlugCount(p *models.Post) error {
 	return nil
 }
 
-func (pr *postRepository) FindById(id int) (*models.Post, error) {
+func (pr *postRepository) FindByID(id int) (*models.Post, error) {
 	post := models.Post{}
 
 	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM post_schema.post WHERE NOT hidden AND id = $1", id).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID, &post.FeatureImgURL, &post.Subtitle, &post.Views)
 	if err != nil {
 		return nil, err
 	}
-	post.Views += 1
+	post.Views++
 	pr.Conn.Prepare(context.Background(), "update-views-query", "UPDATE post_schema.post SET views=$1 WHERE id=$2")
 	_, err = pr.Conn.Exec(context.Background(), "update-views-query", post.Views, post.ID)
 	if err != nil {
@@ -143,7 +145,7 @@ func (pr *postRepository) FindById(id int) (*models.Post, error) {
 	return &post, nil
 }
 
-func (pr *postRepository) FindByIdAdmin(id int) (*models.Post, error) {
+func (pr *postRepository) FindByIDAdmin(id int) (*models.Post, error) {
 	post := models.Post{}
 
 	err := pr.Conn.QueryRow(context.Background(), "SELECT * FROM post_schema.post WHERE id = $1", id).Scan(&post.ID, &post.Title, &post.Slug, &post.Body, &post.CreatedAt, &post.UpdatedAt, &post.Tags, &post.Hidden, &post.AuthorID, &post.FeatureImgURL, &post.Subtitle, &post.Views)
@@ -362,7 +364,7 @@ func (pr *postRepository) GetLastID() (int, error) {
 func (pr *postRepository) SearchQuery(title string, tags []string) ([]*models.Post, error) {
 	var posts []*models.Post
 
-	rows, err := pr.Conn.Query(context.Background(), "SELECT * FROM post_schema.post WHERE NOT hidden AND LOWER(title) LIKE LOWER('%' || $1 || '%') AND tags @> '$2' ORDER BY views DESC;", title, tags)
+	rows, err := pr.Conn.Query(context.Background(), "SELECT * FROM post_schema.post WHERE NOT hidden AND LOWER(title) LIKE LOWER('%' || $1 || '%') AND tags @> $2 ORDER BY views DESC;", title, tags)
 	if err != nil {
 		log.Println(err)
 		return nil, err
