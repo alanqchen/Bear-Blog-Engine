@@ -9,7 +9,7 @@ Uses Go for the backend and React (Next) for the frontend.
 Databases used are PostgreSQL and Redis.
 
 Status:
-Styling post cards in index page
+Styling post cards in index page 
 
 
 ### Q: Why not a static blog?
@@ -25,7 +25,9 @@ First, navigate to the directory where you'll store the docker files:
 cd /path/to/bearpost
 ```
 
-Then download/copy the files in the [templates directory](templates), except for README.md, into the same directory.
+Then download/copy the files in the [templates directory](templates), except for README.md, into the same directory. Make sure
+to change the url `frontend/api.json` to the base api url you'll be using. In a standard development environment this will most likely
+be `"http://localhost:8080"`.
 
 Run `docker-compose up` and the backend should start.
 
