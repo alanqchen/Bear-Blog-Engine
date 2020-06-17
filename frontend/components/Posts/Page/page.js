@@ -13,23 +13,6 @@ import SCtheme from '../../../assests/theme/SCtheme'
 import API from '../../../api';
 import {PostCard} from './PostCard/postCard'
 
-const useStyles = makeStyles({
-root: {
-    minWidth: 275,
-},
-bullet: {
-    display: 'inline-block',
-    margin: '0 2px',
-    transform: 'scale(0.8)',
-},
-title: {
-    fontSize: 14,
-},
-pos: {
-    marginBottom: 12,
-},
-});
-
 const PostCardLink = React.forwardRef((props, ref) => (
 <a ref={ref} {...props}>
     

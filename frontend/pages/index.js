@@ -12,6 +12,7 @@ import Grid from '@material-ui/core/Grid';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import {AppBar, Toolbar, IconButton, Typography, Hidden, CssBaseline} from '@material-ui/core'
 import PostsContainer from '../components/Posts/postsContainer'
+import API from '../api'
 
 const Container = styled.div`
   width: 960px;
@@ -134,10 +135,29 @@ function HideOnScroll(props) {
 const Index = props => (
         
   <Layout> 
-      <PostsContainer></PostsContainer>        
+      <PostsContainer buildPosts={props.buildPosts}></PostsContainer>        
   </Layout>
         
 );
+
+// TODO: use getStaticProps
+export async function getStaticProps() {
+  // Call API
+  const jsonBody = {
+    maxID: "-1"
+  }
+  const res = await fetch(API.url+'/api/v1/posts/get', {
+    method: 'post',
+    body: JSON.stringify(jsonBody)
+  })
+  const posts = await res.json()
+
+  return {
+    props: {
+      buildPosts: posts
+    }
+  }
+}
 
 export default Index;
   
