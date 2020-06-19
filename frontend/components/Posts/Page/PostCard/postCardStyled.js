@@ -11,3 +11,7 @@ export const StyledCard = styled(Card)`
         transform: scale(1.008);
     }
 `
+
+export const StyledImageWrapper = styled.div`
+    min-height: 400px;
+`;
