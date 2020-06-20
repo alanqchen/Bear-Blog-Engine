@@ -2,12 +2,18 @@ package controllers
 
 import (
 	"bytes"
+	"image"
+	"image/jpeg"
+	"image/png"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
+
+	"github.com/nickalie/go-webpbin"
 
 	"github.com/alanqchen/Bear-Post/backend/util"
 )
@@ -56,15 +62,20 @@ func (uc *UploadController) UploadImage(w http.ResponseWriter, r *http.Request) 
 	// Copy the file data to my buffer
 	io.Copy(&Buf, file)
 
+	// trash initilizations so that packages don't get removed. (Needed to decode images)
+	_ = png.Encoder{}
+	_ = jpeg.Options{}
+
 	fileExtension := http.DetectContentType(Buf.Bytes())
 	validFileExtensions := map[string]string{
 		"image/jpeg": ".jpg",
 		"image/png":  ".png",
 		"image/gif":  ".gif",
+		"image/webp": ".webp",
 	}
 
 	if _, ok := validFileExtensions[fileExtension]; !ok {
-		NewAPIError(&APIError{false, "Invalid mime type, file must be of image/jpeg, image/png or image/gif", http.StatusBadRequest}, w)
+		NewAPIError(&APIError{false, "Invalid mime type, file must be of image/jpeg, image/png, image/gif, or image/webp", http.StatusBadRequest}, w)
 		return
 	}
 
@@ -73,14 +84,60 @@ func (uc *UploadController) UploadImage(w http.ResponseWriter, r *http.Request) 
 	now := time.Now()
 	fileName := now.Format("2006-01-02_15-04-05") + "_" + util.GetMD5Hash(now.String())
 
-	err = ioutil.WriteFile("./public/images/"+fileName+ext, Buf.Bytes(), 0644)
-	if err != nil {
-		log.Println(err)
-		NewAPIError(&APIError{false, "Could not write file to disk", http.StatusInternalServerError}, w)
-		return
+	// .webp will only be saved in the /webp directory
+	if ext == ".webp" {
+		err = ioutil.WriteFile("./public/images/webp/"+fileName+ext, Buf.Bytes(), 0644)
+		if err != nil {
+			log.Println(err)
+			NewAPIError(&APIError{false, "Could not write webp image", http.StatusInternalServerError}, w)
+			return
+		}
+	} else {
+
+		// .png and .jpeg images will be also saved as webp
+		if ext != ".gif" {
+			// Decode to get image type
+			img, _, err := image.Decode(bytes.NewReader(Buf.Bytes()))
+			if err != nil {
+				NewAPIError(&APIError{false, "Failed to decode original image", http.StatusBadRequest}, w)
+				log.Println(err)
+				return
+			}
+
+			// Create webp image writer
+			outWebp, err := os.Create("./public/images/webp/" + fileName + ".webp")
+			if err != nil {
+				NewAPIError(&APIError{false, "Failed to create webp image", http.StatusBadRequest}, w)
+				return
+			}
+			defer outWebp.Close()
+
+			// Encode image to webp
+			err = webpbin.Encode(outWebp, img)
+			if err != nil {
+				NewAPIError(&APIError{false, "Failed to encode original image", http.StatusBadRequest}, w)
+				err = os.Remove("./public/images/webp/" + fileName + ".webp")
+				if err != nil {
+					log.Println("[WARN] Failed to delete webp image after failed encoding")
+				}
+				return
+			}
+
+		}
+
+		err = ioutil.WriteFile("./public/images/original/"+fileName+ext, Buf.Bytes(), 0644)
+		if err != nil {
+			log.Println(err)
+			NewAPIError(&APIError{false, "Could not write original image", http.StatusInternalServerError}, w)
+			return
+		}
+
 	}
 
 	Buf.Reset()
+
+	// TODO: Check if wildcard routes are possible - .webp should go to /public/images/webp while
+	//   all other extensions should go to /public/images/original
 
 	// TODO: Remove hardcoded url
 	// imageSrc := util.GetRequestScheme(r) + r.Host + "/assets/images/" + fileName + ext
