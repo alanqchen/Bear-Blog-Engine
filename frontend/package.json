@@ -17,6 +17,7 @@
     "next-offline": "^5.0.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-lazyload": "^2.6.8",
     "react-waypoint": "^9.0.2",
     "styled-components": "^5.1.1",
     "uuid": "^7.0.3"

@@ -5,24 +5,20 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import SCtheme from '../../../../assests/theme/SCtheme'
+import {StyledImageWrapper, StyledCard} from './postCardStyled'
+import LazyLoad from 'react-lazyload'
+import FeatureImage from './featureImage'
 import API from '../../../../api';
-
-
-const StyledCard = styled(Card)`
-    margin-bottom: 10px;
-    background-color: ${SCtheme.backgroundDarkAlt};
-    transition: transform 0.2s ease-in-out !important;
-    &:hover {
-        cursor: pointer;
-        transform: scale(1.008);
-    }
-`
 
 export const PostCard = ({ post }) => {
     return(
         <StyledCard>
             <CardContent>
-                <img src={API.url + post.featureImgUrl}></img>
+                <LazyLoad height={'400px'} >
+                    <StyledImageWrapper>
+                        <FeatureImage featureImgUrl={post.featureImgUrl} />
+                    </StyledImageWrapper>
+                </LazyLoad>
                 <Typography color="textPrimary" gutterBottom>
                     {post.title}
                 </Typography>

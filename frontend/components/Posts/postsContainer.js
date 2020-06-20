@@ -18,18 +18,19 @@ const PostContainer = ({className, children}) => {
     
   }
   
-  const StyledPost = styled(PostContainer)`
-    width: 95%;
-    max-width: 900px;
-  `
+const StyledPost = styled(PostContainer)`
+width: 95%;
+max-width: 900px;
+`
 
-function PostsContainer() {
+function PostsContainer({ buildPosts }) {
     const [tempID, setTempID] = useState(-1);
     const [minID, setMinID] = useState(-1);
     const [children, setChildren] = useState([]);
     const [success, setSuccess] = useState(true);
     const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [build, setBuild] = useState(true);
 
     const loadMorePosts = () => {
         console.log("Loading more posts");
@@ -38,26 +39,39 @@ function PostsContainer() {
         setMinID(tempID);
     };
 
-    useEffect(() => {
-        const jsonBody = {
-            maxID: minID.toString()
-        }
-        fetch(API.url+'/api/v1/posts/get', {
-            method: 'post',
-            body: JSON.stringify(jsonBody)
-        })
-        .then(res => res.json())
-        .then(response => {
-            if(response.success) {
-                setPosts(response.data);
-                setTempID(response.pagination.minID);
-                setChildren(oldChildren => [...oldChildren, <Page posts={response.data}/>])
-            }
-            setIsLoading(false);
-            setSuccess(response.success);
 
-        })
-        .catch(error => console.log(error));
+    useEffect(() => {
+        if (minID != -1) {
+            
+            const jsonBody = {
+                maxID: minID.toString()
+            }
+            fetch(API.url+'/api/v1/posts/get', {
+                method: 'post',
+                body: JSON.stringify(jsonBody)
+            })
+            .then(res => res.json())
+            .then(response => {
+                if(response.success) {
+                    setPosts(response.data);
+                    setTempID(response.pagination.minID);
+                    setChildren(oldChildren => [...oldChildren, <Page posts={response.data}/>]);
+                }
+                setIsLoading(false);
+                setSuccess(response.success);
+
+            })
+            .catch(error => console.log(error));
+        } else {
+            if(buildPosts.success) {
+                setPosts(buildPosts.data);
+                setTempID(buildPosts.pagination.minID);
+                setChildren([<Page posts={buildPosts.data}/>]);
+                setBuild(false);
+                setIsLoading(false);
+            }
+            setSuccess(buildPosts.success);
+        }
     }, [minID]);
 
     return (
@@ -81,5 +95,6 @@ function PostsContainer() {
     )
 }
 
+// TODO: use getStaticProps
 
 export default PostsContainer;
