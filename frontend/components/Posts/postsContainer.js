@@ -63,11 +63,13 @@ function PostsContainer({ buildPosts }) {
             })
             .catch(error => console.log(error));
         } else {
-            setPosts(buildPosts.data);
-            setTempID(buildPosts.pagination.minID);
-            setChildren([<Page posts={buildPosts.data}/>]);
-            setBuild(false);
-            setIsLoading(false);
+            if(buildPosts.success) {
+                setPosts(buildPosts.data);
+                setTempID(buildPosts.pagination.minID);
+                setChildren([<Page posts={buildPosts.data}/>]);
+                setBuild(false);
+                setIsLoading(false);
+            }
             setSuccess(buildPosts.success);
         }
     }, [minID]);

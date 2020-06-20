@@ -140,8 +140,8 @@ const Index = props => (
         
 );
 
-// TODO: use getStaticProps
-export async function getStaticProps() {
+// TODO: use getServerSideProps
+export async function getServerSideProps() {
   // Call API
   const jsonBody = {
     maxID: "-1"

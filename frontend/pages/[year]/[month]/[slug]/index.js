@@ -6,10 +6,10 @@ import dateFormat from 'dateformat'
 import Error from 'next/error'
 import API from '../../../../api'
 
-const Index = ({errorCode, props}) => {
-  console.log(errorCode);
-  if (errorCode) {
-    return <Error statusCode={errorCode} />
+const Index = props => {
+  console.log(props.errorCode);
+  if (props.errorCode) {
+    return <Error statusCode={props.errorCode} />
   }
   return (
     <Layout>
@@ -36,9 +36,9 @@ const Index = ({errorCode, props}) => {
   
 };
 
-Index.getInitialProps = async ctx => {
+export async function getServerSideProps(context) {
 
-  let res = await fetch(`${API.url}/api/v1/posts${ctx.asPath}`);
+  let res = await fetch(`${API.url}/api/v1/posts/${context.params.year}/${context.params.month}/${context.params.slug}`);
 
   const post = await res.json();
 
@@ -48,7 +48,12 @@ Index.getInitialProps = async ctx => {
 
   if(errorCode) {
     console.log("bad slug");
-    return {errorCode, post: post};
+    return {
+      props: {
+        errorCode: errorCode,
+        post: post
+      }
+    };
   }
   
 
@@ -63,8 +68,8 @@ Index.getInitialProps = async ctx => {
   const author = await resAuthor.json();
 
   return {
-    errorCode,
     props: {
+      errorCode: errorCode,
       post: post,
       month: dateFormat(dateStr, "mmmm"),
       day: dateFormat(dateStr, "dd"),
