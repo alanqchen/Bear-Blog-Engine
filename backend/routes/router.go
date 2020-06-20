@@ -34,8 +34,9 @@ func NewRouter(a *app.App) *mux.Router {
 	log.Println("Loaded Contollers")
 	r.HandleFunc("/", middleware.Logger(uc.HelloWorld)).Methods(http.MethodGet)
 
-	// media routes, might change later
-	r.PathPrefix("/assets/images").Handler(http.StripPrefix("/assets/images", http.FileServer(http.Dir("./public/images/"))))
+	// Public assets
+	r.Path("/assets/images/{format:.*\\.webp$}").Handler(http.StripPrefix("/assets/images/", http.FileServer(http.Dir("./public/images/webp"))))
+	r.PathPrefix("/assets/images").Handler(http.StripPrefix("/assets/images", http.FileServer(http.Dir("./public/images/original"))))
 	r.PathPrefix("/assets/videos").Handler(http.StripPrefix("/assets/videos", http.FileServer(http.Dir("./public/videos/"))))
 	//r.PathPrefix("/public").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("./public/images/"))))
 
