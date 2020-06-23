@@ -10,8 +10,20 @@ export const StyledCard = styled(Card)`
         cursor: pointer;
         transform: scale(1.008);
     }
+    min-height: 600px;
 `
 
 export const StyledImageWrapper = styled.div`
-    min-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    min-height: 500px;
+    max-height: 500px;
+`;
+
+export const StyledImage = styled.img`
+    flex-shrink: 0;
+    min-width: 100%;
+    min-height: 100%
 `;
