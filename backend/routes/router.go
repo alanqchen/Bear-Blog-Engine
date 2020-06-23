@@ -31,6 +31,7 @@ func NewRouter(a *app.App) *mux.Router {
 	uc := controllers.NewUserController(a, ur, pr)
 	pc := controllers.NewPostController(a, pr, ur)
 	uploadController := controllers.NewUploadController()
+	ec := controllers.NewErrorController(a)
 	log.Println("Loaded Contollers")
 	r.HandleFunc("/", middleware.Logger(uc.HelloWorld)).Methods(http.MethodGet)
 
@@ -71,6 +72,8 @@ func NewRouter(a *app.App) *mux.Router {
 	auth.HandleFunc("/update", middleware.Logger(middleware.RequireAuthentication(a, uc.Update, false))).Methods(http.MethodPut)
 	auth.HandleFunc("/logout", middleware.Logger(middleware.RequireAuthentication(a, ac.Logout, false))).Methods(http.MethodGet)
 	auth.HandleFunc("/logout/all", middleware.Logger(middleware.RequireAuthentication(a, ac.LogoutAll, false))).Methods(http.MethodGet)
+	// No Match
+	r.NotFoundHandler = http.HandlerFunc(middleware.Logger(ec.NotFound))
 	log.Println("Created authentication routes")
 	return r
 }

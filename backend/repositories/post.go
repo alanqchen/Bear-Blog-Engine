@@ -323,6 +323,15 @@ func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*mo
 			log.Println(err)
 			return nil, -1, err
 		}
+
+		// Limit p.Body to 250 characters
+		limit := len(p.Body)
+		if len(p.Body) > 250 {
+			limit = 250
+		}
+
+		p.Body = p.Body[:limit]
+
 		posts = append(posts, p)
 	}
 	if err := rows.Err(); err != nil {

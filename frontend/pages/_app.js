@@ -1,12 +1,12 @@
 import NextApp from 'next/app'
 import Head from 'next/head';
 import React from 'react'
-import '../assests/css/fonts.css'
+import '../assets/css/fonts.css'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import { ThemeProvider as MUIThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from "@material-ui/core/CssBaseline"
-import theme from '../assests/theme/MUItheme'
-import SCtheme from '../assests/theme/SCtheme'
+import theme from '../assets/theme/MUItheme'
+import SCtheme from '../assets/theme/SCtheme'
 
 const GlobalStyle = createGlobalStyle`
   body {
