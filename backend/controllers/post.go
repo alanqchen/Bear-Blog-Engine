@@ -24,16 +24,12 @@ type PostController struct {
 }
 
 type PostPaginator struct {
-	Total        int     `json:"total"`
-	PerPage      int     `json:"perPage"`
-	CurrentPage  int     `json:"currentPage"`
-	LastPage     int     `json:"lastPage"`
-	From         int     `json:"from"`
-	To           int     `json:"to"`
-	FirstPageUrl string  `json:"firstPageUrl"`
-	LastPageUrl  string  `json:"lastPageUrl"`
-	NextPageUrl  *string `json:"nextPageUrl"`
-	PrevPageUrl  *string `json:"prevPageUrl"`
+	Total       int `json:"total"`
+	PerPage     int `json:"perPage"`
+	CurrentPage int `json:"currentPage"`
+	LastPage    int `json:"lastPage"`
+	From        int `json:"from"`
+	To          int `json:"to"`
 }
 
 func NewPostController(a *app.App, pr repositories.PostRepository, ur repositories.UserRepository) *PostController {
@@ -90,7 +86,7 @@ func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// May add changing num posts per page in the future
-	perPageInt := 10
+	perPageInt := 5
 	posts, minID, err := pc.PostRepository.Paginate(maxID, perPageInt, tagsSlice)
 
 	if err != nil && err != pgx.ErrNoRows {
@@ -100,7 +96,9 @@ func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(posts) == 0 {
-		NewAPIResponse(&APIResponse{Success: false, Message: "Could not find posts", Data: posts}, w, http.StatusNotFound)
+		log.Println("Could not find more posts")
+		posts = make([]*models.Post, 0)
+		NewAPIResponse(&APIResponse{Success: true, Message: "Could not find more posts", Data: posts}, w, http.StatusOK)
 		return
 	}
 

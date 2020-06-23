@@ -4,7 +4,7 @@ import React from 'react';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import SCtheme from '../../../../assests/theme/SCtheme'
+import SCtheme from '../../../../assets/theme/SCtheme'
 import {StyledImageWrapper, StyledCard} from './postCardStyled'
 import FeatureImage from './featureImage'
 import API from '../../../../api';

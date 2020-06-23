@@ -4,7 +4,7 @@ import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import Slide from '@material-ui/core/Slide';
 import {AppBar, Toolbar, IconButton, Typography, Hidden, CssBaseline} from '@material-ui/core'
 import Select from '@atlaskit/select';
-import SCtheme from '../../assests/theme/SCtheme'
+import SCtheme from '../../assets/theme/SCtheme'
 
 /* These are just placeholder values for now */
 const TagSelect = ({className, children}) => (
