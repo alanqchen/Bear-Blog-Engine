@@ -7,7 +7,10 @@ import Page from '../Posts/Page/page'
 import Spinner from '@atlaskit/spinner';
 import { Waypoint } from 'react-waypoint';
 import styled from 'styled-components'
+import LinearProgress from '@material-ui/core/LinearProgress';
+import {StyledCard} from './Page/PostCard/postCardStyled'
 import API from '../../api'
+import { responsiveFontSizes } from '@material-ui/core';
 
 const PostContainer = ({className, children}) => {
     return (
@@ -52,25 +55,25 @@ function PostsContainer({ buildPosts }) {
             })
             .then(res => res.json())
             .then(response => {
-                if(response.success) {
+                if(response.success && response.data.length != 0) {
                     setPosts(response.data);
                     setTempID(response.pagination.minID);
                     setChildren(oldChildren => [...oldChildren, <Page posts={response.data}/>]);
                 }
                 setIsLoading(false);
-                setSuccess(response.success);
+                setSuccess(response.success && response.data.length != 0);
 
             })
             .catch(error => console.log(error));
         } else {
-            if(buildPosts.success) {
+            if(buildPosts.success && buildPosts.data.length != 0) {
                 setPosts(buildPosts.data);
                 setTempID(buildPosts.pagination.minID);
                 setChildren([<Page posts={buildPosts.data}/>]);
                 setBuild(false);
                 setIsLoading(false);
             }
-            setSuccess(buildPosts.success);
+            setSuccess(buildPosts.success && buildPosts.data.length != 0);
         }
     }, [minID]);
 
@@ -83,14 +86,12 @@ function PostsContainer({ buildPosts }) {
                     {post}
                 </StyledPost>
             ))}
-            {!isLoading && success && <Waypoint onEnter={loadMorePosts}></Waypoint>}
-            {isLoading && <Spinner invertColor="true" size="xlarge"/>}
-            {/*}
-            {success && posts.length !== 0 && (
-                <button onClick={loadMorePosts}>Load More Posts</button>
-            )}
-            */}
-
+            {!isLoading && success 
+                && <Waypoint onEnter={loadMorePosts}></Waypoint>
+            }
+            {isLoading
+                && <Spinner invertColor="true" size="xlarge"/>
+            }
         </>
     )
 }
