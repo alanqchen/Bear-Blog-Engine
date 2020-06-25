@@ -5,9 +5,8 @@ import Slide from '@material-ui/core/Slide';
 import {AppBar, Toolbar, IconButton, Typography, Hidden, CssBaseline} from '@material-ui/core'
 
 const postLayoutStyle = {
-
-  margin: 20,
-  padding: 20,
+  marginTop: 20,
+  marginBottom: 20,
 };
 
 function HideOnScroll(props) {

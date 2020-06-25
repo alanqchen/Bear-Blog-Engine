@@ -4,6 +4,7 @@ import Layout from '../../../../components/PostLayout/postLayout'
 import fetch from 'isomorphic-unfetch'
 import dateFormat from 'dateformat'
 import Error from 'next/error'
+import {timestamp2date} from '../../../../components/Functions/helpers'
 import API from '../../../../api'
 
 const Index = props => {
@@ -16,7 +17,7 @@ const Index = props => {
       <Link href="/"><a>Goto Index</a></Link>
       <img src={API.url + props.post.data.featureImgUrl}></img>
       <p>{props.post.data.createdAt}</p>
-      <p>{props.month} {props.day}, {props.year}</p>
+      <p>{props.dateF}</p>
       <p>Author: {props.author}</p>
       
       <h1>{props.post.data.title}</h1>
@@ -58,11 +59,8 @@ export async function getServerSideProps(context) {
   
 
   let dateStr = post.data.createdAt;
-  dateStr = dateStr.slice(0, dateStr.length-3) + dateStr.slice(dateStr.length-2);
+  dateStr = timestamp2date(dateStr)
   console.log(dateStr);
-  let d = dateFormat(dateStr, 'yyyy-mm-dd HH:MM:ss       Z');
-
-  console.log(d);
   
   let resAuthor = await fetch(`${API.url}/api/v1/users/${post.data.authorid}`);
   const author = await resAuthor.json();
@@ -71,9 +69,7 @@ export async function getServerSideProps(context) {
     props: {
       errorCode: errorCode,
       post: post,
-      month: dateFormat(dateStr, "mmmm"),
-      day: dateFormat(dateStr, "dd"),
-      year: dateFormat(dateStr, "yyyy"),
+      dateF: dateStr,
       author: author.data.name
     }
   };

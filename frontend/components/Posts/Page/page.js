@@ -36,7 +36,7 @@ class Pagination extends Component {
                 <React.Fragment key={post.id}>
                 <Link href="/[year]/[month]/[slug]" as={`/${post.slug}`}>
                     <PostCardLink post={post}>
-                        <PostCard post={post}></PostCard>
+                        <PostCard post={post} skeleton={false}></PostCard>
                     </PostCardLink>
                 </Link>
                 </React.Fragment>

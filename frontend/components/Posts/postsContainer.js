@@ -4,13 +4,12 @@ import fetch from 'isomorphic-unfetch'
 import dynamic from 'next/dynamic'
 import React, { Component, Children, useEffect, useState } from 'react';
 import Page from '../Posts/Page/page'
-import Spinner from '@atlaskit/spinner';
 import { Waypoint } from 'react-waypoint';
 import styled from 'styled-components'
-import LinearProgress from '@material-ui/core/LinearProgress';
-import {StyledCard} from './Page/PostCard/postCardStyled'
+import PostCard from './Page/PostCard/postCard'
 import API from '../../api'
-import { responsiveFontSizes } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
+import { StyledButton } from './postsContainerStyled'
 
 const PostContainer = ({className, children}) => {
     return (
@@ -23,7 +22,7 @@ const PostContainer = ({className, children}) => {
   
 const StyledPost = styled(PostContainer)`
 width: 95%;
-max-width: 900px;
+max-width: 800px;
 `
 
 function PostsContainer({ buildPosts }) {
@@ -34,6 +33,8 @@ function PostsContainer({ buildPosts }) {
     const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [build, setBuild] = useState(true);
+    const [done, setDone] = useState(false);
+    const [toggleRetry, setToggleRetry] = useState(false);
 
     const loadMorePosts = () => {
         console.log("Loading more posts");
@@ -42,6 +43,13 @@ function PostsContainer({ buildPosts }) {
         setMinID(tempID);
     };
 
+    const retryLoad = () => {
+        console.log("Trying to load again");
+        console.log(tempID);
+        setIsLoading(true);
+        setMinID(tempID);
+        setToggleRetry(!toggleRetry);
+    }
 
     useEffect(() => {
         if (minID != -1) {
@@ -62,9 +70,15 @@ function PostsContainer({ buildPosts }) {
                 }
                 setIsLoading(false);
                 setSuccess(response.success && response.data.length != 0);
+                setDone(response.success && response.data.length == 0);
 
             })
-            .catch(error => console.log(error));
+            .catch(error => {
+                console.log(error);
+                setSuccess(false);
+                setDone(false);
+                setIsLoading(false);
+            });
         } else {
             if(buildPosts.success && buildPosts.data.length != 0) {
                 setPosts(buildPosts.data);
@@ -74,8 +88,9 @@ function PostsContainer({ buildPosts }) {
                 setIsLoading(false);
             }
             setSuccess(buildPosts.success && buildPosts.data.length != 0);
+            setDone(buildPosts.success && buildPosts.data.length == 0)
         }
-    }, [minID]);
+    }, [minID, toggleRetry]);
 
     return (
         <>
@@ -89,8 +104,26 @@ function PostsContainer({ buildPosts }) {
             {!isLoading && success 
                 && <Waypoint onEnter={loadMorePosts}></Waypoint>
             }
-            {isLoading
-                && <Spinner invertColor="true" size="xlarge"/>
+            {isLoading &&  
+                <>
+                    <PostCard post={null} skeleton={true} />
+                    <PostCard post={null} skeleton={true} />
+                </>
+            }
+            {done &&
+                <Typography align="center" fontWeight="fontWeightLight" variant="subtitle1" color="textSecondary" component="h1">
+                    No more posts to show!
+                </Typography>
+            }
+            {!success && !done && 
+                <>
+                    <Typography align="center" fontWeight="fontWeightLight" variant="h6" color="textPrimary" component="h6">
+                        Oops! Something went wrong. Check your internet connection and try again.
+                    </Typography>
+                    <StyledButton variant="contained" color="primary" onClick={() => {retryLoad()}}>
+                        Try Again
+                    </StyledButton>
+                </>
             }
         </>
     )

@@ -21,12 +21,23 @@ const theme = createMuiTheme({
           color: '#ffffff',
         },
         colorTextPrimary: {
-          color: '#cfcfcf',
+          color: '#efeff1',
         },
+        colorTextSecondary: {
+          color: '#d0d0d0',
+        }
       },
       MuiToolbar: {
         root: {
           color: "#d32f2f"
+        }
+      },
+      MuiPaper: {
+        outlined: {
+          border: "1px solid #2f323c"
+        },
+        rounded: {
+          borderRadius: "1em"
         }
       }
       
