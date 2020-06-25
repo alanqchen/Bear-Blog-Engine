@@ -26,7 +26,7 @@ const TagSelect = ({className, children}) => (
 
 const StyledTagSelect = styled(TagSelect)`
   width: 95%;
-  max-width: 900px;
+  max-width: 800px;
   margin-bottom: 20px;
   color: white !important;
   & > * {
@@ -42,9 +42,8 @@ const StyledTagSelect = styled(TagSelect)`
 `
 
 const publicLayoutStyle = {
-
-  margin: 20,
-  padding: 20,
+  marginTop: 20,
+  marginBottom: 20,
 };
 
 function HideOnScroll(props) {
@@ -86,7 +85,6 @@ const StyledCenteredContainer = styled(CenteredContainer)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #0e0e10;
 `
 
 const publicLayout = (props) => (

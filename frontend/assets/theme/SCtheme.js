@@ -1,7 +1,9 @@
+import GlobalTheme from '../../components/Theme/theme'
+
 const theme = {
-    backgroundDark: "#0e0e10 !important",
-    backgroundDarkAlt: "#212426 !important",
-    backgroundDarkLight: "rgb(63, 64, 68) !important"
+    backgroundDark: GlobalTheme.background + " !important",
+    backgroundDarkAlt: GlobalTheme.backgroundAlt1 + " !important",
+    backgroundDarkLight:  GlobalTheme.backgroundAlt2 +" !important"
 };
 
 export default theme;
