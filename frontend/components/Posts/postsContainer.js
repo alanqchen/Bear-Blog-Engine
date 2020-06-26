@@ -8,6 +8,7 @@ import { Waypoint } from 'react-waypoint';
 import styled from 'styled-components'
 import PostCard from './Page/PostCard/postCard'
 import API from '../../api'
+import CloudOffIcon from '@material-ui/icons/CloudOff';
 import { Typography } from '@material-ui/core';
 import { StyledButton } from './postsContainerStyled'
 
@@ -117,6 +118,7 @@ function PostsContainer({ buildPosts }) {
             }
             {!success && !done && 
                 <>
+                    <CloudOffIcon />
                     <Typography align="center" fontWeight="fontWeightLight" variant="h6" color="textPrimary" component="h6">
                         Oops! Something went wrong. Check your internet connection and try again.
                     </Typography>

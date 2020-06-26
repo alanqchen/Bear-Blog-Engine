@@ -5,44 +5,42 @@ import { red } from '@material-ui/core/colors';
 const theme = createMuiTheme({
     palette: {
         type: 'dark',
-      primary: {
-        main: '#e53935',
-      },
-      secondary: {
-        main: '#1e88e5',
-      },
-      error: {
-        main: red.A400,
-      },  
+        primary: {
+            main: '#e53935',
+        },
+        secondary: {
+            main: '#1e88e5',
+        },
+        error: {
+            main: red.A400,
+        },  
     },
     overrides: {
-      MuiTypography: {
-        root: {
-          color: '#ffffff',
+        MuiTypography: {
+            root: {
+            color: '#ffffff',
+            },
+            colorTextPrimary: {
+            color: '#efeff1',
+            },
+            colorTextSecondary: {
+            color: '#d0d0d0',
+            }
         },
-        colorTextPrimary: {
-          color: '#efeff1',
+        MuiToolbar: {
+            root: {
+            color: "#d32f2f"
+            }
         },
-        colorTextSecondary: {
-          color: '#d0d0d0',
+        MuiPaper: {
+            outlined: {
+                border: "1px solid #2f323c"
+            },
+            rounded: {
+                borderRadius: "1em"
+            }
         }
-      },
-      MuiToolbar: {
-        root: {
-          color: "#d32f2f"
-        }
-      },
-      MuiPaper: {
-        outlined: {
-          border: "1px solid #2f323c"
-        },
-        rounded: {
-          borderRadius: "1em"
-        }
-      }
-      
     },
-  });
-  
+});
   
   export default theme;

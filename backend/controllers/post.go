@@ -261,6 +261,8 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tags = rmDuplicateTags(tags)
+
 	imgURL, err := j.GetString("image-url")
 	if err != nil || imgURL == "" {
 		imgURL = "/assets/images/feature-default.png"
@@ -369,6 +371,8 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Missing tags key", http.StatusBadRequest}, w)
 		return
 	}
+
+	tags = rmDuplicateTags(tags)
 
 	imgURL, err := j.GetString("image-url")
 	if err != nil {
@@ -484,4 +488,20 @@ func (pc *PostController) flushCache() {
 	log.Println(err.Val())
 	log.Println("[INFO] Flushed pagination hash")
 	return
+}
+
+func rmDuplicateTags(tags []string) []string {
+	// Remove any duplicate tags by using them as a key in a map
+	tagsMap := make(map[string]bool, len(tags))
+	for _, tag := range tags {
+		tagsMap[tag] = true
+	}
+
+	tags = make([]string, len(tagsMap))
+	index := 0
+	for tag := range tagsMap {
+		tags[index] = tag
+		index++
+	}
+	return tags
 }
