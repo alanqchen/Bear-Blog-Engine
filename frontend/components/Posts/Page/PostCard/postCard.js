@@ -9,7 +9,6 @@ import SCtheme from '../../../../assets/theme/SCtheme'
 import {StyledImageWrapper, StyledCard} from './postCardStyled'
 import FeatureImage from './featureImage'
 import {timestamp2date} from '../../../Functions/helpers'
-import API from '../../../../api';
 
 export const PostCard = ({ post, skeleton }) => {
 

@@ -1,0 +1,27 @@
+{
+    "apiURL": "http://localhost:8080",
+    "blogName": "Bear Post Blog",
+    "categories": [
+        "Projects",
+        "Technology",
+        "Coasters",
+        "Travel",
+        "Gaming"
+    ],
+    "categoryLinks": [
+        "/",
+        "/",
+        "/",
+        "/",
+        "/"
+    ],
+    "secondaryCategories": [
+        "About",
+        "Github"
+    ],
+    "secondaryLinks": [
+        "/",
+        "/"
+    ],
+    "navMinWidth": "800px"
+}

@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import styled from 'styled-components'
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {StyledImage, StyledImageWrapper, FeatureImageWrapper, StyledLinearProgressWrapper, TagsWrapper, StyledChip, ImageSkeleton} from './postCardStyled'
-import API from '../../../../api'
+import config from '../../../../config'
 import { Skeleton } from '@material-ui/lab';
 
 function FeatureImage({featureImgUrl, tags, skeleton}) {
@@ -28,10 +28,10 @@ function FeatureImage({featureImgUrl, tags, skeleton}) {
                 :
                 <picture>
                     {featureImgUrl.substring(featureImgUrl.length - 5, featureImgUrl.length) == ".jpeg" 
-                        ? <source srcSet={API.url + featureImgUrl.substring(0, featureImgUrl.length - 5) + ".webp"} />
-                        : <source srcSet={API.url + featureImgUrl.substring(0, featureImgUrl.length - 4) + ".webp"} />
+                        ? <source srcSet={config.apiURL + featureImgUrl.substring(0, featureImgUrl.length - 5) + ".webp"} />
+                        : <source srcSet={config.apiURL + featureImgUrl.substring(0, featureImgUrl.length - 4) + ".webp"} />
                     }
-                    <StyledImage src={API.url + featureImgUrl} onLoad={() => setLoading(false)} />
+                    <StyledImage src={config.apiURL + featureImgUrl} onLoad={() => setLoading(false)} />
                 </picture>
                 } 
             </StyledImageWrapper>

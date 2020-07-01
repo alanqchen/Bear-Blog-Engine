@@ -23,20 +23,11 @@ type PostController struct {
 	repositories.UserRepository
 }
 
-type PostPaginator struct {
-	Total       int `json:"total"`
-	PerPage     int `json:"perPage"`
-	CurrentPage int `json:"currentPage"`
-	LastPage    int `json:"lastPage"`
-	From        int `json:"from"`
-	To          int `json:"to"`
-}
-
 func NewPostController(a *app.App, pr repositories.PostRepository, ur repositories.UserRepository) *PostController {
 	return &PostController{a, pr, ur}
 }
 
-func (pc *PostController) GetAll(w http.ResponseWriter, r *http.Request) {
+func (pc *PostController) GetPage(w http.ResponseWriter, r *http.Request) {
 	//httpScheme := "https://"
 	total, _ := pc.PostRepository.GetPublicPostCount()
 	//page := r.URL.Query().Get("page")
@@ -233,7 +224,7 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	slug = slug + "/" + util.GenerateSlug(title)
 
-	if len(slug) == 0 {
+	if len(title) == 0 {
 		NewAPIError(&APIError{false, "Title is invalid", http.StatusBadRequest}, w)
 		return
 	}
@@ -375,7 +366,7 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 	tags = rmDuplicateTags(tags)
 
 	imgURL, err := j.GetString("image-url")
-	if err != nil {
+	if err != nil || imgURL == "" {
 		imgURL = "/assets/images/feature-default.png"
 	}
 
@@ -411,13 +402,7 @@ func (pc *PostController) Delete(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Could not find post to delete", http.StatusNotFound}, w)
 		return
 	}
-	/*
-		err = pc.PostRepository.ResetSeq()
-		if err != nil {
-			NewAPIError(&APIError{false, "Could not reset sequence", http.StatusNotFound}, w)
-			return
-		}
-	*/
+	pc.flushCache()
 	NewAPIResponse(&APIResponse{Success: true, Data: id}, w, http.StatusOK)
 }
 

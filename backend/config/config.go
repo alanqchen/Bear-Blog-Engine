@@ -33,7 +33,6 @@ type Config struct {
 	JWT        JWTConfig        `json:"jwt"`
 	RedisDB    RedisConfig      `json:"RedisDB"`
 	Port       int              `json:"port"`
-	// TODO
 }
 
 func New(path string) (Config, error) {

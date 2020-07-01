@@ -55,15 +55,15 @@ func NewRouter(a *app.App) *mux.Router {
 	api.HandleFunc("/protected", middleware.Logger(middleware.RequireAuthentication(a, uc.Profile, false))).Methods(http.MethodGet)
 	log.Println("Created users routes")
 	// Posts
-	api.HandleFunc("/posts/get", middleware.Logger(pc.GetAll)).Methods(http.MethodPost)
+	api.HandleFunc("/posts/get", middleware.Logger(pc.GetPage)).Methods(http.MethodPost)
 	api.HandleFunc("/posts/search", middleware.Logger(pc.Search)).Methods(http.MethodGet)
 	api.HandleFunc("/posts/{id:[0-9]+}", middleware.Logger(pc.GetById)).Methods(http.MethodGet)
 	api.HandleFunc("/posts/admin/{id:[0-9]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.GetByIdAdmin, true))).Methods(http.MethodGet)
-	api.HandleFunc("/posts/{slug:[a-zA-Z0-9=\\-\\/]+}", middleware.Logger(pc.GetBySlug)).Methods(http.MethodGet)
 	api.HandleFunc("/posts/admin/{slug:[a-zA-Z0-9=\\-\\/]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.GetBySlugAdmin, true))).Methods(http.MethodGet)
+	api.HandleFunc("/posts/{slug:[a-zA-Z0-9=\\-\\/]+}", middleware.Logger(pc.GetBySlug)).Methods(http.MethodGet)
 	api.HandleFunc("/posts", middleware.Logger(middleware.RequireAuthentication(a, pc.Create, true))).Methods(http.MethodPost)
-	api.HandleFunc("/posts/{id}", middleware.Logger(middleware.RequireAuthentication(a, pc.Update, true))).Methods(http.MethodPut)
-	api.HandleFunc("/posts/delete/{id}", middleware.Logger(middleware.RequireAuthentication(a, pc.Delete, true))).Methods(http.MethodPost)
+	api.HandleFunc("/posts/{id:[0-9]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.Update, true))).Methods(http.MethodPut)
+	api.HandleFunc("/posts/delete/{id:[0-9]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.Delete, true))).Methods(http.MethodDelete)
 	log.Println("Created posts routes")
 	// Authentication
 	auth := api.PathPrefix("/auth").Subrouter()
@@ -71,7 +71,7 @@ func NewRouter(a *app.App) *mux.Router {
 	auth.HandleFunc("/refresh", middleware.Logger(middleware.RequireRefreshToken(a, ac.RefreshTokens))).Methods(http.MethodGet)
 	auth.HandleFunc("/update", middleware.Logger(middleware.RequireAuthentication(a, uc.Update, false))).Methods(http.MethodPut)
 	auth.HandleFunc("/logout", middleware.Logger(middleware.RequireAuthentication(a, ac.Logout, false))).Methods(http.MethodGet)
-	auth.HandleFunc("/logout/all", middleware.Logger(middleware.RequireAuthentication(a, ac.LogoutAll, false))).Methods(http.MethodGet)
+	auth.HandleFunc("/logout/all", middleware.Logger(middleware.RequireAuthentication(a, ac.LogoutAll, true))).Methods(http.MethodGet)
 	// No Match
 	r.NotFoundHandler = http.HandlerFunc(middleware.Logger(ec.NotFound))
 	log.Println("Created authentication routes")

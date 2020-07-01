@@ -1,6 +1,7 @@
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { red } from '@material-ui/core/colors';
+import GlobalTheme from '../../components/Theme/theme'
 
 const theme = createMuiTheme({
     palette: {
@@ -21,15 +22,20 @@ const theme = createMuiTheme({
             color: '#ffffff',
             },
             colorTextPrimary: {
-            color: '#efeff1',
+            color: GlobalTheme.textPrimary,
             },
             colorTextSecondary: {
-            color: '#d0d0d0',
+            color: GlobalTheme.textSecondary,
             }
         },
         MuiToolbar: {
             root: {
-            color: "#d32f2f"
+                color: "#d32f2f"
+            }
+        },
+        MuiAppBar: {
+            colorPrimary: {
+                backgroundColor: GlobalTheme.scarlet
             }
         },
         MuiPaper: {
