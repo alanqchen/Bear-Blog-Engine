@@ -5,7 +5,7 @@ import fetch from 'isomorphic-unfetch'
 import dateFormat from 'dateformat'
 import Error from 'next/error'
 import {timestamp2date} from '../../../../components/Functions/helpers'
-import API from '../../../../api'
+import config from '../../../../config'
 
 const Index = props => {
   console.log(props.errorCode);
@@ -15,7 +15,7 @@ const Index = props => {
   return (
     <Layout>
       <Link href="/"><a>Goto Index</a></Link>
-      <img src={API.url + props.post.data.featureImgUrl}></img>
+      <img src={config.apiURL + props.post.data.featureImgUrl}></img>
       <p>{props.post.data.createdAt}</p>
       <p>{props.dateF}</p>
       <p>Author: {props.author}</p>
@@ -39,7 +39,7 @@ const Index = props => {
 
 export async function getServerSideProps(context) {
 
-  let res = await fetch(`${API.url}/api/v1/posts/${context.params.year}/${context.params.month}/${context.params.slug}`);
+  let res = await fetch(`${config.apiURL}/api/v1/posts/${context.params.year}/${context.params.month}/${context.params.slug}`);
 
   const post = await res.json();
 
@@ -62,15 +62,21 @@ export async function getServerSideProps(context) {
   dateStr = timestamp2date(dateStr)
   console.log(dateStr);
   
-  let resAuthor = await fetch(`${API.url}/api/v1/users/${post.data.authorid}`);
+  let resAuthor = await fetch(`${config.apiURL}/api/v1/users/${post.data.authorid}`);
   const author = await resAuthor.json();
+  let authorName;
+  if(!author.success) {
+    authorName = "Unknown User";
+  } else {
+    authorName = author.data.name;
+  }
 
   return {
     props: {
       errorCode: errorCode,
       post: post,
       dateF: dateStr,
-      author: author.data.name
+      author: authorName
     }
   };
 };

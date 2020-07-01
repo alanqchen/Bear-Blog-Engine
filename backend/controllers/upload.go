@@ -155,10 +155,10 @@ func (uc *UploadController) UploadVideo(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	// Limit upload size
-	r.Body = http.MaxBytesReader(w, r.Body, 500*MB)
+	r.Body = http.MaxBytesReader(w, r.Body, 200*MB)
 
-	if err := r.ParseMultipartForm(500 * MB); err != nil {
-		NewAPIError(&APIError{false, "The video you are uploading is too big. Maximum video size is 500MB", http.StatusBadRequest}, w)
+	if err := r.ParseMultipartForm(200 * MB); err != nil {
+		NewAPIError(&APIError{false, "The video you are uploading is too big. Maximum video size is 200MB", http.StatusBadRequest}, w)
 		return
 	}
 
@@ -201,9 +201,9 @@ func (uc *UploadController) UploadVideo(w http.ResponseWriter, r *http.Request) 
 	Buf.Reset()
 
 	// TODO: Remove hardcoded url
-	imageSrc := util.GetRequestScheme(r) + r.Host + "/assets/videos/" + fileName + ext
+	videoSrc := "/assets/videos/" + fileName + ext
 
-	data := UploadImageResponse{imageSrc}
+	data := UploadVideoResponse{videoSrc}
 
 	NewAPIResponse(&APIResponse{Success: true, Message: "Video uploaded successfully", Data: data}, w, http.StatusOK)
 }

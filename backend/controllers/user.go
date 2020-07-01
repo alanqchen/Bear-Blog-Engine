@@ -15,7 +15,6 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/services"
 	"github.com/alanqchen/Bear-Post/backend/util"
 	"github.com/gorilla/mux"
-	"github.com/jackc/pgtype"
 	"github.com/jackc/pgx/v4"
 )
 
@@ -50,7 +49,7 @@ func (uc *UserController) Profile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	NewAPIResponse(&APIResponse{Data: uid}, w, http.StatusOK)
+	NewAPIResponse(&APIResponse{Success: true, Data: uid}, w, http.StatusOK)
 }
 
 func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
@@ -191,7 +190,7 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 		}
 		ok := user.CheckPassword(oldpw)
 		if !ok {
-			NewAPIError(&APIError{false, "Old password do not match", http.StatusBadRequest}, w)
+			NewAPIError(&APIError{false, "Old password does not match", http.StatusBadRequest}, w)
 			return
 		}
 		if len(newpw) < 6 {
@@ -201,7 +200,8 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 		user.SetPassword(newpw)
 	}
 
-	user.UpdatedAt = pgtype.Timestamptz{Time: time.Now()}
+	tempTime := time.Now()
+	user.UpdatedAt = &tempTime
 
 	err = uc.UserRepository.Update(user)
 	if err != nil {

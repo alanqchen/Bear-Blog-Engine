@@ -58,13 +58,20 @@ func (ur *userRepository) Create(u *models.User) error {
 func (ur *userRepository) Update(u *models.User) error {
 	// Check if an user already exists with the email
 	// Prepare statement for inserting data
-	_, err := ur.Conn.Prepare(context.Background(), "update-query", "UPDATE user_schema.\"user\" SET name=?, email=?, password=?, updated_at=? WHERE id = ?")
+	_, err := ur.Conn.Prepare(context.Background(), "update-query", "UPDATE user_schema.user SET name=$1, email=$2, password=$3, updated_at=$4 WHERE id=$5")
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	//defer ur.Conn.Close(context.Background())
 	_, err = ur.Conn.Exec(context.Background(), "update-query", u.Name, u.Email, u.Password, u.UpdatedAt, u.ID)
 	if err != nil {
+		log.Println(u.Name)
+		log.Println(u.Email)
+		log.Println(u.Password)
+		log.Println(u.UpdatedAt)
+		log.Println(u.ID)
+		log.Println(err)
 		return err
 	}
 
@@ -145,5 +152,5 @@ func (ur *userRepository) Exists(email string) bool {
 
 func (ur *userRepository) Delete(id int) error {
 
-	return errors.New("hej")
+	return errors.New("This is not implemented")
 }

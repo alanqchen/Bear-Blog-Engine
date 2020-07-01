@@ -7,10 +7,11 @@ import Page from '../Posts/Page/page'
 import { Waypoint } from 'react-waypoint';
 import styled from 'styled-components'
 import PostCard from './Page/PostCard/postCard'
-import API from '../../api'
+import config from '../../config'
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import { Typography } from '@material-ui/core';
 import { StyledButton } from './postsContainerStyled'
+import { WaveButton } from '../Theme/StyledComponents'
 
 const PostContainer = ({className, children}) => {
     return (
@@ -58,7 +59,7 @@ function PostsContainer({ buildPosts }) {
             const jsonBody = {
                 maxID: minID.toString()
             }
-            fetch(API.url+'/api/v1/posts/get', {
+            fetch(config.apiURL+'/api/v1/posts/get', {
                 method: 'post',
                 body: JSON.stringify(jsonBody)
             })
@@ -95,7 +96,6 @@ function PostsContainer({ buildPosts }) {
 
     return (
         <>
-
             {children.map((post, i) => (
                 // Without the `key`, React will fire a key warning
                 <StyledPost key={i}>
@@ -105,26 +105,28 @@ function PostsContainer({ buildPosts }) {
             {!isLoading && success 
                 && <Waypoint onEnter={loadMorePosts}></Waypoint>
             }
-            {isLoading &&  
+            {isLoading && minID == -1 ? 
                 <>
                     <PostCard post={null} skeleton={true} />
                     <PostCard post={null} skeleton={true} />
                 </>
+            : isLoading &&
+                <PostCard post={null} skeleton={true} />
             }
             {done &&
                 <Typography align="center" fontWeight="fontWeightLight" variant="subtitle1" color="textSecondary" component="h1">
                     No more posts to show!
                 </Typography>
             }
-            {!success && !done && 
+            {!isLoading && !success && !done && 
                 <>
-                    <CloudOffIcon />
+                    <CloudOffIcon fontSize="large" />
                     <Typography align="center" fontWeight="fontWeightLight" variant="h6" color="textPrimary" component="h6">
                         Oops! Something went wrong. Check your internet connection and try again.
                     </Typography>
-                    <StyledButton variant="contained" color="primary" onClick={() => {retryLoad()}}>
+                    <WaveButton variant="contained" color="primary" onClick={() => {retryLoad()}}>
                         Try Again
-                    </StyledButton>
+                    </WaveButton>
                 </>
             }
         </>
