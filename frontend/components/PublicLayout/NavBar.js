@@ -1,5 +1,5 @@
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
-import React, { useCallback, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {AppBar, Toolbar, IconButton, Typography, Link, Slide, ClickAwayListener} from '@material-ui/core'
 import Hamburger from 'hamburger-react'
 import { 
@@ -30,6 +30,11 @@ function HideOnScroll(props) {
 function NavBar({props, atTop, className}) {
 
     const [isActive, setIsActive] = useState(false);
+    const trigger = useScrollTrigger();
+
+    useEffect(() => {
+        setIsActive(false);
+    }, [trigger]);
 
     return (
         <>
@@ -57,7 +62,7 @@ function NavBar({props, atTop, className}) {
                     </Toolbar>
                 </AppBar>
             </HideOnScroll>
-            <SideMenuClose isOpen={isActive} />
+            <SideMenuClose isOpen={isActive} onClick={() => setIsActive(false)}/>
             <SideMenuWrapper isOpen={isActive}>
 
                     <SideMenuNavigation>
