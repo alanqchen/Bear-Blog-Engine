@@ -1,23 +1,19 @@
 import { createStore, applyMiddleware } from 'redux';
+import { createWrapper } from 'next-redux-wrapper'
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunkMiddleware from 'redux-thunk';
-import reducers from './reducers';
+import reducer from './reducers';
 
-export default function getStore(initialState) {
-    const store = createStore(
-        reducers,
-        initialState,
-        composeWithDevTools(applyMiddleware(thunkMiddleware))
-    )
-
-    // IF REDUCERS WERE CHANGED, RELOAD WITH INITIAL STATE
-    if (module.hot) {
-        module.hot.accept('./reducers', () => {
-        const createNextReducer = require('./reducers').default
-
-        store.replaceReducer(createNextReducer(initialState))
-        })
+const bindMiddleware = (middleware) => {
+    if (process.env.NODE_ENV !== 'production') {
+        const { composeWithDevTools } = require('redux-devtools-extension');
+        return composeWithDevTools(applyMiddleware(...middleware));
     }
-
-    return store
+    return applyMiddleware(...middleware);
 }
+
+const initStore = () => {
+    return createStore(reducer, bindMiddleware([thunkMiddleware]))
+}
+
+export const wrapper = createWrapper(initStore)

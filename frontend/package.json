@@ -20,6 +20,7 @@
     "next": "^9.4.4",
     "next-google-fonts": "^1.1.0",
     "next-offline": "^5.0.2",
+    "next-redux-wrapper": "^6.0.2",
     "react": "^16.13.1",
     "react-animated-burgers": "^1.2.8",
     "react-burger-menu": "^2.6.17",
