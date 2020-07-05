@@ -3,10 +3,12 @@ import * as fetchPostsTypes from './types';
 const initialFetchPostsState = {
     posts: [],
     loading: false,
-    error: null
+    error: null,
+    minID: "-1"
 };
 
 export default function fetchPostsReducer( state = initialFetchPostsState, { type, payload }) {
+    console.log("IN FETCH POSTS REDUCER");
     switch(type) {
         case fetchPostsTypes.FETCH_POSTS_BEGIN:
             return {
@@ -16,10 +18,12 @@ export default function fetchPostsReducer( state = initialFetchPostsState, { typ
             };
 
         case fetchPostsTypes.FETCH_POSTS_SUCCESS:
+            console.log("SUCCESS TYPE");
             return {
                 ...state,
                 loading: false,
-                posts: payload.posts
+                posts: payload.response.data,
+                minID: payload.response.minID
             };
 
         case fetchPostsTypes.FETCH_POSTS_FAILURE:
@@ -27,6 +31,7 @@ export default function fetchPostsReducer( state = initialFetchPostsState, { typ
                 ...state,
                 loading: false,
                 error: payload.error,
+                minID: state.minID
             };
 
         default:
