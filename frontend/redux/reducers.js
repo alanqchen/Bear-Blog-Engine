@@ -1,42 +1,22 @@
 import { combineReducers } from 'redux';
-import * as fetchPostsTypes from './fetchPosts/types';
+import { HYDRATE } from 'next-redux-wrapper'
+import fetchPosts from './fetchPosts/reducer';
 
-const initialFetchPostsState = {
-    items: [],
-    loading: false,
-    error: null
-};
+const combinedReducers = combineReducers({
+    fetchPosts
+});
 
-const fetchPostsReducer = ( state = initialFetchPostsState, { type, payload }) => {
-    switch(type) {
-        case fetchPostsTypes.FETCH_POSTS_BEGIN:
-            return {
-                ...state,
-                loading: true,
-                error: null
-            };
-
-        case fetchPostsTypes.FETCH_POSTS_SUCCESS:
-            return {
-                ...state,
-                loading: false,
-                items: payload.posts
-            };
-
-        case fetchPostsTypes.FETCH_POSTS_FAILURE:
-            return {
-                ...state,
-                loading: false,
-                error: payload.error,
-            };
-
-        default:
-            return state;
+const reducer = (state, action) => {
+    if (action.type === HYDRATE) {
+        const nextState = {
+        ...state, // use previous state
+        ...action.payload, // apply delta from hydration
+        };
+        if (state.fetchPosts.posts) nextState.fetchPosts.posts = state.fetchPosts.posts;
+        return nextState;
+    } else {
+        return combinedReducers(state, action);
     }
-};
+}
 
-const reducers = {
-    fetchPosts: fetchPostsReducer
-};
-
-export default combineReducers(reducers);
+export default reducer;

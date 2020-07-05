@@ -1,6 +1,7 @@
 import * as types from './types';
 
-export const fetchPostsBegin = () => ({
+export const fetchPostsBegin = () => (dispatch) => 
+dispatch({
     type: types.FETCH_POSTS_BEGIN
 });
 

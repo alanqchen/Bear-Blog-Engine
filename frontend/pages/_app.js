@@ -1,6 +1,6 @@
 import { Provider as ReduxProvider } from 'react-redux';
 import NextApp from 'next/app';
-import withReduxStore from '../redux/with-redux-store';
+import { wrapper } from '../redux/store';
 import Head from 'next/head';
 import React from 'react';
 import GoogleFonts from "next-google-fonts";
@@ -26,7 +26,7 @@ class App extends NextApp {
     }
 
     render() {
-        const { Component, pageProps, store } = this.props;
+        const { Component, pageProps } = this.props;
 
         return (
             <React.Fragment>
@@ -39,9 +39,7 @@ class App extends NextApp {
                     <ThemeProvider theme={SCtheme}>
                         <GlobalStyle/>
                         <CssBaseline />
-                        <ReduxProvider store={store}>
-                            <Component {...pageProps} />
-                        </ReduxProvider>
+                        <Component {...pageProps} />
                     </ThemeProvider>
                 </MUIThemeProvider>
             </React.Fragment>
@@ -49,4 +47,4 @@ class App extends NextApp {
     }
 }
 
-export default withReduxStore(App);
+export default wrapper.withRedux(App);
