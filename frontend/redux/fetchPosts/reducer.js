@@ -4,12 +4,13 @@ const initialFetchPostsState = {
     posts: [],
     loading: false,
     error: null,
-    minID: "-1"
+    minID: "-1",
+    hasMore: true
 };
 
-export default function fetchPostsReducer( state = initialFetchPostsState, { type, payload }) {
+export default function fetchPostsReducer( state = initialFetchPostsState, action) {
     console.log("IN FETCH POSTS REDUCER");
-    switch(type) {
+    switch(action.type) {
         case fetchPostsTypes.FETCH_POSTS_BEGIN:
             return {
                 ...state,
@@ -19,19 +20,28 @@ export default function fetchPostsReducer( state = initialFetchPostsState, { typ
 
         case fetchPostsTypes.FETCH_POSTS_SUCCESS:
             console.log("SUCCESS TYPE");
+            console.log(state.posts.concat(action.payload.response.data));
             return {
                 ...state,
                 loading: false,
-                posts: payload.response.data,
-                minID: payload.response.minID
+                posts: state.posts.concat(action.payload.response.data),
+                minID: action.payload.response.minID,
+                hadMore: action.hasMore
             };
 
         case fetchPostsTypes.FETCH_POSTS_FAILURE:
             return {
                 ...state,
                 loading: false,
-                error: payload.error,
+                error: action.payload.error,
                 minID: state.minID
+            };
+        
+        case fetchPostsTypes.FETCH_POSTS_NO_MORE:
+            return {
+                ...state,
+                loading: false,
+                hasMore: false
             };
 
         default:

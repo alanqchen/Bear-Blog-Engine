@@ -2,6 +2,7 @@ import styled, { keyframes } from 'styled-components';
 import { Typography, Link } from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/Search';
 import GlobalStyle from '../Theme/theme'
+import config from '../../config.json';
 
 export const CategoriesWrapper = styled.div`
     display: flex;
@@ -121,11 +122,11 @@ export const SideMenuNavLinkItem = styled.li`
     `}
 
     ${({ primary = false }) => primary && `
-    @media (max-width: 780px) {
-        display: none !important;
-    }
-    @media (min-width: 780px) {
+    @media (max-width: ${config.navMinWidth}) {
         display: inherit !important;
+    }
+    @media (min-width: ${config.navMinWidth}) {
+        display: none !important;
     }`}
 `;
 
@@ -134,6 +135,10 @@ export const NavLinks = styled.ul`
     margin: 0;
     padding: 0;
     list-style-type: none;
+
+    @media (max-width: ${config.navMinWidth}) {
+        display: none !important;
+    }
 
     & li {
         margin-left: 16px;

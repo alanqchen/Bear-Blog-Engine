@@ -7,6 +7,7 @@ const combinedReducers = combineReducers({
 });
 
 const reducer = (state, action) => {
+    console.log(action.type);
     if (action.type === HYDRATE) {
         const nextState = {
         ...state, // use previous state

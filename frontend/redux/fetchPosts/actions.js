@@ -7,7 +7,8 @@ export const fetchPostsBegin = () => ({
 
 export const fetchPostsSuccess = response => ({
     type: types.FETCH_POSTS_SUCCESS,
-    payload: { response }
+    payload: { response },
+    hasMore: response.data.length > 0
 });
 
 export const fetchPostsFailure = error => ({
