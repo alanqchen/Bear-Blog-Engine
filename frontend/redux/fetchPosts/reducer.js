@@ -3,11 +3,14 @@ import * as fetchPostsTypes from './types';
 const initialFetchPostsState = {
     posts: [],
     loading: false,
-    error: null
+    error: null,
+    minID: "-1",
+    hasMore: true
 };
 
-export default function fetchPostsReducer( state = initialFetchPostsState, { type, payload }) {
-    switch(type) {
+export default function fetchPostsReducer( state = initialFetchPostsState, action) {
+    console.log("IN FETCH POSTS REDUCER");
+    switch(action.type) {
         case fetchPostsTypes.FETCH_POSTS_BEGIN:
             return {
                 ...state,
@@ -16,17 +19,29 @@ export default function fetchPostsReducer( state = initialFetchPostsState, { typ
             };
 
         case fetchPostsTypes.FETCH_POSTS_SUCCESS:
+            console.log("SUCCESS TYPE v1");
             return {
                 ...state,
                 loading: false,
-                posts: payload.posts
+                posts: state.posts.concat(action.payload.response.data),
+                minID: action.payload.response.pagination.minID.toString(),
+                error: null,
+                hasMore: action.hasMore
             };
 
         case fetchPostsTypes.FETCH_POSTS_FAILURE:
             return {
                 ...state,
                 loading: false,
-                error: payload.error,
+                error: action.payload.error,
+                minID: state.minID
+            };
+        
+        case fetchPostsTypes.FETCH_POSTS_NO_MORE:
+            return {
+                ...state,
+                loading: false,
+                hasMore: false
             };
 
         default:

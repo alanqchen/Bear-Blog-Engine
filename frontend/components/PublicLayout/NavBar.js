@@ -31,9 +31,9 @@ function NavBar({props, atTop, className}) {
 
     const [isActive, setIsActive] = useState(false);
     const trigger = useScrollTrigger();
-
+    
     useEffect(() => {
-        setIsActive(false);
+        setIsActive(isActive && trigger ? false : isActive);
     }, [trigger]);
 
     return (
@@ -63,14 +63,21 @@ function NavBar({props, atTop, className}) {
                 </AppBar>
             </HideOnScroll>
             <SideMenuClose isOpen={isActive} onClick={() => setIsActive(false)}/>
-            <SideMenuWrapper isOpen={isActive}>
+            <SideMenuWrapper isOpen={isActive && !trigger}>
 
                     <SideMenuNavigation>
                         <SideMenuNavLinks>
                         {config.categories.map((category, i) => (
-                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: i * 0.02 + "s"} : null }>
+                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: i * 0.02 + "s"} : null } primary>
                                 <Typography variant="h6" color="textPrimary">
                                     <Link href={config.categoryLinks[i]} color="textPrimary">{category}</Link>
+                                </Typography>
+                            </SideMenuNavLinkItem>
+                        ))}
+                        {config.secondaryCategories.map((secondaryCategory, i) => (
+                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: i * 0.02 + "s"} : null }>
+                                <Typography variant="h6" color="textPrimary">
+                                    <Link href={config.secondaryLinks[i]} color="textPrimary">{secondaryCategory}</Link>
                                 </Typography>
                             </SideMenuNavLinkItem>
                         ))}
