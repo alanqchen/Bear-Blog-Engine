@@ -6,9 +6,10 @@ import PostsContainer from '../components/Posts/postsContainer'
 import config from '../config'
 import { fetchPosts } from '../redux/fetchPosts/actions'
 
-const Index = props => (
+const Index = ({posts}) => (
         
   <Layout> 
+      {posts}
       {/*<PostsContainer buildPosts={props.buildPosts}></PostsContainer>*/}
   </Layout>
         
@@ -36,12 +37,12 @@ const Index = props => (
 //}
 
 export const getServerSideProps = wrapper.getServerSideProps(
-    ({store, req, res, ...etc}) => {
+async({store, req, res, ...etc}) => {
         console.log("START FETCH DISPATCH");
-        store.dispatch(fetchPosts());
+        await store.dispatch(fetchPosts());
         console.log("DONE");
     }
 );
 
-export default Index;
+export default connect(state => state)(Index);
   

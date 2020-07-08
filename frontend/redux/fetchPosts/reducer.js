@@ -19,14 +19,13 @@ export default function fetchPostsReducer( state = initialFetchPostsState, actio
             };
 
         case fetchPostsTypes.FETCH_POSTS_SUCCESS:
-            console.log("SUCCESS TYPE");
-            console.log(state.posts.concat(action.payload.response.data));
+            console.log("SUCCESS TYPE v1");
             return {
                 ...state,
                 loading: false,
                 posts: state.posts.concat(action.payload.response.data),
-                minID: action.payload.response.minID,
-                hadMore: action.hasMore
+                minID: action.payload.response.pagination.minID.toString(),
+                hasMore: action.hasMore
             };
 
         case fetchPostsTypes.FETCH_POSTS_FAILURE:
