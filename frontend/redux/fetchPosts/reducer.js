@@ -25,6 +25,7 @@ export default function fetchPostsReducer( state = initialFetchPostsState, actio
                 loading: false,
                 posts: state.posts.concat(action.payload.response.data),
                 minID: action.payload.response.pagination.minID.toString(),
+                error: null,
                 hasMore: action.hasMore
             };
 

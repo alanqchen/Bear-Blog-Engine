@@ -27,7 +27,7 @@ width: 95%;
 max-width: 800px;
 `
 
-function PostsContainer({ buildPosts }) {
+function PostsContainer({ buildState }) {
     const [tempID, setTempID] = useState(-1);
     const [minID, setMinID] = useState(-1);
     const [children, setChildren] = useState([]);
@@ -37,12 +37,14 @@ function PostsContainer({ buildPosts }) {
     const [build, setBuild] = useState(true);
     const [done, setDone] = useState(false);
     const [toggleRetry, setToggleRetry] = useState(false);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     const loadMorePosts = () => {
         console.log("Loading more posts");
         console.log(tempID);
         setIsLoading(true);
         setMinID(tempID);
+        //store.dispatch(fetchPosts());
     };
 
     const retryLoad = () => {
@@ -52,7 +54,7 @@ function PostsContainer({ buildPosts }) {
         setMinID(tempID);
         setToggleRetry(!toggleRetry);
     }
-
+    /*
     useEffect(() => {
         if (minID != -1) {
             
@@ -93,7 +95,24 @@ function PostsContainer({ buildPosts }) {
             setDone(buildPosts.success && buildPosts.data.length == 0)
         }
     }, [minID, toggleRetry]);
-
+    */
+    useEffect(() => {
+        console.log("IN USE EFFECT");
+        if(isInitialLoad) {
+            setIsInitialLoad(false);
+            console.log(buildState);
+            if(buildState.success && buildState.hasMore) {
+                console.log("BUILDPOST");
+                //setPosts(buildPosts.data);
+                //setTempID(buildPosts.pagination.minID);
+                setChildren([<Page posts={buildState.buildPosts}/>]);
+                //setBuild(false);
+                setIsLoading(false);
+            }
+            setSuccess(buildState.success && buildState.hasMore);
+            setDone(buildState.success && !buildState.hasMore);
+        }
+    }, [minID]);
     return (
         <>
             {children.map((post, i) => (

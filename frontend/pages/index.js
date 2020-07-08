@@ -6,11 +6,11 @@ import PostsContainer from '../components/Posts/postsContainer'
 import config from '../config'
 import { fetchPosts } from '../redux/fetchPosts/actions'
 
-const Index = ({posts}) => (
-        
+const Index = props => (
   <Layout> 
-      {posts}
-      {/*<PostsContainer buildPosts={props.buildPosts}></PostsContainer>*/}
+      {console.log("Given")}
+      {console.log(props.buildPosts)}
+      <PostsContainer buildState={props}></PostsContainer>
   </Layout>
         
 );
@@ -41,6 +41,16 @@ async({store, req, res, ...etc}) => {
         console.log("START FETCH DISPATCH");
         await store.dispatch(fetchPosts());
         console.log("DONE");
+        console.log(store.getState());
+        const fetchPostsState = store.getState().fetchPosts;
+        return {
+            props: {
+                buildPosts: fetchPostsState.posts,
+                minID: fetchPostsState.minID,
+                hasMore: fetchPostsState.hasMore,
+                success: fetchPostsState.error === null
+            }
+        }
     }
 );
 

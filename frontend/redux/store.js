@@ -3,6 +3,7 @@ import { createWrapper } from 'next-redux-wrapper'
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunkMiddleware from 'redux-thunk';
 import reducer from './reducers';
+import {fromJS} from 'immutable'
 
 const bindMiddleware = (middleware) => {
     if (process.env.NODE_ENV !== 'production') {
@@ -16,4 +17,4 @@ const initStore = () => {
     return createStore(reducer, bindMiddleware([thunkMiddleware]))
 }
 
-export const wrapper = createWrapper(initStore)
+export const wrapper = createWrapper(initStore);
