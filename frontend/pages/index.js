@@ -4,12 +4,15 @@ import { wrapper, State } from '../redux/store';
 import Layout from '../components/PublicLayout/publicLayout';
 import PostsContainer from '../components/Posts/postsContainer'
 import config from '../config'
+import { Waypoint } from 'react-waypoint';
 import { fetchPosts } from '../redux/fetchPosts/actions'
+
+
 
 const Index = props => (
   <Layout> 
       {console.log("Given")}
-      {console.log(props.buildPosts)}
+      {console.log(props)}
       <PostsContainer buildState={props}></PostsContainer>
   </Layout>
         

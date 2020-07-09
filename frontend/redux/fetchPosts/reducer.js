@@ -23,6 +23,7 @@ export default function fetchPostsReducer( state = initialFetchPostsState, actio
             return {
                 ...state,
                 loading: false,
+                posts: [...state.posts, action.payload.response.data], // This causes lots of problems...
                 posts: state.posts.concat(action.payload.response.data),
                 minID: action.payload.response.pagination.minID.toString(),
                 error: null,
@@ -33,7 +34,7 @@ export default function fetchPostsReducer( state = initialFetchPostsState, actio
             return {
                 ...state,
                 loading: false,
-                error: action.payload.error,
+                error: null,
                 minID: state.minID
             };
         

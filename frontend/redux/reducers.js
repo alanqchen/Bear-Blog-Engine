@@ -11,9 +11,14 @@ const reducer = (state, action) => {
     console.log(action.type);
     switch (action.type) {
         case HYDRATE:
+            console.log("action payload");
+            console.log(action.payload);
             if (action.payload.app === 'init') delete action.payload.app;
             if (action.payload.page === 'init') delete action.payload.page;
-            return {...state, ...action.payload};
+            return {
+                ...state,
+                ...action.payload
+            };
         case 'APP':
             return {...state, app: action.payload};
         case 'PAGE':
