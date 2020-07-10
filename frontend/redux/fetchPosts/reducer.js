@@ -20,10 +20,16 @@ export default function fetchPostsReducer( state = initialFetchPostsState, actio
 
         case fetchPostsTypes.FETCH_POSTS_SUCCESS:
             console.log("SUCCESS TYPE v1");
+            console.log([...state.posts, ...action.payload.response.data]);
+            let temp = [];
+            temp.concat(state.posts);
+            temp.concat(action.payload.response.data);
+            console.log("TEMP");
+            console.log(temp);
             return {
                 ...state,
                 loading: false,
-                posts: state.posts.concat(action.payload.response.data),
+                posts: temp,
                 minID: action.payload.response.pagination.minID.toString(),
                 error: null,
                 hasMore: action.hasMore
@@ -33,7 +39,7 @@ export default function fetchPostsReducer( state = initialFetchPostsState, actio
             return {
                 ...state,
                 loading: false,
-                error: action.payload.error,
+                error: null,
                 minID: state.minID
             };
         

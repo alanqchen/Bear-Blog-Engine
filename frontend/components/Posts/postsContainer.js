@@ -3,6 +3,8 @@ import Layout from '../../components/PublicLayout/publicLayout';
 import fetch from 'isomorphic-unfetch'
 import dynamic from 'next/dynamic'
 import React, { Component, Children, useEffect, useState } from 'react';
+import {connect} from 'react-redux';
+import { fetchPosts as fetchPostsAction } from '../../redux/fetchPosts/actions'
 import Page from '../Posts/Page/page'
 import { Waypoint } from 'react-waypoint';
 import styled from 'styled-components'
@@ -27,7 +29,7 @@ width: 95%;
 max-width: 800px;
 `
 
-function PostsContainer({ buildState }) {
+function PostsContainer({ fetchPosts, dispatch, buildState }) {
     const [tempID, setTempID] = useState(-1);
     const [minID, setMinID] = useState(-1);
     const [children, setChildren] = useState([]);
@@ -39,12 +41,12 @@ function PostsContainer({ buildState }) {
     const [toggleRetry, setToggleRetry] = useState(false);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-    const loadMorePosts = () => {
+    const loadMorePosts = async() => {
         console.log("Loading more posts");
         console.log(tempID);
         setIsLoading(true);
+        await dispatch(fetchPostsAction());
         setMinID(tempID);
-        //store.dispatch(fetchPosts());
     };
 
     const retryLoad = () => {
@@ -104,25 +106,31 @@ function PostsContainer({ buildState }) {
             if(buildState.success && buildState.hasMore) {
                 console.log("BUILDPOST");
                 //setPosts(buildPosts.data);
-                //setTempID(buildPosts.pagination.minID);
+                setTempID(buildState.fetchPosts.minID);
                 setChildren([<Page posts={buildState.buildPosts}/>]);
                 //setBuild(false);
                 setIsLoading(false);
             }
             setSuccess(buildState.success && buildState.hasMore);
             setDone(buildState.success && !buildState.hasMore);
+        } else {
         }
     }, [minID]);
     return (
         <>
+            <Page posts={fetchPosts.posts}/>
+            {/*
             {children.map((post, i) => (
                 // Without the `key`, React will fire a key warning
                 <StyledPost key={i}>
                     {post}
                 </StyledPost>
             ))}
-            {!isLoading && success 
-                && <Waypoint onEnter={loadMorePosts}></Waypoint>
+            */}
+            {console.log("COMPONENT GIVEN")}
+            {console.log(fetchPosts)}
+            {!isLoading && success && !fetchPosts.loading 
+                && <Waypoint onEnter={() => loadMorePosts()} ></Waypoint>
             }
             {isLoading && minID == -1 ? 
                 <>
@@ -154,4 +162,4 @@ function PostsContainer({ buildState }) {
 
 // TODO: use getStaticProps
 
-export default PostsContainer;
+export default connect(state => state)(PostsContainer);

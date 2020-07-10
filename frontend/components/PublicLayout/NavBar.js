@@ -62,7 +62,7 @@ function NavBar({props, atTop, className}) {
                     </Toolbar>
                 </AppBar>
             </HideOnScroll>
-            <SideMenuClose isOpen={isActive} onClick={() => setIsActive(false)}/>
+            <SideMenuClose isOpen={isActive} onClick={() => setIsActive(false)} />
             <SideMenuWrapper isOpen={isActive && !trigger}>
 
                     <SideMenuNavigation>
