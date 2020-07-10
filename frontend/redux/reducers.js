@@ -13,6 +13,8 @@ const reducer = (state, action) => {
         case HYDRATE:
             console.log("action payload");
             console.log(action.payload);
+            console.log("root reducer state");
+            console.log(state);
             if (action.payload.app === 'init') delete action.payload.app;
             if (action.payload.page === 'init') delete action.payload.page;
             return {

@@ -41,11 +41,11 @@ function PostsContainer({ fetchPosts, dispatch, buildState }) {
     const [toggleRetry, setToggleRetry] = useState(false);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-    const loadMorePosts = () => {
+    const loadMorePosts = async() => {
         console.log("Loading more posts");
         console.log(tempID);
         setIsLoading(true);
-        dispatch(fetchPostsAction());
+        await dispatch(fetchPostsAction());
         setMinID(tempID);
     };
 
