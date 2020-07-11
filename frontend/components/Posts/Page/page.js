@@ -18,30 +18,19 @@ const PostCardLink = React.forwardRef((props, ref) => (
 </a>
 ))
 
-class Pagination extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            posts: this.props.posts,
-        };
-    }
-    render() {
-        const { posts } = this.state;
-        if( posts == null) return null;
-        console.log(this.state.posts);
-        return (
-            <>
-                {posts.map(post => (
-                <React.Fragment key={post.id}>
-                <Link href="/[year]/[month]/[slug]" as={`/${post.slug}`}>
-                    <PostCardLink post={post}>
-                        <PostCard post={post} skeleton={false}></PostCard>
-                    </PostCardLink>
-                </Link>
-                </React.Fragment>
-                ))}
-            </>
-        );
-    }
+function Pagination({posts}) {
+    return (
+        <>
+            {posts.map(post => (
+            <React.Fragment key={post.id}>
+            <Link href="/[year]/[month]/[slug]" as={`/${post.slug}`}>
+                <PostCardLink post={post}>
+                    <PostCard post={post} skeleton={false}></PostCard>
+                </PostCardLink>
+            </Link>
+            </React.Fragment>
+            ))}
+        </>
+    );
 }
 export default Pagination;

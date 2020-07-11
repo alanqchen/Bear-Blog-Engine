@@ -29,7 +29,7 @@ width: 95%;
 max-width: 800px;
 `
 
-function PostsContainer({ fetchPosts, dispatch, buildState }) {
+function PostsContainer({fetchPosts, dispatch, buildState }) {
     const [tempID, setTempID] = useState(-1);
     const [minID, setMinID] = useState(-1);
     const [children, setChildren] = useState([]);
@@ -118,7 +118,7 @@ function PostsContainer({ fetchPosts, dispatch, buildState }) {
     }, [minID]);
     return (
         <>
-            <Page posts={fetchPosts.posts}/>
+            <Page posts={fetchPosts}/>
             {/*
             {children.map((post, i) => (
                 // Without the `key`, React will fire a key warning
@@ -160,6 +160,12 @@ function PostsContainer({ fetchPosts, dispatch, buildState }) {
     )
 }
 
-// TODO: use getStaticProps
+const mapStateToProps = (state, ownProps) => {
+    console.log("MAPSTATETOPROPS")
+    console.log(state)
+    return {
+        fetchPosts: state.fetchPosts.posts
+    }
+}
 
-export default connect(state => state)(PostsContainer);
+export default connect(mapStateToProps)(PostsContainer);
