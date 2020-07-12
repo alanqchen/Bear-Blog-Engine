@@ -39,7 +39,7 @@ function PostsContainer({fetchPosts, dispatch, buildState }) {
     const [build, setBuild] = useState(true);
     const [done, setDone] = useState(false);
     const [toggleRetry, setToggleRetry] = useState(false);
-    const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const [isHydrate, setIsHydrate] = useState(true);
 
     const loadMorePosts = async() => {
         console.log("Loading more posts");
@@ -98,6 +98,7 @@ function PostsContainer({fetchPosts, dispatch, buildState }) {
         }
     }, [minID, toggleRetry]);
     */
+   /*
     useEffect(() => {
         console.log("IN USE EFFECT");
         if(isInitialLoad) {
@@ -106,7 +107,7 @@ function PostsContainer({fetchPosts, dispatch, buildState }) {
             if(buildState.success && buildState.hasMore) {
                 console.log("BUILDPOST");
                 //setPosts(buildPosts.data);
-                setTempID(buildState.fetchPosts.minID);
+                //setTempID(buildState.fetchPosts.minID);
                 setChildren([<Page posts={buildState.buildPosts}/>]);
                 //setBuild(false);
                 setIsLoading(false);
@@ -116,6 +117,7 @@ function PostsContainer({fetchPosts, dispatch, buildState }) {
         } else {
         }
     }, [minID]);
+    */
     return (
         <>
             <Page posts={fetchPosts.posts}/>
@@ -127,14 +129,14 @@ function PostsContainer({fetchPosts, dispatch, buildState }) {
                 </StyledPost>
             ))}
             */}
-            {console.log("COMPONENT GIVEN")}
-            {console.log(fetchPosts)}
-            {console.log("BUILD STATE")}
-            {console.log(buildState)}
+            {console.log("LOADING?")}
+            {console.log(fetchPosts.loading)}
+            {console.log("minID")}
+            {console.log(fetchPosts.minID)}
             {!fetchPosts.loading && fetchPosts.hasMore
                 && <Waypoint onEnter={() => loadMorePosts()} ></Waypoint>
             }
-            {isLoading && minID == -1 ? 
+            {fetchPosts.loading && fetchPosts.minID === -1 ? 
                 <>
                     <PostCard post={null} skeleton={true} />
                     <PostCard post={null} skeleton={true} />
@@ -168,6 +170,8 @@ const mapStateToProps = (state, ownProps) => {
     return {
         fetchPosts: {
             posts: state.fetchPosts.posts,
+            loading: state.fetchPosts.loading,
+            minID: state.fetchPosts.minID,
             hasMore: state.fetchPosts.hasMore
         }
     }

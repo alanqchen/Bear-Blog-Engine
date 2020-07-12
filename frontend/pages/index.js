@@ -18,27 +18,6 @@ const Index = props => (
         
 );
 
-//export async function getServerSideProps() {
-    // Call API
-    /*
-    const jsonBody = {
-        maxID: "-1"
-    }
-    const res = await fetch(config.apiURL+'/api/v1/posts/get', {
-        method: 'post',
-        body: JSON.stringify(jsonBody)
-    })
-    const posts = await res.json()
-
-    return {
-        props: {
-            buildPosts: posts
-        }
-    }
-    */
-   
-//}
-
 export const getServerSideProps = wrapper.getServerSideProps(
 async({store, req, res, ...etc}) => {
         console.log("START FETCH DISPATCH");
@@ -63,6 +42,7 @@ async({store, req, res, ...etc}) => {
     }
 );
 
+
 const mapStateToProps = (state, ownProps) => {
     console.log("MAPSTATETOPROPS")
     console.log(state)
@@ -75,4 +55,5 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 export default connect(mapStateToProps)(Index);
-  
+
+//export default Index;
