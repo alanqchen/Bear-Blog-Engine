@@ -42,7 +42,13 @@ const Index = props => (
 export const getServerSideProps = wrapper.getServerSideProps(
 async({store, req, res, ...etc}) => {
         console.log("START FETCH DISPATCH");
-        await store.dispatch(fetchPosts());
+        console.log("STATE BEFORE DISPATCH");
+        console.log(store.getState());
+        if(store.getState().fetchPosts.posts === []) {
+            await store.dispatch(fetchPosts());
+        } else {
+            console.log("SKIPPED DISPATCH")
+        }
         console.log("DONE");
         console.log(store.getState());
         const fetchPostsState = store.getState().fetchPosts;
@@ -57,5 +63,16 @@ async({store, req, res, ...etc}) => {
     }
 );
 
-export default connect(state => state)(Index);
+const mapStateToProps = (state, ownProps) => {
+    console.log("MAPSTATETOPROPS")
+    console.log(state)
+    return {
+        fetchPosts: {
+            posts: state.fetchPosts.posts,
+            hasMore: state.fetchPosts.hasMore
+        }
+    }
+}
+
+export default connect(mapStateToProps)(Index);
   

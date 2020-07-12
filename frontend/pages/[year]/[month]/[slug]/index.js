@@ -4,7 +4,7 @@ import Layout from '../../../../components/PostLayout/postLayout'
 import fetch from 'isomorphic-unfetch'
 import dateFormat from 'dateformat'
 import Error from 'next/error'
-import {timestamp2date} from '../../../../components/Functions/helpers'
+import {timestamp2date} from '../../../../components/utils/helpers'
 import config from '../../../../config'
 
 const Index = props => {

@@ -118,7 +118,7 @@ function PostsContainer({fetchPosts, dispatch, buildState }) {
     }, [minID]);
     return (
         <>
-            <Page posts={fetchPosts}/>
+            <Page posts={fetchPosts.posts}/>
             {/*
             {children.map((post, i) => (
                 // Without the `key`, React will fire a key warning
@@ -129,7 +129,9 @@ function PostsContainer({fetchPosts, dispatch, buildState }) {
             */}
             {console.log("COMPONENT GIVEN")}
             {console.log(fetchPosts)}
-            {!isLoading && success && !fetchPosts.loading 
+            {console.log("BUILD STATE")}
+            {console.log(buildState)}
+            {!fetchPosts.loading && fetchPosts.hasMore
                 && <Waypoint onEnter={() => loadMorePosts()} ></Waypoint>
             }
             {isLoading && minID == -1 ? 
@@ -164,7 +166,10 @@ const mapStateToProps = (state, ownProps) => {
     console.log("MAPSTATETOPROPS")
     console.log(state)
     return {
-        fetchPosts: state.fetchPosts.posts
+        fetchPosts: {
+            posts: state.fetchPosts.posts,
+            hasMore: state.fetchPosts.hasMore
+        }
     }
 }
 
