@@ -8,7 +8,7 @@ import { Skeleton } from '@material-ui/lab';
 import SCtheme from '../../../../assets/theme/SCtheme'
 import {StyledImageWrapper, StyledCard} from './postCardStyled'
 import FeatureImage from './featureImage'
-import {timestamp2date} from '../../../Functions/helpers'
+import {timestamp2date} from '../../../utils/helpers'
 
 export const PostCard = ({ post, skeleton }) => {
 
