@@ -16,6 +16,10 @@ export const fetchPostsFailure = error => ({
     payload: { error }
 });
 
+export const fetchPostsNoMore = () => ({
+    type: types.FETCH_POSTS_NO_MORE
+});
+
 export function fetchPosts() {
     console.log("IN FETCH POSTS ACTION");
     return (dispatch, getState) => {
@@ -32,7 +36,11 @@ export function fetchPosts() {
           .then(res => res.json())
           .then(json => {
             console.log(json);
-            dispatch(fetchPostsSuccess(json));
+            if(json.success && json.data.length === 0) {
+                dispatch(fetchPostsNoMore());
+            } else {
+                dispatch(fetchPostsSuccess(json));
+            }
             return json;
           })
           .catch(error => dispatch(fetchPostsFailure(error)));
@@ -44,5 +52,6 @@ function handleErrors(response) {
     if (!response.ok) {
         throw Error(response.statusText);
     }
+    console.log("REPSONSE OK!");
     return response;
 }
