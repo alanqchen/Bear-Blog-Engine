@@ -1,6 +1,7 @@
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import React, { useEffect, useState } from 'react';
-import {AppBar, Toolbar, IconButton, Typography, Link, Slide, ClickAwayListener} from '@material-ui/core'
+import {AppBar, Toolbar, IconButton, Typography, Slide, ClickAwayListener} from '@material-ui/core'
+import Link from 'next/link';
 import Hamburger from 'hamburger-react'
 import { 
     CategoriesWrapper,
@@ -42,16 +43,18 @@ function NavBar({props, atTop, className}) {
                 <AppBar color={atTop ? 'transparent' : 'primary'} className={className}>
                     <Toolbar>
                         <Typography variant="h6">
-                            <HeaderLink href="/" color="textPrimary">
-                                {config.blogName}
-                            </HeaderLink>
+                            <Link href="/" passHref>
+                                <HeaderLink>{config.blogName}</HeaderLink>
+                            </Link>
                         </Typography>
                         <CategoriesWrapper>
                             <NavLinks>
                             {config.categories.map((category, i) => (
                                 <NavLink key={i}>
                                     <Typography variant="h6" color="textPrimary">
-                                        <Link href={config.categoryLinks[i]} color="textPrimary">{category}</Link>
+                                        <Link href={config.categoryLinks[i]} passHref>
+                                            <a>{category}</a>
+                                        </Link>
                                     </Typography>
                                 </NavLink>
                             ))}
@@ -70,14 +73,18 @@ function NavBar({props, atTop, className}) {
                         {config.categories.map((category, i) => (
                             <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: i * 0.02 + "s"} : null } primary>
                                 <Typography variant="h6" color="textPrimary">
-                                    <Link href={config.categoryLinks[i]} color="textPrimary">{category}</Link>
+                                    <Link href={config.categoryLinks[i]} passHref>
+                                        <a>{category}</a>
+                                    </Link>
                                 </Typography>
                             </SideMenuNavLinkItem>
                         ))}
                         {config.secondaryCategories.map((secondaryCategory, i) => (
                             <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: i * 0.02 + "s"} : null }>
                                 <Typography variant="h6" color="textPrimary">
-                                    <Link href={config.secondaryLinks[i]} color="textPrimary">{secondaryCategory}</Link>
+                                    <Link href={config.secondaryLinks[i]} passHref>
+                                        <a>{secondaryCategory}</a>
+                                    </Link>
                                 </Typography>
                             </SideMenuNavLinkItem>
                         ))}
