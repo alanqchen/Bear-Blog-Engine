@@ -1,9 +1,10 @@
 import Header from '../Header/header'
 import React, { useEffect, useState } from 'react';
-import {AppBar, Toolbar, IconButton, Typography, Hidden, CssBaseline} from '@material-ui/core'
-import SCtheme from '../../assets/theme/SCtheme'
+import {AppBar, Toolbar, IconButton, Typography, Hidden, CssBaseline} from '@material-ui/core';
+import SCtheme from '../../assets/theme/SCtheme';
 import { Waypoint } from 'react-waypoint';
-import { StyledCenteredContainer, StyledNavBar } from './publicLayoutStyled'
+import { StyledCenteredContainer } from './publicLayoutStyled';
+import { StyledNavBar } from '../PublicNavBar/NavBarStyled';
 
 const publicLayoutStyle = {
     marginTop: 20,
@@ -35,7 +36,7 @@ function publicLayout({children}) {
         if(!isInitialLoad && !everEnter) {
             setAtTop(false);
         }
-    }, [atTop, isInitialLoad, everEnter])
+    }, [atTop, isInitialLoad, everEnter]);
 
     return (
 

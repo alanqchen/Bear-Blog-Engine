@@ -13,7 +13,7 @@ import {
     SideMenuNavigation,
     SideMenuNavLinks,
     SideMenuNavLinkItem
-} from './NavBarStyled'
+} from './NavBarStyledBase'
 import config from '../../config.json'
 import GlobalTheme from '../Theme/theme'
 

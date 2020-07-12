@@ -107,9 +107,17 @@ export const SideMenuNavLinks = styled.ul`
         transform: translate3d(0, 30px, 0);
     }
 
+    & li a {
+        display: block;
+        width: 100%;
+        border-bottom: 1pt solid #404040;
+        transition: color 130ms linear;
+    }
+
     & li a:hover {
         cursor: pointer;
         text-decoration: none !important;
+        color: ${GlobalStyle.textSecondary};
     }
 `;
 
