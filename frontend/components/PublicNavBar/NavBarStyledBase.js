@@ -1,5 +1,6 @@
 import styled, { keyframes } from 'styled-components';
-import { Typography, Link } from '@material-ui/core'
+import { Typography } from '@material-ui/core'
+import Link from 'next/link';
 import SearchIcon from '@material-ui/icons/Search';
 import GlobalStyle from '../Theme/theme'
 import config from '../../config.json';
@@ -13,7 +14,10 @@ export const Category = styled(Typography)`
     margin-left: 16px;
 `;
 
-export const HeaderLink = styled(Link)`
+export const HeaderLink = styled.a`
+    text-decoration: none;
+    color: ${GlobalStyle.textPrimary};
+
     &:hover {
         cursor: pointer;
         text-decoration: none !important;
@@ -109,6 +113,8 @@ export const SideMenuNavLinks = styled.ul`
 
     & li a {
         display: block;
+        text-decoration: none;
+        color: ${GlobalStyle.textPrimary};
         width: 100%;
         border-bottom: 1pt solid #404040;
         transition: color 130ms linear;
@@ -155,6 +161,8 @@ export const NavLinks = styled.ul`
     & li a {
         position: relative;
         display: block;
+        text-decoration: none;
+        color: ${GlobalStyle.textPrimary};
         line-height: 1.4;
         transition: opacity 0.6s linear;
         font-weight: 300 !important;
