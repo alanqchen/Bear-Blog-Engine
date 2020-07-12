@@ -131,31 +131,31 @@ function PostsContainer({fetchPosts, dispatch, buildState }) {
             */}
             {console.log("LOADING?")}
             {console.log(fetchPosts.loading)}
-            {console.log("minID")}
-            {console.log(fetchPosts.minID)}
-            {!fetchPosts.loading && fetchPosts.hasMore
+            {console.log("CONDITION?")}
+            {console.log(!fetchPosts.loading && fetchPosts.error === null && fetchPosts.hasMore)}
+            {!fetchPosts.loading && fetchPosts.error === null && fetchPosts.hasMore
                 && <Waypoint onEnter={() => loadMorePosts()} ></Waypoint>
             }
-            {fetchPosts.loading && fetchPosts.minID === -1 ? 
+            {isHydrate && fetchPosts.error === null && fetchPosts.posts.length === 0 ? 
                 <>
                     <PostCard post={null} skeleton={true} />
                     <PostCard post={null} skeleton={true} />
                 </>
-            : isLoading &&
+            : fetchPosts.loading &&
                 <PostCard post={null} skeleton={true} />
             }
-            {done &&
+            {!fetchPosts.hasMore &&
                 <Typography align="center" fontWeight="fontWeightLight" variant="subtitle1" color="textSecondary" component="h1">
                     No more posts to show!
                 </Typography>
             }
-            {!isLoading && !success && !done && 
+            {!fetchPosts.loading && fetchPosts.error !== null && fetchPosts.hasMore && 
                 <>
                     <CloudOffIcon fontSize="large" />
                     <Typography align="center" fontWeight="fontWeightLight" variant="h6" color="textPrimary" component="h6">
                         Oops! Something went wrong. Check your internet connection and try again.
                     </Typography>
-                    <WaveButton variant="contained" color="primary" onClick={() => {retryLoad()}}>
+                    <WaveButton variant="contained" color="primary" onClick={() => {loadMorePosts()}}>
                         Try Again
                     </WaveButton>
                 </>
@@ -172,7 +172,8 @@ const mapStateToProps = (state, ownProps) => {
             posts: state.fetchPosts.posts,
             loading: state.fetchPosts.loading,
             minID: state.fetchPosts.minID,
-            hasMore: state.fetchPosts.hasMore
+            hasMore: state.fetchPosts.hasMore,
+            error: state.fetchPosts.error
         }
     }
 }

@@ -25,7 +25,7 @@ const reducer = (state, action) => {
                 console.log(action.payload.page);
                 delete action.payload.page;
             }
-            if(state.fetchPosts.posts === []) {
+            if(state.fetchPosts.posts.length === 0) {
                 return {
                     ...action.payload, // HYDRATION DATA
                 };

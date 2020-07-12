@@ -23,7 +23,7 @@ async({store, req, res, ...etc}) => {
         console.log("START FETCH DISPATCH");
         console.log("STATE BEFORE DISPATCH");
         console.log(store.getState());
-        if(store.getState().fetchPosts.posts === []) {
+        if(store.getState().fetchPosts.posts.length === 0) {
             await store.dispatch(fetchPosts());
         } else {
             console.log("SKIPPED DISPATCH")
@@ -49,6 +49,7 @@ const mapStateToProps = (state, ownProps) => {
     return {
         fetchPosts: {
             posts: state.fetchPosts.posts,
+            minID: state.fetchPosts.minID,
             hasMore: state.fetchPosts.hasMore
         }
     }
