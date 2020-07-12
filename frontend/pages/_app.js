@@ -1,4 +1,5 @@
 import { Provider as ReduxProvider } from 'react-redux';
+import NextApp from 'next/app'
 import { wrapper } from '../redux/store';
 import Head from 'next/head';
 import React from 'react';

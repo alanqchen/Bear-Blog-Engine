@@ -13,7 +13,7 @@ import {timestamp2date} from '../../../utils/helpers'
 export const PostCard = ({ post, skeleton }) => {
 
     return(
-        <StyledCard variant="outlined">
+        <StyledCard variant="outlined" skeleton={skeleton}>
             <CardContent>
                 {skeleton
                     ? <FeatureImage featureImgUrl={null} tags={null} skeleton={true}/>

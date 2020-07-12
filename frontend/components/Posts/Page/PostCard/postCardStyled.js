@@ -5,7 +5,11 @@ import GlobalTheme from '../../../Theme/theme'
 import SCtheme from '../../../../assets/theme/SCtheme'
 
 export const StyledCard = styled(Card)`
-    width: 100%;
+    ${({ skeleton = false }) => skeleton ? `
+        width: 97%;
+    ` : `
+        width: 100%;
+    `}
     max-width: 800px;
     margin-bottom: 20px;
     background-color: ${SCtheme.backgroundDarkAlt};
