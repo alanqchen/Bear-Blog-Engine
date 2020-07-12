@@ -13,16 +13,18 @@ const Index = props => (
   <Layout> 
       {console.log("Given")}
       {console.log(props)}
-      <PostsContainer buildState={props}></PostsContainer>
+      {/*<PostsContainer buildState={props}></PostsContainer>*/}
+      <PostsContainer />
   </Layout>
         
 );
 
+/*
 export const getServerSideProps = wrapper.getServerSideProps(
-async({store, req, res, ...etc}) => {
+    async({store, req, res, ...etc}) => {
         console.log("START FETCH DISPATCH");
         console.log("STATE BEFORE DISPATCH");
-        console.log(store.getState());
+        console.log(store.getState())
         if(store.getState().fetchPosts.posts.length === 0) {
             await store.dispatch(fetchPosts());
         } else {
@@ -41,8 +43,8 @@ async({store, req, res, ...etc}) => {
         }
     }
 );
-
-
+*/
+/*
 const mapStateToProps = (state, ownProps) => {
     console.log("MAPSTATETOPROPS")
     console.log(state)
@@ -56,5 +58,5 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 export default connect(mapStateToProps)(Index);
-
-//export default Index;
+*/
+export default Index;

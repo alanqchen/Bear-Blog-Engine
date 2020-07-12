@@ -12,5 +12,4 @@ export const CenteredContainer = ({className, children}) => {
 export const StyledCenteredContainer = styled(CenteredContainer)`
     display: flex;
     flex-direction: column;
-    align-items: center;
 `;

@@ -1,60 +1,50 @@
-import Header from '../Header/header'
-import styled from 'styled-components';
-import useScrollTrigger from '@material-ui/core/useScrollTrigger';
-import Slide from '@material-ui/core/Slide';
-import {AppBar, Toolbar, IconButton, Typography, Hidden, CssBaseline} from '@material-ui/core'
+import Header from '../Header/header';
+import React, { useEffect, useState } from 'react';
+import { Waypoint } from 'react-waypoint';
+import { StyledNavBar } from '../PublicNavBar/NavBarStyled';
+import { StyledCenteredContainer } from './postLayoutSyled';
 
 const postLayoutStyle = {
-  marginTop: 20,
-  marginBottom: 20,
+    marginTop: 20,
+    marginBottom: 20,
 };
 
-function HideOnScroll(props) {
-  const { children } = props;
-  const trigger = useScrollTrigger();
-  return (
-    <Slide appear={false} direction="down" in={!trigger}>
-      {children}
-    </Slide>
-  );
-}
-  
-const NavBar = (props) => {
-  return (
-    <>
-      <CssBaseline />
-      <HideOnScroll {...props}>
-        <AppBar>
-          <Toolbar>
-            <Typography variant="h6">Bear Post Blog</Typography>
-          </Toolbar>
-        </AppBar>
-      </HideOnScroll>
-      <Toolbar/>
-    </>
-  );
-}
+function postLayout({children}) {
+    // These hooks and useEffect is for the edge case where the user
+    //   refreshes or goes back to the post page. In that case, the
+    //   navbar has to detect that it needs to change the background color
+    //   without the use of the waypoint.
+    const [atTop, setAtTop] = useState(true);
+    const [everEnter, setEverEnter] = useState(false);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-const CenteredContainer = ({className, children}) => {
-  return (
-    <div className={className}>
-      {children}
-    </div>
-  );
-  
-}
+    const waypointEnter = () => {
+        setEverEnter(true);
+        setAtTop(true);
+    }
+    
+    const waypointLeave = () => {
+        setAtTop(false);
+    }
 
-const StyledCenteredContainer = styled(CenteredContainer)`
-  display: flex;
-  flex-direction: column;
-`
-const postLayout = (props) => (
-  <div style={postLayoutStyle}>
-    <NavBar></NavBar>
-    <StyledCenteredContainer>
-      {props.children}
-    </StyledCenteredContainer>
-  </div>
-);
+    useEffect(() => { 
+        if(isInitialLoad) {
+            setIsInitialLoad(false);
+        }
+        if(!isInitialLoad && !everEnter) {
+            setAtTop(false);
+        }
+    }, [atTop, isInitialLoad, everEnter]);
+
+    return (
+        <div style={postLayoutStyle}>
+            <StyledNavBar atTop={atTop} />
+            <Waypoint onEnter={waypointEnter} onLeave={waypointLeave} />
+            <StyledCenteredContainer>
+                {children}
+            </StyledCenteredContainer>
+        </div>
+    );
+};
 
 export default postLayout;
