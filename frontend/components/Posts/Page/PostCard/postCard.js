@@ -1,14 +1,9 @@
-import styled from 'styled-components';
-import { makeStyles } from '@material-ui/core/styles';
-import React from 'react';
-import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import { Skeleton } from '@material-ui/lab';
-import SCtheme from '../../../../assets/theme/SCtheme'
-import {StyledImageWrapper, StyledCard} from './postCardStyled'
-import FeatureImage from './featureImage'
-import {timestamp2date} from '../../../utils/helpers'
+import { StyledCard } from './postCardStyled';
+import FeatureImage from './featureImage';
+import { timestamp2date } from '../../../utils/helpers';
 
 export const PostCard = ({ post, skeleton }) => {
 
@@ -42,4 +37,4 @@ export const PostCard = ({ post, skeleton }) => {
     )
 }
 
-export default PostCard
+export default PostCard;

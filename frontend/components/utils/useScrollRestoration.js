@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-
 import Router from 'next/router';
 
 function saveScrollPos(url) {

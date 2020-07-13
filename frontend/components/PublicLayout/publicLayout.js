@@ -1,7 +1,4 @@
-import Header from '../Header/header'
 import React, { useEffect, useState } from 'react';
-import {AppBar, Toolbar, IconButton, Typography, Hidden, CssBaseline} from '@material-ui/core';
-import SCtheme from '../../assets/theme/SCtheme';
 import { Waypoint } from 'react-waypoint';
 import { StyledCenteredContainer } from './publicLayoutStyled';
 import { StyledNavBar } from '../PublicNavBar/NavBarStyled';

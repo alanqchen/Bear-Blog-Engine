@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { Card, Chip } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
-import GlobalTheme from '../../../Theme/theme'
-import SCtheme from '../../../../assets/theme/SCtheme'
+import GlobalTheme from '../../../Theme/theme';
+import SCtheme from '../../../../assets/theme/SCtheme';
 
 export const StyledCard = styled(Card).withConfig({
         shouldForwardProp: prop => prop !== "skeleton"

@@ -1,9 +1,15 @@
-import fetch from 'isomorphic-unfetch'
-import React, {useState, useEffect} from 'react';
-import styled from 'styled-components'
+import React, { useState } from 'react';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import {StyledImage, StyledImageWrapper, FeatureImageWrapper, StyledLinearProgressWrapper, TagsWrapper, StyledChip, ImageSkeleton} from './postCardStyled'
-import config from '../../../../config'
+import { 
+    StyledImage, 
+    StyledImageWrapper,
+    FeatureImageWrapper,
+    StyledLinearProgressWrapper,
+    TagsWrapper,
+    StyledChip,
+    ImageSkeleton
+} from './postCardStyled';
+import config from '../../../../config';
 import { Skeleton } from '@material-ui/lab';
 
 function FeatureImage({featureImgUrl, tags, skeleton}) {
@@ -14,7 +20,7 @@ function FeatureImage({featureImgUrl, tags, skeleton}) {
         <FeatureImageWrapper>
             {!skeleton && loading 
                 &&  <>
-                        {/*<StyledLinearProgressWrapper><LinearProgress /></StyledLinearProgressWrapper>*/}
+                        <StyledLinearProgressWrapper><LinearProgress /></StyledLinearProgressWrapper>
                         <ImageSkeleton variant="rect" width="100%" height="300px" />
                     </>
             }
