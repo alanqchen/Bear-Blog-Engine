@@ -7,22 +7,12 @@ const combinedReducers = combineReducers({
 });
 
 const reducer = (state, action) => {
-    console.log("IN ROOT REDUCER");
-    console.log(action.type);
     switch (action.type) {
         case HYDRATE:
-            console.log("action payload");
-            console.log(action.payload);
-            console.log("root reducer state");
-            console.log(state);
             if (action.payload.app === 'init') {
-                console.log("DELETE APP");
-                console.log(action.payload.app);
                 delete action.payload.app;
             }
             if (action.payload.page === 'init') {
-                console.log("DELETE PAGE");
-                console.log(action.payload.page);
                 delete action.payload.page;
             }
             if(state.fetchPosts.posts.length === 0) {
@@ -39,11 +29,6 @@ const reducer = (state, action) => {
         case 'PAGE':
             return {...state, page: action.payload};
         default:
-            console.log("COMBINE REDUCERS");
-            console.log("action payload");
-            console.log(action.payload);
-            console.log("root reducer state");
-            console.log(state);
             return combinedReducers(state, action);
     }
 }

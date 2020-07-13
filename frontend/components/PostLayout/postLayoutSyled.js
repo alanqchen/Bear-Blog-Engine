@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import GlobalTheme from '../Theme/theme'
 
 export const CenteredContainer = ({className, children}) => {
     return (

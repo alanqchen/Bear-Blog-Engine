@@ -21,9 +21,7 @@ export const fetchPostsNoMore = () => ({
 });
 
 export function fetchPosts() {
-    console.log("IN FETCH POSTS ACTION");
     return (dispatch, getState) => {
-        console.log(getState().fetchPosts.minID);
         const jsonBody = {
             maxID: getState().fetchPosts.minID
         };
@@ -35,7 +33,6 @@ export function fetchPosts() {
           .then(handleErrors)
           .then(res => res.json())
           .then(json => {
-            console.log(json);
             if(json.success && json.data.length === 0) {
                 dispatch(fetchPostsNoMore());
             } else {
@@ -52,6 +49,5 @@ function handleErrors(response) {
     if (!response.ok) {
         throw Error(response.statusText);
     }
-    console.log("REPSONSE OK!");
     return response;
 }

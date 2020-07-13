@@ -1,4 +1,3 @@
-import Header from '../Header/header';
 import React, { useEffect, useState } from 'react';
 import { Waypoint } from 'react-waypoint';
 import { StyledNavBar } from '../PublicNavBar/NavBarStyled';

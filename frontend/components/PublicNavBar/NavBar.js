@@ -1,8 +1,8 @@
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import React, { useEffect, useState } from 'react';
-import {AppBar, Toolbar, IconButton, Typography, Slide, ClickAwayListener} from '@material-ui/core'
+import { AppBar, Toolbar, Typography, Slide } from '@material-ui/core'
 import Link from 'next/link';
-import Hamburger from 'hamburger-react'
+import Hamburger from 'hamburger-react';
 import { 
     CategoriesWrapper,
     HeaderLink,

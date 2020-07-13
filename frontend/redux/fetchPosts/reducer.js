@@ -9,7 +9,6 @@ const initialFetchPostsState = {
 };
 
 export default function fetchPostsReducer( state = initialFetchPostsState, action) {
-    console.log("IN FETCH POSTS REDUCER");
     switch(action.type) {
         case fetchPostsTypes.FETCH_POSTS_BEGIN:
             return {
@@ -19,8 +18,6 @@ export default function fetchPostsReducer( state = initialFetchPostsState, actio
             };
 
         case fetchPostsTypes.FETCH_POSTS_SUCCESS:
-            console.log("SUCCESS TYPE");
-            console.log([...state.posts, ...action.payload.response.data]);
             return {
                 ...state,
                 loading: false,
