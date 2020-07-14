@@ -23,5 +23,44 @@
         "/",
         "/"
     ],
-    "navMinWidth": "1000px"
+    "numPrimaryLinks": 3,
+    "tempcategories": [
+        {
+            "name": "category1",
+            "link": "/",
+            "external": false,
+            "primary": true
+        },
+        {
+            "name": "category2",
+            "link": "https://google.com",
+            "external": true,
+            "primary": true
+        },
+        {
+            "name": "category3",
+            "link": "/",
+            "external": false,
+            "primary": true
+        },
+        {
+            "name": "category4",
+            "link": "/",
+            "external": false,
+            "primary": false
+        },
+        {
+            "name": "github",
+            "link": "https://github.com",
+            "external": true,
+            "primary": false
+        },
+        {
+            "name": "about",
+            "link": "https://aqchen.com",
+            "external": true,
+            "primary": false
+        }
+    ],
+    "navMinWidth": "850px"
 }

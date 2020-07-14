@@ -1,6 +1,5 @@
 import styled, { keyframes } from 'styled-components';
-import { Typography } from '@material-ui/core'
-import Link from 'next/link';
+import { Typography, Link } from '@material-ui/core'
 import SearchIcon from '@material-ui/icons/Search';
 import GlobalStyle from '../Theme/theme'
 import config from '../../config.json';
@@ -15,6 +14,16 @@ export const Category = styled(Typography)`
 `;
 
 export const HeaderLink = styled.a`
+    text-decoration: none;
+    color: ${GlobalStyle.textPrimary};
+
+    &:hover {
+        cursor: pointer;
+        text-decoration: none !important;
+    }
+`;
+
+export const MUILink = styled(Link)`
     text-decoration: none;
     color: ${GlobalStyle.textPrimary};
 
