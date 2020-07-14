@@ -1,11 +1,12 @@
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, Typography, Slide } from '@material-ui/core'
+import { AppBar, Toolbar, Typography, Slide } from '@material-ui/core';
 import Link from 'next/link';
 import Hamburger from 'hamburger-react';
 import { 
     CategoriesWrapper,
     HeaderLink,
+    MUILink,
     NavLinks,
     NavLink,
     SearchIconStyled,
@@ -14,9 +15,10 @@ import {
     SideMenuNavigation,
     SideMenuNavLinks,
     SideMenuNavLinkItem
-} from './NavBarStyledBase'
-import config from '../../config.json'
-import GlobalTheme from '../Theme/theme'
+} from './NavBarStyledBase';
+import { useMediaQuery } from 'react-responsive';
+import config from '../../config.json';
+import GlobalTheme from '../Theme/theme';
 
 function HideOnScroll(props) {
     const { children } = props;
@@ -32,7 +34,8 @@ function NavBar({props, atTop, className}) {
 
     const [isActive, setIsActive] = useState(false);
     const trigger = useScrollTrigger();
-    
+    const isWideScreen = useMediaQuery({ query: '(min-width: '+ config.navMinWidth });
+
     useEffect(() => {
         setIsActive(isActive && trigger ? false : isActive);
     }, [trigger]);
@@ -49,12 +52,21 @@ function NavBar({props, atTop, className}) {
                         </Typography>
                         <CategoriesWrapper>
                             <NavLinks>
-                            {config.categories.map((category, i) => (
+                            {config.tempcategories.map((category, i) => (
+                                category.primary && !category.external ? 
                                 <NavLink key={i}>
                                     <Typography variant="h6" color="textPrimary">
-                                        <Link href={config.categoryLinks[i]} passHref>
-                                            <a>{category}</a>
+                                        <Link href={category.link} passHref>
+                                            <a>{category.name}</a>
                                         </Link>
+                                    </Typography>
+                                </NavLink>
+                                : category.primary &&
+                                <NavLink key={i}>
+                                    <Typography variant="h6" color="textPrimary">
+                                        <MUILink href={category.link} color="textPrimary">
+                                            {category.name}
+                                        </MUILink>
                                     </Typography>
                                 </NavLink>
                             ))}
@@ -70,23 +82,41 @@ function NavBar({props, atTop, className}) {
 
                     <SideMenuNavigation>
                         <SideMenuNavLinks>
-                        {config.categories.map((category, i) => (
-                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: i * 0.02 + "s"} : null } primary>
+                        {isWideScreen ? config.tempcategories.map((category, i) => (
+                            !category.primary && !category.external ?
+                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: (i-config.numPrimaryLinks) * 0.02 + "s"} : null }>
                                 <Typography variant="h6" color="textPrimary">
-                                    <Link href={config.categoryLinks[i]} passHref>
-                                        <a>{category}</a>
+                                    <Link href={category.link} passHref>
+                                        <a>{category.name}</a>
                                     </Link>
                                 </Typography>
                             </SideMenuNavLinkItem>
-                        ))}
-                        {config.secondaryCategories.map((secondaryCategory, i) => (
+                            : !category.primary &&
+                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: (i-config.numPrimaryLinks) * 0.02 + "s"} : null }>
+                                <Typography variant="h6" color="textPrimary">
+                                    <MUILink href={category.link} passHref>
+                                        {category.name}
+                                    </MUILink>
+                                </Typography>
+                            </SideMenuNavLinkItem>    
+                        )) : config.tempcategories.map((category, i) => (
+                            !category.external ?
                             <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: i * 0.02 + "s"} : null }>
                                 <Typography variant="h6" color="textPrimary">
-                                    <Link href={config.secondaryLinks[i]} passHref>
-                                        <a>{secondaryCategory}</a>
+                                    <Link href={category.link} passHref>
+                                        <a>{category.name}</a>
                                     </Link>
                                 </Typography>
                             </SideMenuNavLinkItem>
+                            :
+                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: i * 0.02 + "s"} : null }>
+                                <Typography variant="h6" color="textPrimary">
+                                    <MUILink href={category.link} passHref>
+                                        {category.name}
+                                    </MUILink>
+                                </Typography>
+                            </SideMenuNavLinkItem>    
+                            
                         ))}
                         </SideMenuNavLinks>
                     </SideMenuNavigation>
