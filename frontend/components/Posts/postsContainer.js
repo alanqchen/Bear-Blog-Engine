@@ -23,8 +23,10 @@ width: 95%;
 max-width: 800px;
 `
 
-function PostsContainer({fetchPosts, dispatch, category }) {
+function PostsContainer({fetchPosts, fetchCategory, dispatch, category }) {
 
+    let fetchType = category === "" ? fetchPosts : fetchCategory;
+    console.log(fetchType);
     const loadMorePosts = async() => {
         if(category === "") {
             await dispatch(fetchPostsAction());
@@ -35,25 +37,25 @@ function PostsContainer({fetchPosts, dispatch, category }) {
 
     return (
         <>
-            <Page posts={fetchPosts.posts}/>
+            <Page posts={fetchType.posts}/>
 
-            {!fetchPosts.loading && fetchPosts.error === null && fetchPosts.hasMore
+            {!fetchType.loading && fetchType.error === null && fetchType.hasMore
                 && <Waypoint onEnter={() => loadMorePosts()} ></Waypoint>
             }
-            {fetchPosts.error === null && fetchPosts.posts.length === 0 ? 
+            {fetchType.error === null && fetchType.posts.length === 0 ? 
                 <>
                     <PostCard post={null} skeleton={true} />
                     <PostCard post={null} skeleton={true} />
                 </>
-            : fetchPosts.loading &&
+            : fetchType.loading &&
                 <PostCard post={null} skeleton={true} />
             }
-            {!fetchPosts.hasMore &&
+            {!fetchType.hasMore &&
                 <Typography align="center" fontWeight="fontWeightLight" variant="subtitle1" color="textSecondary" component="h1">
                     No more posts to show!
                 </Typography>
             }
-            {!fetchPosts.loading && fetchPosts.error !== null && fetchPosts.hasMore && 
+            {!fetchType.loading && fetchType.error !== null && fetchType.hasMore && 
                 <>
                     <CloudOffIcon fontSize="large" />
                     <Typography align="center" fontWeight="fontWeightLight" variant="h6" color="textPrimary" component="h6">
@@ -76,6 +78,14 @@ const mapStateToProps = (state, ownProps) => {
             minID: state.fetchPosts.minID,
             hasMore: state.fetchPosts.hasMore,
             error: state.fetchPosts.error
+        },
+        fetchCategory: {
+            posts: state.fetchCategory.posts,
+            loading: state.fetchCategory.loading,
+            minID: state.fetchCategory.minID,
+            hasMore: state.fetchCategory.hasMore,
+            error: state.fetchCategory.error,
+            category: state.fetchCategory.category
         }
     }
 }

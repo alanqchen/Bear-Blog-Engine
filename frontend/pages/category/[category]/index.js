@@ -7,6 +7,7 @@ const Index = () => {
     const { category } = router.query;
     return (
         <Layout> 
+            <h1>Category: {category}</h1>
             <PostsContainer category={category}/>
         </Layout>
     );

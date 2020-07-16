@@ -66,6 +66,11 @@ export const StyledChip = styled(Chip)`
                 0px 2px 2px 0px rgba(0,0,0,0.14),
                 0px 1px 5px 0px rgba(0,0,0,0.12);
     background-color: ${GlobalTheme.backgroundAlt1} !important;
+
+    &:hover {
+        background-color: ${GlobalTheme.backgroundAlt2} !important;
+    }
+
 `;
 
 export const ImageSkeleton = styled(Skeleton)`

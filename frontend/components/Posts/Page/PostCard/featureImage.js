@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { 
     StyledImage, 
@@ -15,7 +16,7 @@ import { Skeleton } from '@material-ui/lab';
 function FeatureImage({featureImgUrl, tags, skeleton}) {
 
     const [loading, setLoading] = useState(true);
-
+    
     return (
         <FeatureImageWrapper>
             {!skeleton && loading 
@@ -25,9 +26,15 @@ function FeatureImage({featureImgUrl, tags, skeleton}) {
                     </>
             }
             <TagsWrapper>
-            {!skeleton && tags.map((tag, i) => (
-                <StyledChip size="small" clickable label={tag} key={i}/>
-            ))}
+            {!skeleton && tags.map((tag, i) => {
+                let attr = {};
+                attr['href'] = "/category/" + tag;
+                return (
+                    <Link key={i} {...attr} passHref>
+                        <StyledChip size="small" clickable label={tag}/>
+                    </Link>
+                );
+            })}
             </TagsWrapper>
             <StyledImageWrapper>
                 {skeleton ? <Skeleton variant="rect" width="100%" height="300px"/>

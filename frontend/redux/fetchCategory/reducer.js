@@ -23,7 +23,7 @@ export default function fetchCategoryReducer( state = initialFetchCategoryState,
             return {
                 ...state,
                 loading: false,
-                posts: [...state.Category, ...action.payload.response.data],
+                posts: [...state.posts, ...action.payload.response.data],
                 minID: action.payload.response.pagination.minID.toString(),
                 error: null,
                 hasMore: action.hasMore,
