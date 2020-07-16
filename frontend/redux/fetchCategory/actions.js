@@ -40,6 +40,8 @@ export function fetchCategory(category) {
             if(json.success && json.data.length === 0) {
                 dispatch(fetchCategoryNoMore(category));
             } else {
+                console.log("Dispatching success...");
+                console.log(json);
                 dispatch(fetchCategorySuccess(json, category));
             }
             return json;

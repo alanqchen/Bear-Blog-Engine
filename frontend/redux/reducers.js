@@ -18,10 +18,12 @@ const reducer = (state, action) => {
                 delete action.payload.page;
             }
             if(state.fetchPosts.posts.length === 0) {
+                console.log("Using hydration data");
                 return {
                     ...action.payload, // HYDRATION DATA
                 };
             } else {
+                console.log("Using client state");
                 return {
                     ...state, // INITIALLY [], PREV CLIENT STATE
                 }
@@ -29,8 +31,10 @@ const reducer = (state, action) => {
         case 'APP':
             return {...state, app: action.payload};
         case 'PAGE':
+            console.log("PAGE");
             return {...state, page: action.payload};
         default:
+            console.log("COMBINED");
             return combinedReducers(state, action);
     }
 }
