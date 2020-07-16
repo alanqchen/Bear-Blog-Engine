@@ -1,5 +1,6 @@
 import {connect} from 'react-redux';
-import { fetchPosts as fetchPostsAction } from '../../redux/fetchPosts/actions'
+import { fetchPosts as fetchPostsAction } from '../../redux/fetchPosts/actions';
+import { fetchCategory as fetchCategoryAction } from '../../redux/fetchCategory/actions';
 import Page from '../Posts/Page/page'
 import { Waypoint } from 'react-waypoint';
 import styled from 'styled-components'
@@ -22,10 +23,14 @@ width: 95%;
 max-width: 800px;
 `
 
-function PostsContainer({fetchPosts, dispatch, buildState }) {
+function PostsContainer({fetchPosts, dispatch, category }) {
 
     const loadMorePosts = async() => {
-        await dispatch(fetchPostsAction());
+        if(category === "") {
+            await dispatch(fetchPostsAction());
+        } else {
+            await dispatch(fetchCategoryAction(category));
+        }
     };
 
     return (

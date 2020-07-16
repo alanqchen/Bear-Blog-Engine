@@ -84,7 +84,7 @@ function NavBar({props, atTop, className}) {
                         <SideMenuNavLinks>
                         {isWideScreen ? config.tempcategories.map((category, i) => (
                             !category.primary && !category.external ?
-                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: (i-config.numPrimaryLinks) * 0.02 + "s"} : null }>
+                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: (i-config.numPrimaryLinks) * 0.025 + "s"} : null }>
                                 <Typography variant="h6" color="textPrimary">
                                     <Link href={category.link} passHref>
                                         <a>{category.name}</a>
@@ -92,16 +92,16 @@ function NavBar({props, atTop, className}) {
                                 </Typography>
                             </SideMenuNavLinkItem>
                             : !category.primary &&
-                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: (i-config.numPrimaryLinks) * 0.02 + "s"} : null }>
+                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: (i-config.numPrimaryLinks) * 0.025 + "s"} : null }>
                                 <Typography variant="h6" color="textPrimary">
-                                    <MUILink href={category.link} passHref>
+                                    <MUILink href={category.link}>
                                         {category.name}
                                     </MUILink>
                                 </Typography>
                             </SideMenuNavLinkItem>    
                         )) : config.tempcategories.map((category, i) => (
                             !category.external ?
-                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: i * 0.02 + "s"} : null }>
+                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: i * 0.025 + "s"} : null }>
                                 <Typography variant="h6" color="textPrimary">
                                     <Link href={category.link} passHref>
                                         <a>{category.name}</a>
@@ -109,9 +109,9 @@ function NavBar({props, atTop, className}) {
                                 </Typography>
                             </SideMenuNavLinkItem>
                             :
-                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: i * 0.02 + "s"} : null }>
+                            <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: i * 0.025 + "s"} : null }>
                                 <Typography variant="h6" color="textPrimary">
-                                    <MUILink href={category.link} passHref>
+                                    <MUILink href={category.link}>
                                         {category.name}
                                     </MUILink>
                                 </Typography>
