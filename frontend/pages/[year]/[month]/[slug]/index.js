@@ -34,39 +34,39 @@ const Index = props => {
 
 export async function getServerSideProps(context) {
 
-  let res = await fetch(`${config.apiURL}/api/v1/posts/${context.params.year}/${context.params.month}/${context.params.slug}`);
-  const post = await res.json();
-  const errorCode = post.status > 200 ? post.status : false
+    let res = await fetch(`${config.apiURL}/api/v1/posts/${context.params.year}/${context.params.month}/${context.params.slug}`);
+    const post = await res.json();
+    const errorCode = post.status > 200 ? post.status : false;
 
-  if(errorCode) {
-    return {
-      props: {
-        errorCode: errorCode,
-        post: post
-      }
-    };
-  }
-  
-  let dateStr = post.data.createdAt;
-  dateStr = timestamp2date(dateStr)
-  
-  let resAuthor = await fetch(`${config.apiURL}/api/v1/users/${post.data.authorid}`);
-  const author = await resAuthor.json();
-  let authorName;
-  if(!author.success) {
-    authorName = "Unknown User";
-  } else {
-    authorName = author.data.name;
-  }
-
-  return {
-    props: {
-      errorCode: errorCode,
-      post: post,
-      dateF: dateStr,
-      author: authorName
+    if(errorCode) {
+        return {
+            props: {
+                errorCode: errorCode,
+                post: post
+            }
+        };
     }
-  };
+
+    let dateStr = post.data.createdAt;
+    dateStr = timestamp2date(dateStr)
+
+    let resAuthor = await fetch(`${config.apiURL}/api/v1/users/${post.data.authorid}`);
+    const author = await resAuthor.json();
+    let authorName;
+    if(!author.success) {
+        authorName = "Unknown User";
+    } else {
+        authorName = author.data.name;
+    }
+
+    return {
+        props: {
+            errorCode: errorCode,
+            post: post,
+            dateF: dateStr,
+            author: authorName
+        }
+    };
 };
 
 export default Index;

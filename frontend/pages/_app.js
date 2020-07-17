@@ -3,7 +3,6 @@ import NextApp from 'next/app'
 import { wrapper } from '../redux/store';
 import Head from 'next/head';
 import React from 'react';
-import GoogleFonts from "next-google-fonts";
 import '../assets/css/fonts.css';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { ThemeProvider as MUIThemeProvider } from '@material-ui/core/styles';
@@ -24,7 +23,6 @@ const App = ({Component, pageProps, router}) => {
 
     return (
         <React.Fragment>
-            <GoogleFonts href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
             <Head>
                 <title>Bear Post</title>
                 <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />

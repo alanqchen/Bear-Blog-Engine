@@ -14,6 +14,8 @@
     "babel-install": "^2.1.0",
     "core-js": "^3.6.5",
     "dateformat": "^3.0.3",
+    "email-validator": "^2.0.4",
+    "formik": "^2.1.5",
     "hamburger-react": "^2.1.1",
     "immutable": "^4.0.0-rc.12",
     "isomorphic-unfetch": "^3.0.0",
@@ -27,6 +29,7 @@
     "react-burger-menu": "^2.6.17",
     "react-dom": "^16.13.1",
     "react-lazyload": "^2.6.9",
+    "react-particles-js": "^3.2.1",
     "react-redux": "^7.2.0",
     "react-responsive": "^8.1.0",
     "react-waypoint": "^9.0.3",
@@ -34,7 +37,8 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "styled-components": "^5.1.1",
-    "uuid": "^7.0.3"
+    "uuid": "^7.0.3",
+    "yup": "^0.29.1"
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.10.7"
