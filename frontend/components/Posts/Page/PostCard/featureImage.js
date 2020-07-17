@@ -28,9 +28,9 @@ function FeatureImage({featureImgUrl, tags, skeleton}) {
             <TagsWrapper>
             {!skeleton && tags.map((tag, i) => {
                 let attr = {};
-                attr['href'] = "/category/" + tag;
+                attr['href'] = "category/" + tag;
                 return (
-                    <Link key={i} {...attr} passHref>
+                    <Link key={i} href="/category/[category]" as={`/category/${tag}`} passHref>
                         <StyledChip size="small" clickable label={tag}/>
                     </Link>
                 );

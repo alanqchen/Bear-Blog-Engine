@@ -1,7 +1,8 @@
 import {connect} from 'react-redux';
 import { fetchPosts as fetchPostsAction } from '../../redux/fetchPosts/actions';
 import { fetchCategory as fetchCategoryAction } from '../../redux/fetchCategory/actions';
-import Page from '../Posts/Page/page'
+import { fetchCategoryNew } from '../../redux/fetchCategory/actions';
+import Page from '../Posts/Page/page';
 import { Waypoint } from 'react-waypoint';
 import styled from 'styled-components'
 import PostCard from './Page/PostCard/postCard';
@@ -26,7 +27,7 @@ max-width: 800px;
 function PostsContainer({fetchPosts, fetchCategory, dispatch, category }) {
 
     let fetchType = category === "" ? fetchPosts : fetchCategory;
-    console.log(fetchType);
+
     const loadMorePosts = async() => {
         if(category === "") {
             await dispatch(fetchPostsAction());
@@ -37,12 +38,13 @@ function PostsContainer({fetchPosts, fetchCategory, dispatch, category }) {
 
     return (
         <>
+
             <Page posts={fetchType.posts}/>
 
             {!fetchType.loading && fetchType.error === null && fetchType.hasMore
                 && <Waypoint onEnter={() => loadMorePosts()} ></Waypoint>
             }
-            {fetchType.error === null && fetchType.posts.length === 0 ? 
+            {fetchType.error === null && fetchType.posts.length === 0 && fetchType.loading ? 
                 <>
                     <PostCard post={null} skeleton={true} />
                     <PostCard post={null} skeleton={true} />
