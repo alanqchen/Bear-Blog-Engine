@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { HYDRATE } from 'next-redux-wrapper'
+import { HYDRATE } from 'next-redux-wrapper';
 import fetchPosts from './fetchPosts/reducer';
 import fetchCategory from './fetchCategory/reducer';
 
@@ -17,13 +17,14 @@ const reducer = (state, action) => {
             if (action.payload.page === 'init') {
                 delete action.payload.page;
             }
-            if(state.fetchPosts.posts.length === 0) {
-                console.log("Using hydration data");
+            if(state.fetchCategory.lastCategory !== action.payload.fetchCategory.lastCategory) {
                 return {
                     ...action.payload, // HYDRATION DATA
+                    fetchPosts: {
+                        ...state.fetchPosts
+                    }
                 };
             } else {
-                console.log("Using client state");
                 return {
                     ...state, // INITIALLY [], PREV CLIENT STATE
                 }
@@ -31,10 +32,8 @@ const reducer = (state, action) => {
         case 'APP':
             return {...state, app: action.payload};
         case 'PAGE':
-            console.log("PAGE");
             return {...state, page: action.payload};
         default:
-            console.log("COMBINED");
             return combinedReducers(state, action);
     }
 }

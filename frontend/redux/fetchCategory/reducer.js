@@ -15,8 +15,7 @@ export default function fetchCategoryReducer( state = initialFetchCategoryState,
             return {
                 ...state,
                 loading: true,
-                error: null,
-                lastCategory: action.category
+                error: null
             };
 
         case fetchCategoryTypes.FETCH_CATEGORY_SUCCESS:
@@ -26,8 +25,7 @@ export default function fetchCategoryReducer( state = initialFetchCategoryState,
                 posts: [...state.posts, ...action.payload.response.data],
                 minID: action.payload.response.pagination.minID.toString(),
                 error: null,
-                hasMore: action.hasMore,
-                lastCategory: action.category
+                hasMore: action.hasMore
             };
 
         case fetchCategoryTypes.FETCH_CATEGORY_FAILURE:
@@ -35,8 +33,7 @@ export default function fetchCategoryReducer( state = initialFetchCategoryState,
                 ...state,
                 loading: false,
                 error: action.payload.error,
-                minID: state.minID,
-                lastCategory: action.category
+                minID: state.minID
             };
         
         case fetchCategoryTypes.FETCH_CATEGORY_NO_MORE:
@@ -45,6 +42,13 @@ export default function fetchCategoryReducer( state = initialFetchCategoryState,
                 loading: false,
                 hasMore: false
             };
+
+        case fetchCategoryTypes.FETCH_CATEGORY_NEW:
+            return {
+                ...state,
+                hasMore: true,
+                lastCategory: action.category
+            }
 
         default:
             return state;

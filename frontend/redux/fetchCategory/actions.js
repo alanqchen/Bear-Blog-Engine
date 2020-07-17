@@ -1,30 +1,39 @@
 import * as types from './types';
 import config from '../../config';
 
-export const fetchCategoryBegin = (category) => ({
+export const fetchCategoryBegin = () => ({
     type: types.FETCH_CATEGORY_BEGIN,
-    category: category
 });
 
-export const fetchCategorySuccess = (response, category) => ({
+export const fetchCategorySuccess = (response) => ({
     type: types.FETCH_CATEGORY_SUCCESS,
     payload: { response },
-    hasMore: response.data.length > 0,
-    category: category
+    hasMore: response.data.length > 0
 });
 
-export const fetchCategoryFailure = (error, category) => ({
+export const fetchCategoryFailure = (error) => ({
     type: types.FETCH_CATEGORY_FAILURE,
-    payload: { error },
-    category: category
+    payload: { error }
 });
 
 export const fetchCategoryNoMore = () => ({
     type: types.FETCH_CATEGORY_NO_MORE
 });
 
+export const fetchCategoryNew = (category) => ({
+    type: types.FETCH_CATEGORY_NEW,
+    category: category
+})
+
 export function fetchCategory(category) {
     return (dispatch, getState) => {
+        
+        const { fetchCategory } = getState();
+
+        if(fetchCategory.lastCategory !== category) {
+            dispatch(fetchCategoryNew(category));
+        }
+
         const jsonBody = {
             maxID: getState().fetchCategory.minID,
             tags: [category]
@@ -38,15 +47,13 @@ export function fetchCategory(category) {
           .then(res => res.json())
           .then(json => {
             if(json.success && json.data.length === 0) {
-                dispatch(fetchCategoryNoMore(category));
+                dispatch(fetchCategoryNoMore());
             } else {
-                console.log("Dispatching success...");
-                console.log(json);
-                dispatch(fetchCategorySuccess(json, category));
+                dispatch(fetchCategorySuccess(json));
             }
             return json;
           })
-          .catch(error => dispatch(fetchCategoryFailure(error, category)));
+          .catch(error => dispatch(fetchCategoryFailure(error)));
     };
 }
 

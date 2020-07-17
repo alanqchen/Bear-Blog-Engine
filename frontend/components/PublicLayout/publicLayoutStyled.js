@@ -13,3 +13,7 @@ export const StyledCenteredContainer = styled(CenteredContainer)`
     flex-direction: column;
     align-items: center;
 `;
+
+export const HeaderWrapper = styled.div`
+    margin-bottom: 10px;
+`;
