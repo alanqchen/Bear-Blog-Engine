@@ -44,12 +44,13 @@ func NewRouter(a *app.App) *mux.Router {
 	api := r.PathPrefix("/api/v1").Subrouter()
 
 	// Uploads
-	api.HandleFunc("/images/upload", middleware.Logger(middleware.RequireAuthentication(a, uploadController.UploadImage, true))).Methods(http.MethodPost)
-	api.HandleFunc("/videos/upload", middleware.Logger(middleware.RequireAuthentication(a, uploadController.UploadVideo, true))).Methods(http.MethodPost)
+	api.HandleFunc("/images/upload", middleware.Logger(middleware.RequireAuthentication(a, uploadController.UploadImage, false))).Methods(http.MethodPost)
+	api.HandleFunc("/videos/upload", middleware.Logger(middleware.RequireAuthentication(a, uploadController.UploadVideo, false))).Methods(http.MethodPost)
 	log.Println("Created media uploads route")
 	// Users
 	api.HandleFunc("/users", middleware.Logger(uc.GetAll)).Methods(http.MethodGet)
 	api.HandleFunc("/users", middleware.Logger(uc.Create)).Methods(http.MethodPost)
+	api.HandleFunc("/users/setup", middleware.Logger(uc.CreateFirstAdmin)).Methods(http.MethodPost)
 	api.HandleFunc("/users/{id}", middleware.Logger(uc.GetById)).Methods(http.MethodGet)
 	//api.HandleFunc("/users/{id}/posts", middleware.Logger(uc.FindPostsByUser)).Methods(http.MethodGet)
 	api.HandleFunc("/protected", middleware.Logger(middleware.RequireAuthentication(a, uc.Profile, false))).Methods(http.MethodGet)
@@ -58,12 +59,12 @@ func NewRouter(a *app.App) *mux.Router {
 	api.HandleFunc("/posts/get", middleware.Logger(pc.GetPage)).Methods(http.MethodPost)
 	api.HandleFunc("/posts/search", middleware.Logger(pc.Search)).Methods(http.MethodGet)
 	api.HandleFunc("/posts/{id:[0-9]+}", middleware.Logger(pc.GetById)).Methods(http.MethodGet)
-	api.HandleFunc("/posts/admin/{id:[0-9]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.GetByIdAdmin, true))).Methods(http.MethodGet)
-	api.HandleFunc("/posts/admin/{slug:[a-zA-Z0-9=\\-\\/]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.GetBySlugAdmin, true))).Methods(http.MethodGet)
+	api.HandleFunc("/posts/admin/{id:[0-9]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.GetByIdAdmin, false))).Methods(http.MethodGet)
+	api.HandleFunc("/posts/admin/{slug:[a-zA-Z0-9=\\-\\/]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.GetBySlugAdmin, false))).Methods(http.MethodGet)
 	api.HandleFunc("/posts/{slug:[a-zA-Z0-9=\\-\\/]+}", middleware.Logger(pc.GetBySlug)).Methods(http.MethodGet)
-	api.HandleFunc("/posts", middleware.Logger(middleware.RequireAuthentication(a, pc.Create, true))).Methods(http.MethodPost)
-	api.HandleFunc("/posts/{id:[0-9]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.Update, true))).Methods(http.MethodPut)
-	api.HandleFunc("/posts/delete/{id:[0-9]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.Delete, true))).Methods(http.MethodDelete)
+	api.HandleFunc("/posts", middleware.Logger(middleware.RequireAuthentication(a, pc.Create, false))).Methods(http.MethodPost)
+	api.HandleFunc("/posts/{id:[0-9]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.Update, false))).Methods(http.MethodPut)
+	api.HandleFunc("/posts/delete/{id:[0-9]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.Delete, false))).Methods(http.MethodDelete)
 	log.Println("Created posts routes")
 	// Authentication
 	auth := api.PathPrefix("/auth").Subrouter()

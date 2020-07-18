@@ -19,6 +19,7 @@ import (
 
 type UserRepository interface {
 	Create(u *models.User) error
+	CreateFirstAdmin(u *models.User) (bool, error)
 	GetAll() ([]*models.User, error)
 	FindById(id int) (*models.User, error)
 	FindByEmail(email string) (*models.User, error)
@@ -53,6 +54,34 @@ func (ur *userRepository) Create(u *models.User) error {
 	}
 
 	return nil
+}
+
+func (ur *userRepository) CreateFirstAdmin(u *models.User) (bool, error) {
+	users, err := ur.GetAll()
+	if err != nil {
+		log.Println(err)
+		return false, err
+	}
+	numUsers := len(users)
+	if numUsers != 0 {
+		log.Println("[WARN] Invalid request to create first admin")
+		return false, err
+	}
+	// There are no users yet, create admin
+	_, err = ur.Conn.Prepare(context.Background(), "first-admin-query", "INSERT INTO user_schema.\"user\"(id, name, email, password, created_at, admin) VALUES ($1, $2, $3, $4, $5, $6)")
+	log.Println(err)
+	if err != nil {
+		return false, err
+	}
+
+	_, err = ur.Conn.Exec(context.Background(), "first-admin-query", u.ID, u.Name, u.Email, u.Password, (u.CreatedAt.UTC()), u.Admin)
+	log.Println(err)
+	if err != nil {
+		return false, err
+	}
+
+	return true, err
+
 }
 
 func (ur *userRepository) Update(u *models.User) error {
