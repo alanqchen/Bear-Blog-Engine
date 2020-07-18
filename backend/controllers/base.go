@@ -73,8 +73,8 @@ func GetJSON(reader io.Reader) (*JsonData, error) {
 func (d *JsonData) GetString(key string) (string, error) {
 	keys := d.data
 	err := errors.New("Could not find key: " + key)
-	if v, ok := keys[key]; ok {
-		return v.(string), nil
+	if v, ok := keys[key].(string); ok {
+		return v, nil
 	}
 
 	return "", err
@@ -83,8 +83,8 @@ func (d *JsonData) GetString(key string) (string, error) {
 func (d *JsonData) GetInt(key string) (int, error) {
 	keys := d.data
 	err := errors.New("Could not find key: " + key)
-	if v, ok := keys[key]; ok {
-		return v.(int), nil
+	if v, ok := keys[key].(int); ok {
+		return v, nil
 	}
 
 	return -1, err
@@ -93,8 +93,8 @@ func (d *JsonData) GetInt(key string) (int, error) {
 func (d *JsonData) GetBool(key string) (bool, error) {
 	keys := d.data
 	err := errors.New("Could not find key: " + key)
-	if v, ok := keys[key]; ok {
-		return v.(bool), nil
+	if v, ok := keys[key].(bool); ok {
+		return v, nil
 	}
 
 	return false, err
@@ -103,11 +103,11 @@ func (d *JsonData) GetBool(key string) (bool, error) {
 func (d *JsonData) GetStringArray(key string) ([]string, error) {
 	keys := d.data
 	err := errors.New("Could not find key: " + key)
-	if v, ok := keys[key]; ok {
+	if v, ok := keys[key].([]interface{}); ok {
 
-		keySlice := make([]string, len(v.([]interface{})))
+		keySlice := make([]string, len(v))
 
-		for i, vIn := range v.([]interface{}) {
+		for i, vIn := range v {
 			keySlice[i] = vIn.(string)
 		}
 		return keySlice, nil
