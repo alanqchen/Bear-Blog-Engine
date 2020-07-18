@@ -6,7 +6,7 @@ export const WaveButton = styled(Button)`
     background-color: rgba(0, 0, 0, 0) !important;
     transform: translate3d(0px, 0px, 0px);
     border: 2px solid ${GlobalTheme.scarlet} !important;
-    border-radius: inherit !important;
+    border-radius: 0px !important;
     margin-top: 8px !important;
     margin-bottom: 8px !important;
     min-width: 130px !important;

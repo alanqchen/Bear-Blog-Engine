@@ -1,14 +1,19 @@
-import { Typography } from '@material-ui/core';
+import { Typography, InputAdornment } from '@material-ui/core';
+import { Person, Lock } from '@material-ui/icons';
+import Particles from 'react-particles-js';
 import Layout from '../../../../components/PublicLayout/publicLayout';
 import { HeaderWrapper } from '../../../../components/PublicLayout/publicLayoutStyled';
 import {
     StyledLoginPaper,
     LoginPaperWrapper,
-    StyledTextField
+    StyledTextField,
+    InnerWrapper
 } from '../../../../components/Login/loginStyled';
-import Particles from 'react-particles-js';
+import { WaveButton } from '../../../../components/Theme/StyledComponents';
+import config from '../../../../config';
 
-const Index = ({ numUsers }) => {
+const Index = ({ setup, updatedAt }) => {
+    const timeString = new Date(updatedAt).toLocaleTimeString();
     return (
         <>
         <Particles params={{
@@ -59,16 +64,66 @@ const Index = ({ numUsers }) => {
                 <StyledLoginPaper>
                     <HeaderWrapper>
                         <Typography align="center" fontWeight="fontWeightLight" variant="h3" color="textPrimary" component="h4">
-                            Login
+                            {timeString}
                         </Typography>
                     </HeaderWrapper>
-                    <StyledTextField label="email" variant="filled" />
-                    <StyledTextField label="password" type="password" variant="filled" />
+                    <StyledTextField label="Email" variant="outlined" 
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Person />
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                    <StyledTextField label="Password" type="password" variant="outlined" 
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Lock />
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                    <WaveButton variant="contained" color="primary">
+                        Login
+                    </WaveButton>
                 </StyledLoginPaper>
             </LoginPaperWrapper>
         </Layout>
         </>
     );
+};
+
+async function getSetup() {
+    let res = await fetch(`${config.apiURL}/api/v1/users`);
+    const users = await res.json();
+    const errorCode = users.status > 200 ? users.status : false;
+    if(errorCode || users.data.length !== 0) {
+        return {
+            data: {
+                errorCode: errorCode,
+                setup: false
+            }
+        }
+    }
+
+    return {
+        data: {
+            errorCode: errorCode,
+            setup: true,
+        }
+    };
+}
+
+export async function getStaticProps() {
+    return {
+        props: {
+            ...await getSetup(),
+            updatedAt: Date.now()
+        },
+        unstable_revalidate: 20
+    };
 };
 
 export default Index;
