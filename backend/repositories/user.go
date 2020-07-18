@@ -8,6 +8,7 @@ import (
 
 	"github.com/alanqchen/Bear-Post/backend/database"
 	"github.com/alanqchen/Bear-Post/backend/models"
+	"github.com/jackc/pgtype"
 	"github.com/jackc/pgx/v4"
 )
 
@@ -161,22 +162,19 @@ func (ur *userRepository) FindById(id int) (*models.User, error) {
 func (ur *userRepository) Exists(email string) bool {
 
 	// Check if an user already exists with the email
-	var exists bool
-	_, err := ur.Conn.Prepare(context.Background(), "email-exists-query", "SELECT user_schema.\"user\".email FROM user_schema.\"user\" WHERE email = $1;")
-	log.Println(err)
+	_, err := ur.Conn.Prepare(context.Background(), "email-exists-query", "SELECT EXISTS(SELECT user_schema.\"user\".email FROM user_schema.\"user\" WHERE email = $1);")
 	if err != nil {
+		log.Println(err)
 		return true
 	}
-	log.Println("Passed prepare")
-	//defer ur.Conn.Close(context.Background())
 
-	err = ur.Conn.QueryRow(context.Background(), "email-exists-query", email).Scan(exists)
-	log.Println(err)
+	var exists pgtype.Bool
+	err = ur.Conn.QueryRow(context.Background(), "email-exists-query", email).Scan(&exists)
 	if err != nil && err != pgx.ErrNoRows {
+		log.Println(err)
 		return true
 	}
-	log.Println("email does not exist")
-	return exists
+	return exists.Bool
 }
 
 func (ur *userRepository) Delete(id int) error {
