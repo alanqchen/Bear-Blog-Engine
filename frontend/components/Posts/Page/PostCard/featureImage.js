@@ -44,7 +44,7 @@ function FeatureImage({featureImgUrl, tags, skeleton}) {
                         ? <source srcSet={config.apiURL + featureImgUrl.substring(0, featureImgUrl.length - 5) + ".webp"} />
                         : <source srcSet={config.apiURL + featureImgUrl.substring(0, featureImgUrl.length - 4) + ".webp"} />
                     }
-                    <StyledImage src={config.apiURL + featureImgUrl} onLoad={() => setLoading(false)} />
+                    <StyledImage src={config.apiURL + featureImgUrl} alt="Feature Image" onLoad={() => setLoading(false)} />
                 </picture>
                 } 
             </StyledImageWrapper>

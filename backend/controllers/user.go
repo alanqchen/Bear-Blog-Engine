@@ -128,6 +128,78 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Message: "User created"}, w, http.StatusOK)
 }
 
+func (uc *UserController) CreateFirstAdmin(w http.ResponseWriter, r *http.Request) {
+	j, err := GetJSON(r.Body)
+	if err != nil {
+		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
+		return
+	}
+
+	name, err := j.GetString("name")
+	if err != nil {
+		NewAPIError(&APIError{false, "Name is required", http.StatusBadRequest}, w)
+		return
+	}
+	// TODO: Implement something like this and embed in a basecontroller https://stackoverflow.com/a/23960293/2554631
+	if len(name) < 2 || len(name) > 32 {
+		NewAPIError(&APIError{false, "Name must be between 2 and 32 characters", http.StatusBadRequest}, w)
+		return
+	}
+
+	email, err := j.GetString("email")
+	if err != nil {
+		NewAPIError(&APIError{false, "Email is required", http.StatusBadRequest}, w)
+		return
+	}
+	if ok := util.IsEmail(email); !ok {
+		NewAPIError(&APIError{false, "You must provide a valid email address", http.StatusBadRequest}, w)
+		return
+	}
+	exists := uc.UserRepository.Exists(email)
+	if exists {
+		NewAPIError(&APIError{false, "The email address is already in use", http.StatusBadRequest}, w)
+		return
+	}
+	pw, err := j.GetString("password")
+	if err != nil {
+		NewAPIError(&APIError{false, "Password is required", http.StatusBadRequest}, w)
+		return
+	}
+	if len(pw) < 6 {
+		NewAPIError(&APIError{false, "Password must not be less than 6 characters", http.StatusBadRequest}, w)
+		return
+	}
+
+	var newID int
+	for collision := true; collision; collision = !(err == pgx.ErrNoRows) {
+		newID = int(rand.Int31())
+		_, err = uc.Database.Conn.Prepare(context.Background(), "id-exists-query", "SELECT user_schema.\"user\".id FROM user_schema.\"user\" WHERE id = $1;")
+		err = uc.Database.Conn.QueryRow(context.Background(), "id-exists-query", newID).Scan(exists)
+	}
+	u := &models.User{
+		ID:        newID,
+		Name:      name,
+		Email:     email,
+		Admin:     true,
+		CreatedAt: time.Now(),
+	}
+	u.SetPassword(pw)
+
+	success, err := uc.UserRepository.CreateFirstAdmin(u)
+	if err != nil {
+		NewAPIError(&APIError{false, "Could not create admin user", http.StatusBadRequest}, w)
+		return
+	}
+
+	if success == false {
+		NewAPIError(&APIError{false, "There is already an admin user", http.StatusBadRequest}, w)
+		return
+	}
+
+	defer r.Body.Close()
+	NewAPIResponse(&APIResponse{Success: true, Message: "Admin user created"}, w, http.StatusOK)
+}
+
 func (uc *UserController) GetAll(w http.ResponseWriter, r *http.Request) {
 	users, err := uc.UserRepository.GetAll()
 	if err != nil {
