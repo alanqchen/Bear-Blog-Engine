@@ -19,13 +19,13 @@ const theme = createMuiTheme({
     overrides: {
         MuiTypography: {
             root: {
-            color: '#ffffff',
+                color: '#ffffff',
             },
             colorTextPrimary: {
-            color: GlobalTheme.textPrimary,
+                color: GlobalTheme.textPrimary,
             },
             colorTextSecondary: {
-            color: GlobalTheme.textSecondary,
+                color: GlobalTheme.textSecondary,
             }
         },
         MuiToolbar: {
@@ -45,7 +45,7 @@ const theme = createMuiTheme({
             rounded: {
                 borderRadius: "1em"
             }
-        }
+        },
     },
 });
   

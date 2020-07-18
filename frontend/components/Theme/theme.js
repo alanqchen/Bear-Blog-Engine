@@ -8,6 +8,7 @@ const Theme = {
     textRoot: "#ffffff",
     textPrimary: "#efeff1",
     textSecondary: "#d0d0d0",
+    focused: "#277be8"
 }
 
 export default Theme;
