@@ -36,13 +36,9 @@ func (pc *PostController) GetPage(w http.ResponseWriter, r *http.Request) {
 	//if err != nil {
 	//	pageInt = 1
 	//}
-	j, err := GetJSON(r.Body)
-	if err != nil {
-		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
-		return
-	}
 
-	maxIDString, err := j.GetString("maxID")
+	q := r.URL.Query()
+	maxIDString := q.Get("maxID")
 	maxID, err := strconv.Atoi(maxIDString)
 
 	log.Println(maxID)
@@ -51,10 +47,9 @@ func (pc *PostController) GetPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var tagsSlice []string
-	tagsSlice, err = j.GetStringArray("tags")
-	if err != nil {
-		log.Println("[WARN] No tags slice")
+	tagsSlice := q["tags"]
+	if len(tagsSlice) == 0 {
+		log.Println("No tags slice")
 	}
 
 	if maxID == -1 {

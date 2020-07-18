@@ -117,6 +117,7 @@ async function getSetup() {
 }
 
 export async function getStaticProps() {
+    console.log("In static props");
     return {
         props: {
             ...await getSetup(),
