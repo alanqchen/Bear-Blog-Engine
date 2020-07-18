@@ -34,15 +34,12 @@ export function fetchCategory(category) {
             dispatch(fetchCategoryNew(category));
         }
 
-        const jsonBody = {
+        const params = {
             maxID: getState().fetchCategory.minID,
-            tags: [category]
+            tags: category
         };
         dispatch(fetchCategoryBegin());
-        return fetch(config.apiURL+'/api/v1/posts/get', {
-            method: 'post',
-            body: JSON.stringify(jsonBody)
-        })
+        return fetch(config.apiURL+'/api/v1/posts/get?maxID='+ params.maxID + '&tags=' + params.tags)
           .then(handleErrors)
           .then(res => res.json())
           .then(json => {

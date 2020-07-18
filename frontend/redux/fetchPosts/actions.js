@@ -22,14 +22,11 @@ export const fetchPostsNoMore = () => ({
 
 export function fetchPosts() {
     return (dispatch, getState) => {
-        const jsonBody = {
+        const params = {
             maxID: getState().fetchPosts.minID
         };
         dispatch(fetchPostsBegin());
-        return fetch(config.apiURL+'/api/v1/posts/get', {
-            method: 'post',
-            body: JSON.stringify(jsonBody)
-        })
+        return fetch(config.apiURL+'/api/v1/posts/get?maxID=' + params.maxID)
           .then(handleErrors)
           .then(res => res.json())
           .then(json => {
