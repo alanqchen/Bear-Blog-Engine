@@ -70,7 +70,7 @@ export const LoginForm = () => {
                             helperText={errors.password && touched.password && errors.password}
                         />
                         <WaveButton variant="contained" color="primary" disabled={
-                                !touched.email || !touched.password || errors.email || errors.password
+                                (!touched.email || !touched.password || errors.email || errors.password) ? true : false
                             }
                         >
                             Login
