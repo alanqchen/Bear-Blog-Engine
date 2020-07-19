@@ -27,6 +27,7 @@
     "react": "^16.13.1",
     "react-animated-burgers": "^1.2.8",
     "react-burger-menu": "^2.6.17",
+    "react-cookie": "^4.0.3",
     "react-dom": "^16.13.1",
     "react-lazyload": "^2.6.9",
     "react-particles-js": "^3.2.1",

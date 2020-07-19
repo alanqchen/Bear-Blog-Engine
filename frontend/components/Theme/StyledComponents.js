@@ -11,6 +11,10 @@ export const WaveButton = styled(Button)`
     margin-bottom: 8px !important;
     min-width: 130px !important;
 
+    &:hover {
+        cursor: pointer;
+    }
+
     &:hover .MuiTouchRipple-root {
         transform-origin: bottom center;
         transform: scale3d(1, 1, 1);
@@ -36,4 +40,11 @@ export const WaveButton = styled(Button)`
         transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
     }
 
+    &.Mui-disabled {
+        border: 2px solid ${GlobalTheme.backgroundAlt2} !important;
+    }
+
+    &.Mui-disabled .MuiButton-label {
+        color: ${GlobalTheme.backgroundAlt2} !important;
+    }
 `;
