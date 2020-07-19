@@ -39,7 +39,7 @@ export function fetchCategory(category) {
             tags: category
         };
         dispatch(fetchCategoryBegin());
-        return fetch(config.apiURL+'/api/v1/posts/get?maxID='+ params.maxID + '&tags=' + params.tags)
+        return fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/posts/get?maxID='+ params.maxID + '&tags=' + params.tags)
           .then(handleErrors)
           .then(res => res.json())
           .then(json => {
