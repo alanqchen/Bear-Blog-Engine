@@ -115,14 +115,12 @@ async function getSetup() {
     };
 }
 
-export async function getStaticProps() {
-    console.log("In static props");
+export async function getServerSideProps() {
     return {
         props: {
             ...await getSetup(),
             updatedAt: Date.now()
-        },
-        unstable_revalidate: 20
+        }
     };
 };
 
