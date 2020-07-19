@@ -1,5 +1,4 @@
 import * as types from './types';
-import config from '../../config';
 
 export const fetchPostsBegin = () => ({
     type: types.FETCH_POSTS_BEGIN
@@ -26,7 +25,7 @@ export function fetchPosts() {
             maxID: getState().fetchPosts.minID
         };
         dispatch(fetchPostsBegin());
-        return fetch(config.apiURL+'/api/v1/posts/get?maxID=' + params.maxID)
+        return fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/posts/get?maxID=' + params.maxID)
           .then(handleErrors)
           .then(res => res.json())
           .then(json => {

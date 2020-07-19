@@ -10,7 +10,6 @@ import {
     InnerWrapper
 } from '../../../../components/Login/loginStyled';
 import { WaveButton } from '../../../../components/Theme/StyledComponents';
-import config from '../../../../config';
 
 const Index = ({ setup, updatedAt }) => {
     const timeString = new Date(updatedAt).toLocaleTimeString();
@@ -96,7 +95,7 @@ const Index = ({ setup, updatedAt }) => {
 };
 
 async function getSetup() {
-    let res = await fetch(`${config.apiURL}/api/v1/users`);
+    let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`);
     const users = await res.json();
     const errorCode = users.status > 200 ? users.status : false;
     if(errorCode || users.data.length !== 0) {

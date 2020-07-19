@@ -3,7 +3,6 @@ import Layout from '../../../../components/PostLayout/postLayout'
 import fetch from 'isomorphic-unfetch'
 import Error from 'next/error'
 import {timestamp2date} from '../../../../components/utils/helpers'
-import config from '../../../../config'
 
 const Index = props => {
     if (props.errorCode) {
@@ -12,7 +11,7 @@ const Index = props => {
     return (
         <Layout>
             <Link href="/"><a>Goto Index</a></Link>
-            <img src={config.apiURL + props.post.data.featureImgUrl}></img>
+            <img src={process.env.NEXT_PUBLIC_API_URL + props.post.data.featureImgUrl}></img>
             <p>{props.post.data.createdAt}</p>
             <p>{props.dateF}</p>
             <p>Author: {props.author}</p>
@@ -34,7 +33,7 @@ const Index = props => {
 
 export async function getServerSideProps(context) {
 
-    let res = await fetch(`${config.apiURL}/api/v1/posts/${context.params.year}/${context.params.month}/${context.params.slug}`);
+    let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts/${context.params.year}/${context.params.month}/${context.params.slug}`);
     const post = await res.json();
     const errorCode = post.status > 200 ? post.status : false;
 
@@ -50,7 +49,7 @@ export async function getServerSideProps(context) {
     let dateStr = post.data.createdAt;
     dateStr = timestamp2date(dateStr)
 
-    let resAuthor = await fetch(`${config.apiURL}/api/v1/users/${post.data.authorid}`);
+    let resAuthor = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/${post.data.authorid}`);
     const author = await resAuthor.json();
     let authorName;
     if(!author.success) {
