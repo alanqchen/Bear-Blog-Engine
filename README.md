@@ -9,7 +9,10 @@ Uses Go for the backend and React (Next) for the frontend.
 Databases used are PostgreSQL and Redis.
 
 Status:
-Styling post cards in index page 
+Working on login
+
+Current lighthouse stats:
+![image](https://user-images.githubusercontent.com/18543142/87865583-293cd380-c945-11ea-9aaa-4e58bdafa203.png)
 
 
 ### Q: Why not a static blog?

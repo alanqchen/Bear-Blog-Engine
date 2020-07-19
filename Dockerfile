@@ -18,10 +18,9 @@ RUN go mod download
 # Copy source to working directory in container
 COPY /backend .
 # Build
-RUN go build -o bearpost/backend/main .
+RUN go build -o /bearpost/backend/main .
 
 EXPOSE 8080
 
 # Run executable
 CMD [ "/bearpost/backend/main" ]
-
