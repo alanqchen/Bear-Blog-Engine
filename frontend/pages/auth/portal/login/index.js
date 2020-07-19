@@ -10,8 +10,21 @@ import {
     InnerWrapper
 } from '../../../../components/Login/loginStyled';
 import { WaveButton } from '../../../../components/Theme/StyledComponents';
+import fetch from 'isomorphic-unfetch';
+import LoginForm from '../../../../components/Login/loginForm';
+import { Cookies } from 'react-cookie';
+
+const cookies = new Cookies();
 
 const Index = ({ setup, updatedAt }) => {
+    /*
+    tryLogin = async () => {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`, {
+            method: 'post'
+        })
+    }
+    */
+
     const timeString = new Date(updatedAt).toLocaleTimeString();
     return (
         <>
@@ -66,27 +79,7 @@ const Index = ({ setup, updatedAt }) => {
                             {timeString}
                         </Typography>
                     </HeaderWrapper>
-                    <StyledTextField label="Email" variant="outlined" 
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <Person />
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                    <StyledTextField label="Password" type="password" variant="outlined" 
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <Lock />
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                    <WaveButton variant="contained" color="primary">
-                        Login
-                    </WaveButton>
+                    <LoginForm />
                 </StyledLoginPaper>
             </LoginPaperWrapper>
         </Layout>

@@ -31,10 +31,11 @@ export const StyledTextField = styled(TextField)`
     width: 80%;
     margin-top: 15px !important;
     margin-bottom: 15px !important;
-
+    ${({ error }) => error && `
     & label {
-        color: ${GlobalTheme.textPrimary} !important;
+        color: ${GlobalTheme.textPrimary};
     }
+    `}
 
     & label.Mui-focused {
         color: ${GlobalTheme.focused} !important;
