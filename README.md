@@ -11,7 +11,7 @@ Databases used are PostgreSQL and Redis.
 Status:
 Working on login
 
-Current lighthouse stats(SEO hopefully soon):
+Current lighthouse stats(PWA hopefully soon):
 ![image](https://user-images.githubusercontent.com/18543142/87865583-293cd380-c945-11ea-9aaa-4e58bdafa203.png)
 
 
