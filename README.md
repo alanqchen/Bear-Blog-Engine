@@ -1,10 +1,12 @@
 **Work-In-Progress**
 
 <p align="center">
+  
 [![Go Report Card](https://goreportcard.com/badge/github.com/alanqchen/bear-post)](https://goreportcard.com/report/github.com/alanqchen/bear-post)
 ![Docker Cloud Build Status (API)](https://img.shields.io/docker/cloud/build/aqchen/bearpost-api?label=docker%20build%20api)
 ![Docker Cloud Build Status (Frontend)](https://img.shields.io/docker/cloud/build/aqchen/bearpost-frontend?label=docker%20build%20frontend)
 ![Website](https://img.shields.io/website?label=example%20site&up_color=green&up_message=Online&url=https%3A%2F%2Fexample.aqchen.com)
+
 </p>
 
 # Bear Post
