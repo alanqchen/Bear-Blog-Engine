@@ -35,7 +35,8 @@ func New(appConfig config.Config) (*App, *database.Postgres) {
 
 func (a *App) Run(r *mux.Router) {
 	headersOk := handlers.AllowedHeaders([]string{"Authorization", "Content-Type", "X-Requested-With"})
-	originsOk := handlers.AllowedOrigins([]string{"*"})
+	originsOk := handlers.AllowedOrigins(a.Config.AllowedOrigins)
+	log.Println(a.Config.AllowedOrigins)
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 	port := a.Config.Port
 	addr := fmt.Sprintf(":%v", port)

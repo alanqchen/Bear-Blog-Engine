@@ -28,11 +28,12 @@ type RedisConfig struct {
 }
 
 type Config struct {
-	Env        string           `json:"env"`
-	PostgreSQL PostgreSQLConfig `json:"postgreSQL"`
-	JWT        JWTConfig        `json:"jwt"`
-	RedisDB    RedisConfig      `json:"RedisDB"`
-	Port       int              `json:"port"`
+	Env            string           `json:"env"`
+	PostgreSQL     PostgreSQLConfig `json:"postgreSQL"`
+	JWT            JWTConfig        `json:"jwt"`
+	RedisDB        RedisConfig      `json:"RedisDB"`
+	Port           int              `json:"port"`
+	AllowedOrigins []string         `json:"allowedOrigins"`
 }
 
 func New(path string) (Config, error) {
