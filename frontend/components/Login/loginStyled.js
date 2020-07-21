@@ -12,7 +12,7 @@ export const StyledLoginPaper = styled(Paper)`
     width: 90%;
     background-color: ${GlobalTheme.backgroundAlt1} !important;
     max-height: 400px;
-    height: 50vh;
+    height: 100%;
 `;
 
 export const LoginPaperWrapper = styled.div`
