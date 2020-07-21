@@ -32,13 +32,13 @@ func main() {
 		log.Fatal("[FATAL] Failed to find config/app.json or ../app.json or config/app-custom.json")
 	}
 
-	log.Println("Creating app")
+	log.Println("Creating api")
 
 	var db *database.Postgres
 	app, db := app.New(cfg)
 	defer db.Close(context.Background())
 	log.Println("Creating routes")
 	router := routes.NewRouter(app)
-	log.Println("Running app...")
+	log.Println("Running api...")
 	app.Run(router)
 }

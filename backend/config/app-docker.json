@@ -1,5 +1,5 @@
 {
-    "env": "local",
+    "env": "prod",
     "postgreSQL": {
         "host": "postgres",
         "port": "5432",

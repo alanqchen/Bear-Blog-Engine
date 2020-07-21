@@ -3,12 +3,14 @@ package routes
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/alanqchen/Bear-Post/backend/app"
 	"github.com/alanqchen/Bear-Post/backend/controllers"
 	"github.com/alanqchen/Bear-Post/backend/middleware"
 	"github.com/alanqchen/Bear-Post/backend/repositories"
 	"github.com/alanqchen/Bear-Post/backend/services"
+	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 )
 
@@ -41,7 +43,22 @@ func NewRouter(a *app.App) *mux.Router {
 	r.PathPrefix("/assets/videos").Handler(http.StripPrefix("/assets/videos", http.FileServer(http.Dir("./public/videos/"))))
 	//r.PathPrefix("/public").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("./public/images/"))))
 
+	// Create CSRF protection
+	authKeyFile, err := os.Open("config/authkey")
+	if err != nil {
+		log.Fatal(err)
+	}
+	authKeyFileInfo, _ := authKeyFile.Stat()
+	var size int64 = authKeyFileInfo.Size()
+	if size != 32 {
+		log.Fatal("[FATAL] Auth key is not 32 bytes")
+	}
+	authKeyBytes := make([]byte, size)
+	CSRF := csrf.Protect(authKeyBytes, csrf.TrustedOrigins(a.Config.AllowedOrigins))
+	log.Println("Created CSRF protection")
+
 	api := r.PathPrefix("/api/v1").Subrouter()
+	api.Use(CSRF)
 
 	// Uploads
 	api.HandleFunc("/images/upload", middleware.Logger(middleware.RequireAuthentication(a, uploadController.UploadImage, false))).Methods(http.MethodPost)

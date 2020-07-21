@@ -29,18 +29,19 @@ func New(appConfig config.Config) (*App, *database.Postgres) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Databases started succesfully")
+	log.Println("Databases started successfully")
 	return &App{appConfig, db, redis}, db
 }
 
 func (a *App) Run(r *mux.Router) {
 	headersOk := handlers.AllowedHeaders([]string{"Authorization", "Content-Type", "X-Requested-With"})
 	originsOk := handlers.AllowedOrigins(a.Config.AllowedOrigins)
-	log.Println(a.Config.AllowedOrigins)
+	log.Println("Allowed origins:", a.Config.AllowedOrigins)
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 	port := a.Config.Port
 	addr := fmt.Sprintf(":%v", port)
-	fmt.Printf("APP is listening on port: %d\n", port)
+
+	fmt.Printf("API is listening on port: %d\n", port)
 	log.Fatal(http.ListenAndServe(addr, handlers.CORS(originsOk, headersOk, methodsOk)(r)))
 }
 

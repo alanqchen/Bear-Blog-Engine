@@ -5,3 +5,4 @@ config/app-custom.json
 config/api.rsa.pub
 config/api.rsa
 config/production.json
+config/authkey

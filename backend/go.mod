@@ -12,6 +12,7 @@ require (
 	github.com/go-redis/redis/v7 v7.0.0-beta.5
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/gofrs/uuid v3.2.0+incompatible
+	github.com/gorilla/csrf v1.7.0
 	github.com/gorilla/handlers v1.4.2
 	github.com/gorilla/mux v1.7.3
 	github.com/jackc/pgtype v1.1.0
