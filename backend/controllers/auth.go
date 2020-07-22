@@ -40,6 +40,7 @@ func (ac *AuthController) Authenticate(w http.ResponseWriter, r *http.Request) {
 	}
 	u, err := ac.UserRepository.FindByEmail(email)
 	if err != nil {
+		log.Println("Failed login - Bad username:", email)
 		NewAPIError(&APIError{false, "Incorrect email or password", http.StatusBadRequest}, w)
 		return
 	}
@@ -51,6 +52,7 @@ func (ac *AuthController) Authenticate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if ok := u.CheckPassword(pw); !ok {
+		log.Println("Failed login - Bad password for user", email)
 		NewAPIError(&APIError{false, "Incorrect email or password", http.StatusBadRequest}, w)
 		return
 	}

@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"errors"
 	"log"
 	"time"
 
@@ -178,6 +177,17 @@ func (ur *userRepository) Exists(email string) bool {
 }
 
 func (ur *userRepository) Delete(id int) error {
+	_, err := ur.Conn.Prepare(context.Background(), "delete-user-query", "DELETE FROM user_schema.\"user\" WHERE id = $1")
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 
-	return errors.New("This is not implemented")
+	_, err = ur.Conn.Exec(context.Background(), "update-query", id)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return nil
 }

@@ -43,7 +43,7 @@ export const LoginForm = () => {
                 } = props;
                 return (
                     <>
-                        <StyledTextField name="email" label="Email" variant="outlined" 
+                        <StyledTextField name="email" label="Email or Username" variant="outlined" 
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">

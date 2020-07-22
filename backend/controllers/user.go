@@ -255,16 +255,18 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	newpw, err := j.GetString("newpassword")
 	if newpw != "" && err == nil {
 		// confirm password
-		oldpw, err := j.GetString("oldpassword")
-		if err != nil {
-			NewAPIError(&APIError{false, "Old password is required", http.StatusBadRequest}, w)
-			return
-		}
-		ok := user.CheckPassword(oldpw)
-		if !ok {
-			NewAPIError(&APIError{false, "Old password does not match", http.StatusBadRequest}, w)
-			return
-		}
+		/*
+			oldpw, err := j.GetString("oldpassword")
+			if err != nil {
+				NewAPIError(&APIError{false, "Old password is required", http.StatusBadRequest}, w)
+				return
+			}
+			ok := user.CheckPassword(oldpw)
+			if !ok {
+				NewAPIError(&APIError{false, "Old password does not match", http.StatusBadRequest}, w)
+				return
+			}
+		*/
 		if len(newpw) < 6 {
 			NewAPIError(&APIError{false, "Password must not be less than 6 characters", http.StatusBadRequest}, w)
 			return
@@ -287,6 +289,30 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: authUser}, w, http.StatusOK)
+}
+
+func (uc *UserController) Delete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
+		return
+	}
+	user, err := uc.UserRepository.FindById(id)
+	if err != nil {
+		// user was not found
+		NewAPIError(&APIError{false, "Could not find user", http.StatusNotFound}, w)
+		return
+	}
+
+	err = uc.UserRepository.Delete(id)
+	if err != nil {
+		// user was not found
+		NewAPIError(&APIError{false, "Failed to delete user", http.StatusInternalServerError}, w)
+		return
+	}
+
+	NewAPIResponse(&APIResponse{Success: true, Data: user}, w, http.StatusOK)
 }
 
 // Password reset functionality - Might look into this more later
