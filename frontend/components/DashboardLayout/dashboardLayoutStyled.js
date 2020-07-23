@@ -13,3 +13,11 @@ export const StyledCenteredContainer = styled(CenteredContainer)`
     flex-direction: column;
     align-items: center;
 `;
+
+export const InputsWrapper = styled.div`
+    max-width: 800px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+`;
