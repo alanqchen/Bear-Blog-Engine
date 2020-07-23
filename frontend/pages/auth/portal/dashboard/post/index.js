@@ -7,6 +7,7 @@ const Index = () => {
         <Layout> 
             <Editor 
                 theme={EditorTheme}
+                style={{maxWidth: '800px', width: '100%'}}
             />
         </Layout>
     );

@@ -112,7 +112,12 @@ export const dark = {
   
 export const customDark = {
     ...dark,
-    background: GlobalTheme.backgroundAlt1
+    background: GlobalTheme.background,
+    text: GlobalTheme.textPrimary,
+    
+    toolbarBackground: GlobalTheme.backgroundAlt1,
+
+    tableDivider: GlobalTheme.backgroundAlt2
 }
 
 export default customDark;
