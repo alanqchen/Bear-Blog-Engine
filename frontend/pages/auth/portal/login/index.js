@@ -13,9 +13,6 @@ import {
 import { WaveButton } from '../../../../components/Theme/StyledComponents';
 import fetch from 'isomorphic-unfetch';
 import LoginForm from '../../../../components/Login/loginForm';
-import { Cookies } from 'react-cookie';
-
-const cookies = new Cookies();
 
 const Index = ({ setup, updatedAt }) => {
     /*
