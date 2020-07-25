@@ -49,9 +49,12 @@ func NewRouter(a *app.App) *mux.Router {
 	log.Println("Created media uploads route")
 	// Users
 	api.HandleFunc("/users", middleware.Logger(uc.GetAll)).Methods(http.MethodGet)
-	api.HandleFunc("/users", middleware.Logger(uc.Create)).Methods(http.MethodPost)
+	api.HandleFunc("/users/detailed", middleware.Logger(middleware.RequireAuthentication(a, uc.GetAllDetailed, true))).Methods(http.MethodGet)
+	api.HandleFunc("/users", middleware.Logger(middleware.RequireAuthentication(a, uc.Create, true))).Methods(http.MethodPost)
 	api.HandleFunc("/users/setup", middleware.Logger(uc.CreateFirstAdmin)).Methods(http.MethodPost)
 	api.HandleFunc("/users/{id}", middleware.Logger(uc.GetById)).Methods(http.MethodGet)
+	api.HandleFunc("/users/{id}/detailed", middleware.Logger(middleware.RequireAuthentication(a, uc.GetByIdDetailed, true))).Methods(http.MethodGet)
+	api.HandleFunc("/users/{id}", middleware.Logger(middleware.RequireAuthentication(a, uc.Delete, true))).Methods(http.MethodDelete)
 	//api.HandleFunc("/users/{id}/posts", middleware.Logger(uc.FindPostsByUser)).Methods(http.MethodGet)
 	api.HandleFunc("/protected", middleware.Logger(middleware.RequireAuthentication(a, uc.Profile, false))).Methods(http.MethodGet)
 	log.Println("Created users routes")
@@ -70,7 +73,7 @@ func NewRouter(a *app.App) *mux.Router {
 	auth := api.PathPrefix("/auth").Subrouter()
 	auth.HandleFunc("/login", middleware.Logger(ac.Authenticate)).Methods(http.MethodPost)
 	auth.HandleFunc("/refresh", middleware.Logger(middleware.RequireRefreshToken(a, ac.RefreshTokens))).Methods(http.MethodGet)
-	auth.HandleFunc("/update", middleware.Logger(middleware.RequireAuthentication(a, uc.Update, false))).Methods(http.MethodPut)
+	auth.HandleFunc("/update", middleware.Logger(middleware.RequireAuthentication(a, uc.Update, true))).Methods(http.MethodPut)
 	auth.HandleFunc("/logout", middleware.Logger(middleware.RequireAuthentication(a, ac.Logout, false))).Methods(http.MethodGet)
 	auth.HandleFunc("/logout/all", middleware.Logger(middleware.RequireAuthentication(a, ac.LogoutAll, true))).Methods(http.MethodGet)
 	// No Match

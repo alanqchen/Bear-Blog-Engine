@@ -18,5 +18,8 @@
         "public_key": "config/api.rsa.pub",
         "private_key": "config/api.rsa"
     },
-    "port": 8080
+    "port": 8080,
+    "allowedOrigins": [
+        "*"
+    ]
 }

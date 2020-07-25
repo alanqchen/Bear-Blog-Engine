@@ -11,7 +11,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/alanqchen/Bear-Post/backend/config"
@@ -20,7 +19,7 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/util"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/dgrijalva/jwt-go/request"
-	uuid "github.com/satori/go.uuid"
+	"github.com/gofrs/uuid"
 )
 
 type TokenClaims struct {
@@ -31,7 +30,7 @@ type TokenClaims struct {
 
 type KAuthTokenClaims struct {
 	jwt.StandardClaims
-	UID       int    `json:"id"`
+	UID       string `json:"id"`
 	Admin     bool   `json:"admin"`
 	TokenHash string `json:"tokenHash"`
 }
@@ -82,16 +81,23 @@ func NewJWTAuthService(jwtCfg *config.JWTConfig, redis *database.Redis) JWTAuthS
 }
 
 func (jwtService *jwtAuthService) GenerateTokens(u *models.User) (*Tokens, error) {
-	uid := strconv.Itoa(u.ID)
+	uid := u.ID.String()
 	now := time.Now()
+	// Gen UUID for JWT
+	uuidJWT, err := uuid.NewV4()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
 	tokenHash := util.GetMD5Hash(now.String() + uid)
 	authClaims := KAuthTokenClaims{
 		jwt.StandardClaims{
-			Id:        uid + "." + uuid.NewV4().String(),
+			Id:        uid + "." + uuidJWT.String(),
 			ExpiresAt: now.Add(TokenDuration).Unix(), // 1 Hour
 			IssuedAt:  now.Unix(),
 		},
-		u.ID,
+		u.ID.String(),
 		u.Admin,
 		tokenHash,
 	}
@@ -100,29 +106,36 @@ func (jwtService *jwtAuthService) GenerateTokens(u *models.User) (*Tokens, error
 
 	accessTokenString, err := accessToken.SignedString([]byte(jwtService.secret))
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 
 	err = jwtService.Redis.Set(tokenHash+"."+authClaims.Id, u.ID, TokenDuration).Err()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return nil, err
+	}
+
+	// Gen UUID for refresh token
+	uuidJWT, err = uuid.NewV4()
+	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
 	refreshToken := jwt.New(jwt.SigningMethodRS512)
-	authClaims.Id = uid + "." + uuid.NewV4().String()
+	authClaims.Id = uid + "." + uuidJWT.String()
 	authClaims.ExpiresAt = now.Add(RefreshTokenDuration).Unix()
 	refreshToken.Claims = authClaims
 	refreshTokenString, err := refreshToken.SignedString(jwtService.privateKey)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 
 	err = jwtService.Redis.Set(tokenHash+"."+authClaims.Id, u.ID, RefreshTokenDuration).Err()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 
@@ -346,15 +359,15 @@ func GetRefreshTokenFromRequest(cfg *config.Config, r *http.Request) (string, er
 }
 
 // TODO: https://www.calhoun.io/pitfalls-of-context-values-and-how-to-avoid-or-mitigate-them/
-func ContextWithUserId(ctx context.Context, uID int) context.Context {
+func ContextWithUserId(ctx context.Context, uID string) context.Context {
 	return context.WithValue(ctx, userIdCtxKey, uID)
 }
 
-func UserIdFromContext(ctx context.Context) (int, error) {
-	uID, ok := ctx.Value(userIdCtxKey).(int)
+func UserIdFromContext(ctx context.Context) (string, error) {
+	uID, ok := ctx.Value(userIdCtxKey).(string)
 	if !ok {
 		log.Println("Context missing userID")
-		return -1, errors.New("[SERVICE]: Context missing userID")
+		return "", errors.New("[SERVICE]: Context missing userID")
 	}
 
 	return uID, nil

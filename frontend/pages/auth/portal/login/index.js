@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Typography, InputAdornment } from '@material-ui/core';
 import { Person, Lock } from '@material-ui/icons';
 import Particles from 'react-particles-js';
@@ -12,9 +13,6 @@ import {
 import { WaveButton } from '../../../../components/Theme/StyledComponents';
 import fetch from 'isomorphic-unfetch';
 import LoginForm from '../../../../components/Login/loginForm';
-import { Cookies } from 'react-cookie';
-
-const cookies = new Cookies();
 
 const Index = ({ setup, updatedAt }) => {
     /*

@@ -18,3 +18,5 @@
 # VSCode Workspace
 *.code-workspace
 
+# Docker-compose env variables
+.env

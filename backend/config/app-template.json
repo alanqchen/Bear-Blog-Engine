@@ -1,5 +1,5 @@
 {
-    "env": "local",
+    "env": "prod",
     "postgreSQL": {
         "host": "<HOST URL>",
         "port": "<PORT>",
@@ -18,5 +18,8 @@
         "public_key": "config/api.rsa.pub",
         "private_key": "config/api.rsa"
     },
-    "port": 8080
+    "port": 8080,
+    "allowedOrigins":  [
+        "ENTER WEBSITE URL"
+    ]
 }

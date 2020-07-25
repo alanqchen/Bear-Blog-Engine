@@ -1,12 +1,9 @@
 package controllers
 
 import (
-	"context"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/alanqchen/Bear-Post/backend/app"
@@ -14,8 +11,8 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/repositories"
 	"github.com/alanqchen/Bear-Post/backend/services"
 	"github.com/alanqchen/Bear-Post/backend/util"
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/jackc/pgx/v4"
 )
 
 type UserController struct {
@@ -103,12 +100,12 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var newID int
-	for collision := true; collision; collision = !(err == pgx.ErrNoRows) {
-		newID = int(rand.Int31())
-		_, err = uc.Database.Conn.Prepare(context.Background(), "id-exists-query", "SELECT user_schema.\"user\".id FROM user_schema.\"user\" WHERE id = $1;")
-		err = uc.Database.Conn.QueryRow(context.Background(), "id-exists-query", newID).Scan(exists)
+	newID, err := uuid.NewV4()
+	if err != nil {
+		NewAPIError(&APIError{false, "Failed to generate user UUID", http.StatusInternalServerError}, w)
+		return
 	}
+
 	u := &models.User{
 		ID:        newID,
 		Name:      name,
@@ -123,12 +120,13 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Could not create user", http.StatusBadRequest}, w)
 		return
 	}
-
-	defer r.Body.Close()
+	// This shouldn't be needed since this is server-side (closed automatically)
+	//defer r.Body.Close()
 	NewAPIResponse(&APIResponse{Success: true, Message: "User created"}, w, http.StatusOK)
 }
 
 func (uc *UserController) CreateFirstAdmin(w http.ResponseWriter, r *http.Request) {
+
 	j, err := GetJSON(r.Body)
 	if err != nil {
 		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
@@ -170,12 +168,12 @@ func (uc *UserController) CreateFirstAdmin(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	var newID int
-	for collision := true; collision; collision = !(err == pgx.ErrNoRows) {
-		newID = int(rand.Int31())
-		_, err = uc.Database.Conn.Prepare(context.Background(), "id-exists-query", "SELECT user_schema.\"user\".id FROM user_schema.\"user\" WHERE id = $1;")
-		err = uc.Database.Conn.QueryRow(context.Background(), "id-exists-query", newID).Scan(exists)
+	newID, err := uuid.NewV4()
+	if err != nil {
+		NewAPIError(&APIError{false, "Failed to generate user UUID", http.StatusInternalServerError}, w)
+		return
 	}
+
 	u := &models.User{
 		ID:        newID,
 		Name:      name,
@@ -192,11 +190,15 @@ func (uc *UserController) CreateFirstAdmin(w http.ResponseWriter, r *http.Reques
 	}
 
 	if success == false {
+		log.Printf("[BAD CREATE FIRST ADMIN] There is already admin name: %v username: %v password: %v", name, email, pw)
 		NewAPIError(&APIError{false, "There is already an admin user", http.StatusBadRequest}, w)
 		return
 	}
 
-	defer r.Body.Close()
+	// This shouldn't be needed since this is server-side (closed automatically)
+	//defer r.Body.Close()
+	
+	log.Println("[AUTH] First admin user created")
 	NewAPIResponse(&APIResponse{Success: true, Message: "Admin user created"}, w, http.StatusOK)
 }
 
@@ -211,14 +213,44 @@ func (uc *UserController) GetAll(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: users}, w, http.StatusOK)
 }
 
+func (uc *UserController) GetAllDetailed(w http.ResponseWriter, r *http.Request) {
+	users, err := uc.UserRepository.GetAllDetailed()
+	if err != nil {
+		// something went wrong
+		NewAPIError(&APIError{false, "Could not fetch users", http.StatusBadRequest}, w)
+		return
+	}
+
+	NewAPIResponse(&APIResponse{Success: true, Data: users}, w, http.StatusOK)
+}
+
 func (uc *UserController) GetById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
+	id := vars["id"]
+	if id == "" {
 		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
 		return
 	}
+
 	user, err := uc.UserRepository.FindById(id)
+	if err != nil {
+		// user was not found
+		NewAPIError(&APIError{false, "Could not find user", http.StatusNotFound}, w)
+		return
+	}
+
+	NewAPIResponse(&APIResponse{Success: true, Data: user}, w, http.StatusOK)
+}
+
+func (uc *UserController) GetByIdDetailed(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	if id == "" {
+		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
+		return
+	}
+
+	user, err := uc.UserRepository.FindByIdDetailed(id)
 	if err != nil {
 		// user was not found
 		NewAPIError(&APIError{false, "Could not find user", http.StatusNotFound}, w)
@@ -255,16 +287,18 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	newpw, err := j.GetString("newpassword")
 	if newpw != "" && err == nil {
 		// confirm password
-		oldpw, err := j.GetString("oldpassword")
-		if err != nil {
-			NewAPIError(&APIError{false, "Old password is required", http.StatusBadRequest}, w)
-			return
-		}
-		ok := user.CheckPassword(oldpw)
-		if !ok {
-			NewAPIError(&APIError{false, "Old password does not match", http.StatusBadRequest}, w)
-			return
-		}
+		/*
+			oldpw, err := j.GetString("oldpassword")
+			if err != nil {
+				NewAPIError(&APIError{false, "Old password is required", http.StatusBadRequest}, w)
+				return
+			}
+			ok := user.CheckPassword(oldpw)
+			if !ok {
+				NewAPIError(&APIError{false, "Old password does not match", http.StatusBadRequest}, w)
+				return
+			}
+		*/
 		if len(newpw) < 6 {
 			NewAPIError(&APIError{false, "Password must not be less than 6 characters", http.StatusBadRequest}, w)
 			return
@@ -287,6 +321,32 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: authUser}, w, http.StatusOK)
+}
+
+func (uc *UserController) Delete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	if id == "" {
+		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
+		return
+	}
+
+	user, err := uc.UserRepository.FindByIdDetailed(id)
+	if err != nil {
+		// user was not found
+		NewAPIError(&APIError{false, "Could not find user", http.StatusNotFound}, w)
+		return
+	}
+
+	err = uc.UserRepository.Delete(id)
+	if err != nil {
+		// user was not found
+		NewAPIError(&APIError{false, "Failed to delete user", http.StatusInternalServerError}, w)
+		return
+	}
+
+	log.Println("[DELETE USER SUCCESS] - username:", user.Email)
+	NewAPIResponse(&APIResponse{Success: true, Data: user}, w, http.StatusOK)
 }
 
 // Password reset functionality - Might look into this more later

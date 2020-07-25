@@ -3,7 +3,6 @@ package database
 import (
 	"fmt"
 	"log"
-	"strconv"
 
 	"github.com/alanqchen/Bear-Post/backend/config"
 	"github.com/go-redis/redis"
@@ -14,8 +13,7 @@ type Redis struct {
 }
 
 func NewRedis(dbConfig config.RedisConfig) (*Redis, error) {
-	port := strconv.Itoa(dbConfig.Port)
-	//port := dbConfig.Port
+	port := dbConfig.Port
 	client := redis.NewClient(&redis.Options{
 		Addr:     dbConfig.Host + ":" + port,
 		Password: dbConfig.Password,

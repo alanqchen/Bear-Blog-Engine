@@ -1,6 +1,20 @@
 **Work-In-Progress**
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/alanqchen/bear-post)](https://goreportcard.com/report/github.com/alanqchen/bear-post)
+<p align="center">
+    <a href="https://goreportcard.com/report/github.com/alanqchen/bear-post">
+        <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/alanqchen/bear-post" />
+    </a>
+    <a href="https://hub.docker.com/repository/docker/aqchen/bearpost-api">
+        <img alt="Docker Cloud Build Status (API)" src="https://img.shields.io/docker/cloud/build/aqchen/bearpost-api?label=docker%20build%20api" />
+    </a>
+    <a href="https://hub.docker.com/repository/docker/aqchen/bearpost-frontend">
+        <img alt="Docker Cloud Build Status (Frontend)" src="https://img.shields.io/docker/cloud/build/aqchen/bearpost-frontend?label=docker%20build%20frontend" />
+    </a>
+    <a href="https://example.aqchen.com">
+        <img alt="Example Website" src="https://img.shields.io/website?label=example%20site&up_message=Online&url=https%3A%2F%2Fexample.aqchen.com" />
+    </a>
+    <img alt="Example Website API" src="https://img.shields.io/website?label=example%20api&up_color=green&url=https%3A%2F%2Fexampleapi.aqchen.com" />
+</p>
 
 # Bear Post
 A Modern Blog Engine.
@@ -12,13 +26,14 @@ Status:
 Working on login
 
 Current lighthouse stats(PWA hopefully soon):
+
 ![image](https://user-images.githubusercontent.com/18543142/87865583-293cd380-c945-11ea-9aaa-4e58bdafa203.png)
 
 
 ### Q: Why not a static blog?
 A: A dynamic blog gives me the opportunity to learn working with databases and React. This is my first large project working with these, so while a static blog has lots of advantages, a dynamic blog is better my personal development.
 
-## Compiling and Running
+## Compiling and Running (Needs to be updated)
 
 ### Docker Compse (Recommened)
 
@@ -64,24 +79,13 @@ for development mode.
 
 ### Frontend
 - ~~Post component data~~
-- Post component styling (In progress)
+- ~~Post component styling~~
+- ~~Add state persistence~~
 - Search component (In progress)
-- Admin login
+- Admin login (In progress)
 - Admin dashboard
 - Etc. (lots to do here)
 
 *Later down the line*
 - Comment support? (Very low-priority)
 - Search by month/year (Need to add backend route)
-- Add state persistence (Low-priority)
-
-## Resources
-Editor: Atlassian https://www.npmjs.com/package/@atlaskit/editor-core
-
-Highlight.js in react: https://github.com/highlightjs/highlight.js/issues/925
-
-(For my web server): https://www.varnish-software.com/wiki/content/tutorials/varnish/varnish_ubuntu.html
-
-Algolia: https://www.algolia.com/doc/
-
-

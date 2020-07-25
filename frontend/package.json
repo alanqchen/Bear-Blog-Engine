@@ -37,6 +37,7 @@
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
+    "rich-markdown-editor": "^10.4.0",
     "styled-components": "^5.1.1",
     "uuid": "^7.0.3",
     "yup": "^0.29.1"
