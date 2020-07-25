@@ -7,7 +7,7 @@ require (
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/frankban/quicktest v1.10.0 // indirect
 	github.com/go-redis/redis v6.15.8+incompatible
-	github.com/gofrs/uuid v3.2.0+incompatible
+	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/gorilla/handlers v1.4.2
