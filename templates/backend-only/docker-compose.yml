@@ -5,7 +5,7 @@ services:
     ##                                  API
     ################################################################################
     api:
-        build: .
+        image: aqchen/bearpost-api
         container_name: bearpost_api
         restart: unless-stopped
         ports: 
