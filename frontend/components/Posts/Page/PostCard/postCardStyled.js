@@ -71,6 +71,9 @@ export const StyledChip = styled(Chip)`
         background-color: ${GlobalTheme.backgroundAlt2} !important;
     }
 
+    &:focus {
+        outline: -webkit-focus-ring-color auto 5px !important;
+    }
 `;
 
 export const ImageSkeleton = styled(Skeleton)`

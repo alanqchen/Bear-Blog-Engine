@@ -1,4 +1,5 @@
 import {connect} from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import { fetchPosts as fetchPostsAction } from '../../redux/fetchPosts/actions';
 import { fetchCategory as fetchCategoryAction } from '../../redux/fetchCategory/actions';
 import { fetchCategoryNew } from '../../redux/fetchCategory/actions';
@@ -20,15 +21,17 @@ const PostContainer = ({className, children}) => {
   }
   
 const StyledPost = styled(PostContainer)`
-width: 95%;
-max-width: 800px;
+    width: 95%;
+    max-width: 800px;
 `
 
 function PostsContainer({fetchPosts, fetchCategory, dispatch, category }) {
 
     let fetchType = category === "" ? fetchPosts : fetchCategory;
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     const loadMorePosts = async() => {
+        setIsInitialLoad(false)
         if(category === "") {
             await dispatch(fetchPostsAction());
         } else {
@@ -44,7 +47,7 @@ function PostsContainer({fetchPosts, fetchCategory, dispatch, category }) {
             {!fetchType.loading && fetchType.error === null && fetchType.hasMore
                 && <Waypoint onEnter={() => loadMorePosts()} ></Waypoint>
             }
-            {fetchType.error === null && fetchType.posts.length === 0 && fetchType.loading ? 
+            {fetchType.error === null && fetchType.posts.length === 0 && (fetchType.loading || isInitialLoad) ? 
                 <>
                     <PostCard post={null} skeleton={true} />
                     <PostCard post={null} skeleton={true} />
