@@ -21,10 +21,12 @@ type UserRepository interface {
 	Create(u *models.User) error
 	CreateFirstAdmin(u *models.User) (bool, error)
 	GetAll() ([]*models.User, error)
-	FindById(id int) (*models.User, error)
+	GetAllDetailed() ([]*models.User, error)
+	FindById(id string) (*models.User, error)
+	FindByIdDetailed(id string) (*models.User, error)
 	FindByEmail(email string) (*models.User, error)
 	Exists(email string) bool
-	Delete(id int) error
+	Delete(id string) error
 	Update(u *models.User) error
 }
 
@@ -110,6 +112,35 @@ func (ur *userRepository) Update(u *models.User) error {
 func (ur *userRepository) GetAll() ([]*models.User, error) {
 	var users []*models.User
 	log.Println(time.Now())
+	rows, err := ur.Conn.Query(context.Background(), "SELECT id, name, admin, created_at, updated_at FROM user_schema.\"user\"")
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		u := new(models.User)
+		err := rows.Scan(&u.ID, &u.Name, &u.Admin, &u.CreatedAt, &u.UpdatedAt)
+		log.Println(err)
+		if err != nil {
+			return nil, err
+		}
+		u.Email = ""
+		users = append(users, u)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	log.Println(err)
+
+	return users, nil
+}
+
+func (ur *userRepository) GetAllDetailed() ([]*models.User, error) {
+	var users []*models.User
+	log.Println(time.Now())
 	rows, err := ur.Conn.Query(context.Background(), "SELECT id, name, email, admin, created_at, updated_at FROM user_schema.\"user\"")
 	if err != nil {
 		log.Println(err)
@@ -146,10 +177,23 @@ func (ur *userRepository) FindByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
-func (ur *userRepository) FindById(id int) (*models.User, error) {
+func (ur *userRepository) FindById(id string) (*models.User, error) {
 	user := models.User{}
 
-	err := ur.Conn.QueryRow(context.Background(), "SELECT id, name, email, password, admin, created_at, updated_at FROM user_schema.\"user\" WHERE id = $1", id).Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.Admin, &user.CreatedAt, &user.UpdatedAt)
+	err := ur.Conn.QueryRow(context.Background(), "SELECT id, name, admin, created_at, updated_at FROM user_schema.\"user\" WHERE id = $1", id).Scan(&user.ID, &user.Name, &user.Admin, &user.CreatedAt, &user.UpdatedAt)
+	log.Println(err)
+	if err != nil {
+		return nil, err
+	}
+	user.Email = ""
+
+	return &user, nil
+}
+
+func (ur *userRepository) FindByIdDetailed(id string) (*models.User, error) {
+	user := models.User{}
+
+	err := ur.Conn.QueryRow(context.Background(), "SELECT id, name, email, admin, created_at, updated_at FROM user_schema.\"user\" WHERE id = $1", id).Scan(&user.ID, &user.Name, &user.Email, &user.Admin, &user.CreatedAt, &user.UpdatedAt)
 	log.Println(err)
 	if err != nil {
 		return nil, err
@@ -176,14 +220,14 @@ func (ur *userRepository) Exists(email string) bool {
 	return exists.Bool
 }
 
-func (ur *userRepository) Delete(id int) error {
+func (ur *userRepository) Delete(id string) error {
 	_, err := ur.Conn.Prepare(context.Background(), "delete-user-query", "DELETE FROM user_schema.\"user\" WHERE id = $1")
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 
-	_, err = ur.Conn.Exec(context.Background(), "update-query", id)
+	_, err = ur.Conn.Exec(context.Background(), "delete-user-query", id)
 	if err != nil {
 		log.Println(err)
 		return err

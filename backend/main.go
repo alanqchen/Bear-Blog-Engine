@@ -28,8 +28,11 @@ func main() {
 	} else if _, err := os.Stat("../app.json"); !os.IsNotExist(err) {
 		log.Println("Using ../app.json")
 		cfg, err = config.New("../app.json")
+	} else if _, err := os.Stat("config/app-docker.json"); !os.IsNotExist(err) {
+		log.Println("Using config/app-docker.json")
+		cfg, err = config.New("config/app-docker.json")
 	} else {
-		log.Fatal("[FATAL] Failed to find config/app.json or ../app.json or config/app-custom.json")
+		log.Fatal("[FATAL] Failed to find config/app-custom.json or config/app.json or config/app-docker or ../app.json")
 	}
 
 	log.Println("Creating api")

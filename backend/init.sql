@@ -3,7 +3,7 @@ create schema user_schema;
 
 create table post_schema.post
 (
-	id serial not null,
+	id integer not null,
 	title text default 'Post' not null,
 	slug text default '' not null,
 	body text default '' not null,

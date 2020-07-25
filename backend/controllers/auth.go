@@ -3,7 +3,6 @@ package controllers
 import (
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/alanqchen/Bear-Post/backend/app"
 	"github.com/alanqchen/Bear-Post/backend/models"
@@ -40,7 +39,7 @@ func (ac *AuthController) Authenticate(w http.ResponseWriter, r *http.Request) {
 	}
 	u, err := ac.UserRepository.FindByEmail(email)
 	if err != nil {
-		log.Println("Failed login - Bad username:", email)
+		log.Println("[BAD LOGIN] - username:", email)
 		NewAPIError(&APIError{false, "Incorrect email or password", http.StatusBadRequest}, w)
 		return
 	}
@@ -52,7 +51,7 @@ func (ac *AuthController) Authenticate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if ok := u.CheckPassword(pw); !ok {
-		log.Println("Failed login - Bad password for user", email)
+		log.Printf("[BAD LOGIN] - username: %v password %v", email, pw)
 		NewAPIError(&APIError{false, "Incorrect email or password", http.StatusBadRequest}, w)
 		return
 	}
@@ -76,6 +75,7 @@ func (ac *AuthController) Authenticate(w http.ResponseWriter, r *http.Request) {
 		authUser,
 	}
 
+	log.Println("[LOGIN SUCCESS] - username:", email)
 	NewAPIResponse(&APIResponse{Success: true, Message: "Login successful", Data: data}, w, http.StatusOK)
 }
 
@@ -118,8 +118,8 @@ func (ac *AuthController) LogoutAll(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Something went wrong", http.StatusInternalServerError}, w)
 		return
 	}
-	userId := strconv.Itoa(uid)
-	keys := ac.App.Redis.Keys("*." + userId + ".*")
+
+	keys := ac.App.Redis.Keys("*." + uid + ".*")
 	for _, token := range keys.Val() {
 		err := ac.App.Redis.Del(token).Err()
 		if err != nil {

@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"bufio"
+	"log"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
@@ -16,13 +17,13 @@ import (
 	"github.com/dgrijalva/jwt-go/request"
 )
 
-//TODO
 func RequireAuthentication(a *app.App, next http.HandlerFunc, admin bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		t, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
 			func(token *jwt.Token) (interface{}, error) {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+					log.Println("[BAD AUTH] Unexpected signing method:", token.Header["alg"])
 					return nil, fmt.Errorf("[ERROR] Unexpected signing method: %v", token.Header["alg"])
 				}
 
@@ -31,19 +32,31 @@ func RequireAuthentication(a *app.App, next http.HandlerFunc, admin bool) http.H
 
 		if err != nil {
 			if err == request.ErrNoTokenInRequest {
+				log.Println("[BAD AUTH] Missing token")
 				controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Missing token", Status: http.StatusUnauthorized}, w)
 				return
 			}
-
+			log.Println("[BAD AUTH] Invalid token")
 			controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Invalid token", Status: http.StatusUnauthorized}, w)
 			return
 		}
 
 		if claims, ok := t.Claims.(jwt.MapClaims); ok && t.Valid {
-			jti := claims["jti"].(string)
-			tokenHash := claims["tokenHash"].(string)
+			jti, ok := claims["jti"].(string)
+			if !ok {
+				log.Println("[BAD AUTH] Bad jti type")
+				controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Bad jti type", Status: http.StatusBadRequest}, w)
+				return
+			}
+			tokenHash, ok := claims["tokenHash"].(string)
+			if !ok {
+				log.Println("[BAD AUTH] Bad token hash type")
+				controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Bad token hash type", Status: http.StatusBadRequest}, w)
+				return
+			}
 			val, err := a.Redis.Get(tokenHash + "." + jti).Result()
 			if err != nil || val == "" {
+				log.Println("[BAD AUTH] Invalid token v2")
 				controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Invalid token", Status: http.StatusUnauthorized}, w)
 				return
 			}
@@ -56,7 +69,12 @@ func RequireAuthentication(a *app.App, next http.HandlerFunc, admin bool) http.H
 				return
 			}
 			ctx := services.ContextWithUser(r.Context(), user)*/
-			uid := int(claims["id"].(float64))
+			uid, ok := claims["id"].(string)
+			if !ok {
+				log.Println("[BAD AUTH] Bad id type")
+				controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Bad id type", Status: http.StatusBadRequest}, w)
+				return
+			}
 			/*db, err := database.NewDB(cfg.Database)
 			if err != nil {
 				controllers.NewAPIError(&controllers.APIError{false, "Something went wrong", http.StatusInternalServerError}, w)
@@ -77,6 +95,7 @@ func RequireAuthentication(a *app.App, next http.HandlerFunc, admin bool) http.H
 			// Check if the user's token has admin true
 			isAdmin := claims["admin"].(bool)
 			if !isAdmin {
+				log.Println("[BAD AUTH] Not an admin - uid:", uid)
 				controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Admin required", Status: http.StatusForbidden}, w)
 				return
 			}
@@ -136,15 +155,27 @@ func RequireRefreshToken(a *app.App, next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		if claims, ok := t.Claims.(jwt.MapClaims); ok && t.Valid {
-			jti := claims["jti"].(string)
-			tokenHash := claims["tokenHash"].(string)
+			jti, ok := claims["jti"].(string)
+			if !ok {
+				controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Bad jti type", Status: http.StatusBadRequest}, w)
+				return
+			}
+			tokenHash, ok := claims["tokenHash"].(string)
+			if !ok {
+				controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Bad token hash type", Status: http.StatusBadRequest}, w)
+				return
+			}
 			val, err := a.Redis.Get(tokenHash + "." + jti).Result()
 			if err != nil || val == "" {
 				controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Invalid token", Status: http.StatusUnauthorized}, w)
 				return
 			}
 
-			uid := int(claims["id"].(float64))
+			uid, ok := claims["id"].(string)
+			if !ok {
+				controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Bad id type", Status: http.StatusBadRequest}, w)
+				return
+			}
 			ctx := services.ContextWithUserId(r.Context(), uid)
 			next(w, r.WithContext(ctx))
 		}

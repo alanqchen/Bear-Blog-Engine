@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -14,7 +15,7 @@ type UpdateTime struct {
 // User represents a user account for public visibility (used for public endpoints)
 // Its MarshalJSON function wont expose its role.
 type User struct {
-	ID        int        `json:"id"`
+	ID        uuid.UUID  `json:"id"`
 	Name      string     `json:"name"`
 	Email     string     `json:"email"`
 	Password  string     `json:"password"`
@@ -35,7 +36,7 @@ func (u *User) MarshalJSON() ([]byte, error) {
 	value := u.UpdatedAt
 	if value == nil {
 		return json.Marshal(struct {
-			ID        int        `json:"id"`
+			ID        uuid.UUID  `json:"id"`
 			Name      string     `json:"name"`
 			Email     string     `json:"email"`
 			CreatedAt time.Time  `json:"createdAt"`
@@ -43,7 +44,7 @@ func (u *User) MarshalJSON() ([]byte, error) {
 		}{u.ID, u.Name, u.Email, u.CreatedAt, nil})
 	}
 	return json.Marshal(struct {
-		ID        int        `json:"id"`
+		ID        uuid.UUID  `json:"id"`
 		Name      string     `json:"name"`
 		Email     string     `json:"email"`
 		CreatedAt time.Time  `json:"createdAt"`
@@ -56,7 +57,7 @@ func (u *AuthUser) MarshalJSON() ([]byte, error) {
 	if value == nil {
 		// *pgtype.Timestamptz is used so we can set it to nil
 		return json.Marshal(struct {
-			ID        int        `json:"id"`
+			ID        uuid.UUID  `json:"id"`
 			Name      string     `json:"name"`
 			Email     string     `json:"email"`
 			Admin     bool       `json:"admin"`
@@ -65,7 +66,7 @@ func (u *AuthUser) MarshalJSON() ([]byte, error) {
 		}{u.ID, u.Name, u.Email, u.Admin, u.CreatedAt, nil})
 	}
 	return json.Marshal(struct {
-		ID        int        `json:"id"`
+		ID        uuid.UUID  `json:"id"`
 		Name      string     `json:"name"`
 		Email     string     `json:"email"`
 		Admin     bool       `json:"admin"`

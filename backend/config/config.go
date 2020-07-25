@@ -23,7 +23,7 @@ type JWTConfig struct {
 
 type RedisConfig struct {
 	Host     string `json:"host"`
-	Port     int    `json:"port"`
+	Port     string    `json:"port"`
 	Password string `json:"password"`
 }
 
@@ -32,7 +32,7 @@ type Config struct {
 	PostgreSQL     PostgreSQLConfig `json:"postgreSQL"`
 	JWT            JWTConfig        `json:"jwt"`
 	RedisDB        RedisConfig      `json:"RedisDB"`
-	Port           int              `json:"port"`
+	Port           string              `json:"port"`
 	AllowedOrigins []string         `json:"allowedOrigins"`
 }
 

@@ -1,5 +1,6 @@
 # Config
 main
+.env
 config/app.json
 config/app-custom.json
 config/api.rsa.pub

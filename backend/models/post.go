@@ -16,7 +16,7 @@ type Post struct {
 	UpdatedAt     pgtype.Timestamptz `json:"updatedAt"`
 	Tags          []string           `json:"tags"`
 	Hidden        bool               `json:"hidden"`
-	AuthorID      int                `json:"authorid"`
+	AuthorID      string                `json:"authorid"`
 	FeatureImgURL string             `json:"featureImgUrl"`
 	Subtitle      string             `json:"subtitle"`
 	Views         int                `json:"views"`
@@ -35,7 +35,7 @@ func (p *Post) MarshalJSON() ([]byte, error) {
 			UpdatedAt     *pgtype.Timestamptz `json:"updatedAt"`
 			Tags          []string            `json:"tags"`
 			Hidden        bool                `json:"hidden"`
-			AuthorID      int                 `json:"authorid"`
+			AuthorID      string                 `json:"authorid"`
 			FeatureImgURL string              `json:"featureImgUrl"`
 			Subtitle      string              `json:"subtitle"`
 			Views         int                 `json:"views"`
@@ -51,7 +51,7 @@ func (p *Post) MarshalJSON() ([]byte, error) {
 		UpdatedAt     time.Time `json:"updatedAt"`
 		Tags          []string  `json:"tags"`
 		Hidden        bool      `json:"hidden"`
-		AuthorID      int       `json:"authorid"`
+		AuthorID      string       `json:"authorid"`
 		FeatureImgURL string    `json:"featureImgUrl"`
 		Subtitle      string    `json:"subtitle"`
 		Views         int       `json:"views"`

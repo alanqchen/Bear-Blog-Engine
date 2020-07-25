@@ -1,0 +1,74 @@
+version: '3.4'
+
+services:
+    ################################################################################
+    ##                                  API
+    ################################################################################
+    api:
+        image: aqchen/bearpost-api
+        container_name: bearpost_api
+        restart: unless-stopped
+        ports: 
+            - 8080:8080
+        environment: 
+            - GOPATH=/go
+        depends_on: 
+            - postgres
+            - redis
+        networks:
+            - bearpost_default
+        volumes: 
+            - bearpost_api_data:/go/src
+            
+    ################################################################################
+    ##                               PostgreSQL
+    ################################################################################
+    postgres:
+        image: postgres:latest
+        container_name: bearpost_postgres
+        restart: unless-stopped
+        environment:
+            POSTGRES_USER: bearpost
+            POSTGRES_PASSWORD: bearpost
+            POSTGRES_DB: bearpost # not recommend to change this
+        ports:
+            - 5432:5432
+        volumes: 
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+            - bearpost_postgres_data:/var/lib/postgresql/data
+        networks: 
+            - bearpost_default
+    
+    ################################################################################
+    ##                                 Redis
+    ################################################################################
+    redis:
+        image: redis:latest
+        container_name: bearpost_redis
+        restart: unless-stopped
+        command: redis-server --requirepass bearpost
+        ports: 
+            - 6379
+        volumes: 
+            - bearpost_redis_data:/data
+        networks: 
+            - bearpost_default
+        sysctls:
+            net.core.somaxconn: '511'
+    
+volumes:
+    bearpost_postgres_data:
+        driver: local
+    bearpost_api_data:
+        driver: local
+    bearpost_redis_data:
+        driver: local
+    bearpost_frontend_data:
+        driver: local
+    bearpost_certificates:
+        driver: local
+
+networks:
+    bearpost_default:
+    
+

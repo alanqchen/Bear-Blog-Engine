@@ -41,7 +41,7 @@ func (a *App) Run(r *mux.Router) {
 	port := a.Config.Port
 	addr := fmt.Sprintf(":%v", port)
 
-	fmt.Printf("API is listening on port: %d\n", port)
+	fmt.Printf("API is listening on port: %v\n", port)
 	log.Fatal(http.ListenAndServe(addr, handlers.CORS(originsOk, headersOk, methodsOk)(r)))
 }
 
