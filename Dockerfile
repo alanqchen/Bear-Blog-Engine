@@ -4,10 +4,9 @@ ADD . /bearpost
 WORKDIR /bearpost/backend
 RUN apk update && apk upgrade && \
     apk add --no-cache bash git openssh openssl
-# Gen jwt keys and CSRF key
+# Gen jwt keys
 RUN openssl genrsa -out config/api.rsa 4096
 RUN openssl rsa -in config/api.rsa -pubout > config/api.rsa.pub
-RUN openssl rand 32 -out config/authkey
 # Add Info
 LABEL maintainer="Alan Chen <chen.8943@osu.edu>"
 LABEL Name=bear-post Version=0.0.1

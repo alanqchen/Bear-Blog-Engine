@@ -57,7 +57,7 @@ services:
             - 5432
         volumes: 
             - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-            - bearpost_postgres_data:/var/lib/postgresql/data
+            - ${LOCAL_POSTGRES_DIR}:/var/lib/postgresql/data
         networks: 
             - bearpost_default
     
@@ -71,25 +71,18 @@ services:
         ports: 
             - 6379
         volumes: 
-            - bearpost_redis_data:/data
+            - ${LOCAL_REDIS_DIR}:/data
         networks: 
             - bearpost_default
         sysctls:
             net.core.somaxconn: '511'
     
 volumes:
-    bearpost_postgres_data:
-        driver: local
     bearpost_api_data:
         driver: local
-    bearpost_redis_data:
-        driver: local
     bearpost_frontend_data:
-        driver: local
-    bearpost_certificates:
         driver: local
 
 networks:
     bearpost_default:
     
-

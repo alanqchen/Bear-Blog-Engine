@@ -1,11 +1,11 @@
-version: '3.4'
+version: '3.8'
 
 services:
     ################################################################################
     ##                                  API
     ################################################################################
     api:
-        image: aqchen/bearpost-api
+        build: .
         container_name: bearpost_api
         restart: unless-stopped
         ports: 
@@ -19,6 +19,7 @@ services:
             - bearpost_default
         volumes: 
             - bearpost_api_data:/go/src
+            - ${PWD}/config/app-docker-dev.json:/bearpost/backend/config/app-custom.json
             
     ################################################################################
     ##                               PostgreSQL
@@ -28,14 +29,14 @@ services:
         container_name: bearpost_postgres
         restart: unless-stopped
         environment:
-            POSTGRES_USER: bearpost
-            POSTGRES_PASSWORD: bearpost
-            POSTGRES_DB: bearpost # not recommend to change this
+            POSTGRES_USER: bearpost # If you change any of these, change them
+            POSTGRES_PASSWORD: bearpost # in the .json config file as well
+            POSTGRES_DB: bearpost
         ports:
             - 5432:5432
         volumes: 
             - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-            - bearpost_postgres_data:/var/lib/postgresql/data
+            - ${LOCAL_POSTGRES_DIR}:/var/lib/postgresql/data
         networks: 
             - bearpost_default
     
@@ -46,29 +47,20 @@ services:
         image: redis:latest
         container_name: bearpost_redis
         restart: unless-stopped
-        command: redis-server --requirepass bearpost
+        command: redis-server --requirepass bearpost # Change this in the .json config as well
         ports: 
             - 6379
         volumes: 
-            - bearpost_redis_data:/data
+            - ${LOCAL_REDIS_DIR}:/data
         networks: 
             - bearpost_default
         sysctls:
             net.core.somaxconn: '511'
     
 volumes:
-    bearpost_postgres_data:
-        driver: local
     bearpost_api_data:
-        driver: local
-    bearpost_redis_data:
-        driver: local
-    bearpost_frontend_data:
-        driver: local
-    bearpost_certificates:
         driver: local
 
 networks:
     bearpost_default:
-    
 
