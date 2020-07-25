@@ -1,12 +1,19 @@
 **Work-In-Progress**
 
 <p align="center">
-  
-[![Go Report Card](https://goreportcard.com/badge/github.com/alanqchen/bear-post)](https://goreportcard.com/report/github.com/alanqchen/bear-post)
-![Docker Cloud Build Status (API)](https://img.shields.io/docker/cloud/build/aqchen/bearpost-api?label=docker%20build%20api)
-![Docker Cloud Build Status (Frontend)](https://img.shields.io/docker/cloud/build/aqchen/bearpost-frontend?label=docker%20build%20frontend)
-![Website](https://img.shields.io/website?label=example%20site&up_color=green&up_message=Online&url=https%3A%2F%2Fexample.aqchen.com)
-
+    <a href="https://goreportcard.com/report/github.com/alanqchen/bear-post">
+        <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/alanqchen/bear-post" />
+    </a>
+    <a href="https://hub.docker.com/repository/docker/aqchen/bearpost-api">
+        <img alt="Docker Cloud Build Status (API)" src="https://img.shields.io/docker/cloud/build/aqchen/bearpost-api?label=docker%20build%20api" />
+    </a>
+    <a href="https://hub.docker.com/repository/docker/aqchen/bearpost-frontend">
+        <img alt="Docker Cloud Build Status (Frontend)" src="https://img.shields.io/docker/cloud/build/aqchen/bearpost-frontend?label=docker%20build%20frontend" />
+    </a>
+    <a href="https://example.aqchen.com">
+        <img alt="Example Website" src="https://img.shields.io/website?label=example%20site&up_message=Online&url=https%3A%2F%2Fexample.aqchen.com" />
+    </a>
+    <img alt="Example Website API" src="https://img.shields.io/website?label=example%20api&up_color=green&url=https%3A%2F%2Fexampleapi.aqchen.com" />
 </p>
 
 # Bear Post
@@ -82,8 +89,3 @@ for development mode.
 *Later down the line*
 - Comment support? (Very low-priority)
 - Search by month/year (Need to add backend route)
-
-## Resources
-Editor: Atlassian https://www.npmjs.com/package/@atlaskit/editor-core
-
-Highlight.js in react: https://github.com/highlightjs/highlight.js/issues/925
