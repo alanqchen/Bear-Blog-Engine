@@ -16,7 +16,7 @@ func Logger(next http.HandlerFunc) http.HandlerFunc {
 		if ip != "" {
 			log.Printf("[%s] [%v] %q %v\n", req.Method, ip, req.URL.String(), time.Since(start))
 		} else {
-			log.Printf("[%s] [IP Unkown] %q %v\n", req.Method, req.URL.String(), time.Since(start))
+			log.Printf("[%s] [IP unknown] %q %v\n", req.Method, req.URL.String(), time.Since(start))
 		}
 	}
 }
