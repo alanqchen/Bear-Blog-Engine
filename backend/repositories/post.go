@@ -308,11 +308,15 @@ func (pr *postRepository) GetAll() ([]*models.Post, error) {
 func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*models.Post, int, error) {
 	var posts []*models.Post
 
-	log.Println("Given maxID:", maxID)
-	log.Println("Given perPage:", perPage)
-	log.Println("Given tags:", tags)
+	var rows pgx.Rows
+	var err error
 
-	rows, err := pr.Conn.Query(context.Background(), "SELECT * FROM post_schema.post WHERE NOT hidden AND id < $1 AND tags @> $2::text[] ORDER BY created_at DESC, id DESC LIMIT $3", maxID, tags, perPage)
+	// For some reason, can't use same query w/ tags in latest pgx update
+	if len(tags) == 0 {
+		rows, err = pr.Conn.Query(context.Background(), "SELECT * FROM post_schema.post WHERE NOT hidden AND id < $1 ORDER BY created_at DESC, id DESC LIMIT $2", maxID, perPage)
+	} else {
+		rows, err = pr.Conn.Query(context.Background(), "SELECT * FROM post_schema.post WHERE NOT hidden AND id < $1 AND tags @> $2::text[] ORDER BY created_at DESC, id DESC LIMIT $3", maxID, tags, perPage)
+	}
 
 	if err != nil {
 		log.Println(err)
@@ -321,7 +325,6 @@ func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*mo
 	defer rows.Close()
 	var minID int
 	for rows.Next() {
-		log.Println("next row")
 		p := new(models.Post)
 		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt, &p.Tags, &p.Hidden, &p.AuthorID, &p.FeatureImgURL, &p.Subtitle, &p.Views)
 

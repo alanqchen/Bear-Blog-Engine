@@ -36,7 +36,7 @@ func NewUserController(a *app.App, ur repositories.UserRepository, pr repositori
 func (uc *UserController) HelloWorld(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.Context().Value("userId"))
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprint(w, "Hello gopher!")
+	fmt.Fprint(w, "Hey! You're not supposed to be here! (The API is online though)")
 }
 
 func (uc *UserController) Profile(w http.ResponseWriter, r *http.Request) {
