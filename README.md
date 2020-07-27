@@ -13,7 +13,6 @@
     <a href="https://example.aqchen.com">
         <img alt="Example Website" src="https://img.shields.io/website?label=example%20site&up_message=Online&url=https%3A%2F%2Fexample.aqchen.com" />
     </a>
-    <img alt="Example Website API" src="https://img.shields.io/website?label=example%20api&up_color=green&url=https%3A%2F%2Fexampleapi.aqchen.com" />
 </p>
 
 # Bear Post
