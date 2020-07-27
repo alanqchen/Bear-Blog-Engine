@@ -73,7 +73,7 @@ function NavBar({props, atTop, className}) {
                             </NavLinks>
                         </CategoriesWrapper>
                         <SearchIconStyled fontSize="large" style={{ fontSize: 26, color: GlobalTheme.textPrimary }}/>
-                        <Hamburger label="sidebar" toggled={isActive} toggle={setIsActive} color={GlobalTheme.textPrimary} size={26} hideOutline={false} />
+                        <Hamburger label="sidebar" toggled={isActive} toggle={setIsActive} color={GlobalTheme.textPrimary} size={26} />
                     </Toolbar>
                 </AppBar>
             </HideOnScroll>

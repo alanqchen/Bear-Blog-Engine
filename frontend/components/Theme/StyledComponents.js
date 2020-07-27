@@ -11,10 +11,6 @@ export const WaveButton = styled(Button)`
     margin-bottom: 8px !important;
     min-width: 130px !important;
 
-    &:focus {
-        outline: -webkit-focus-ring-color auto 5px !important;
-    }
-
     &:hover {
         cursor: pointer;
     }
