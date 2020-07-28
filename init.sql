@@ -11,7 +11,7 @@ create table post_schema.post
 	updated_at timestamptz default null,
 	tags text[] default '{}' not null,
 	hidden boolean default true not null,
-	authorid integer not null,
+	authorid uuid not null,
 	feature_image_url text default '/assets/images/default-image.png' not null,
 	subtitle text default '' not null,
 	views integer default 0 not null
@@ -26,6 +26,12 @@ create unique index post_slug_uindex
 alter table post_schema.post
 	add constraint post_pk
 		primary key (id);
+
+create sequence post_schema.post_id_seq;
+
+alter table post_schema.post alter column id set default nextval('post_schema.post_id_seq');
+
+alter sequence post_schema.post_id_seq owned by post_schema.post.id;
 
 create table user_schema."user"
 (

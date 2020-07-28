@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import ReCAPTCHA from "react-google-recaptcha";
 import { Typography, InputAdornment } from '@material-ui/core';
 import { Person, Lock, Toys } from '@material-ui/icons';
 import { WaveButton } from '../Theme/StyledComponents';
@@ -11,6 +12,10 @@ import {
 export const LoginForm = () => {
 
     const [isActive, setIsActive] = useState(false);
+    const [passedCaptcha, setPassedCaptcha] = useState(false);
+    const [failedCaptcha, setFailedCaptcha] = useState(false);
+
+    const recaptchaRef = useRef();
 
     useEffect(() => {}, [isActive]);
 
@@ -72,9 +77,19 @@ export const LoginForm = () => {
                         <WaveButton variant="contained" color="primary" disabled={
                                 (!touched.email || !touched.password || errors.email || errors.password) ? true : false
                             }
+                            onClick={() => { recaptchaRef.current.execute() }}
                         >
                             Login
                         </WaveButton>
+                        <ReCAPTCHA
+                            ref={recaptchaRef}
+                            size="invisible"
+                            sitekey={process.env.NEXT_PUBLIC_CAPTCHA_KEY}
+                            onChange={() => {setPassedCaptcha(true)}}
+                            onErrored={() => {setFailedCaptcha(true)}}
+                        />
+                        {passedCaptcha && <p>Passed Captcha!</p>}
+                        {failedCaptcha && <p>Couldn't complete captcha, try again.</p>}
                     </>
                 );
             }}

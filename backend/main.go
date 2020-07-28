@@ -11,8 +11,7 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/routes"
 )
 
-/* Big thanks to steffen for Backend File Structure from https://github.com/steffen25/golang.zone. Used
- * w/ permission through MIT Liscense
+/* Big thanks to steffen for Backend File Structure from https://github.com/steffen25/golang.zone.
  */
 
 func main() {

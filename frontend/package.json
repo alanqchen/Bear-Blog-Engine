@@ -29,6 +29,7 @@
     "react-burger-menu": "^2.6.17",
     "react-cookie": "^4.0.3",
     "react-dom": "^16.13.1",
+    "react-google-recaptcha": "^2.1.0",
     "react-lazyload": "^3.0.0",
     "react-particles-js": "^3.2.1",
     "react-redux": "^7.2.0",

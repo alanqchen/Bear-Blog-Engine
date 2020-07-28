@@ -308,9 +308,18 @@ func (pr *postRepository) GetAll() ([]*models.Post, error) {
 func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*models.Post, int, error) {
 	var posts []*models.Post
 
-	rows, err := pr.Conn.Query(context.Background(), "SELECT * FROM post_schema.post WHERE NOT hidden AND id < $1 AND tags @> $2::text[] ORDER BY created_at DESC, id DESC LIMIT $3", maxID, &tags, perPage)
+	var rows pgx.Rows
+	var err error
+
+	// For some reason, can't use same query w/ tags in latest pgx update
+	if len(tags) == 0 {
+		rows, err = pr.Conn.Query(context.Background(), "SELECT * FROM post_schema.post WHERE NOT hidden AND id < $1 ORDER BY created_at DESC, id DESC LIMIT $2", maxID, perPage)
+	} else {
+		rows, err = pr.Conn.Query(context.Background(), "SELECT * FROM post_schema.post WHERE NOT hidden AND id < $1 AND tags @> $2::text[] ORDER BY created_at DESC, id DESC LIMIT $3", maxID, tags, perPage)
+	}
 
 	if err != nil {
+		log.Println(err)
 		return nil, -1, err
 	}
 	defer rows.Close()
@@ -337,8 +346,11 @@ func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*mo
 		minID = p.ID
 	}
 	if err := rows.Err(); err != nil {
+		log.Println(err)
 		return nil, -1, err
 	}
+	
+	log.Println("Posts",posts)
 
 	//var minID int
 	//err = pr.QueryRow(context.Background(), "SELECT id FROM (SELECT * FROM post_schema.post WHERE id < $1 AND NOT hidden ORDER BY created_at DESC, id DESC LIMIT $2) AS trash_alias WHERE tags @> $3::text[] ORDER BY created_at LIMIT 1;", maxID, perPage, &tags).Scan(&minID)
