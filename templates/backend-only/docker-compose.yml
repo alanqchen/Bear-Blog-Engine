@@ -11,7 +11,9 @@ services:
         ports: 
             - 8080:8080
         environment: 
-            - GOPATH=/go
+          VIRTUAL_HOST: ${VIRTUAL_HOST}
+          LETSENCRYPT_HOST: ${LETSENCRYPT_HOST}
+          LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
         depends_on: 
             - postgres
             - redis
