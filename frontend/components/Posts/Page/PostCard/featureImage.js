@@ -41,8 +41,8 @@ function FeatureImage({featureImgUrl, tags, skeleton}) {
                 :
                 <picture>
                     {featureImgUrl.substring(featureImgUrl.length - 5, featureImgUrl.length) == ".jpeg" 
-                        ? <source srcSet={process.env.NEXT_PUBLIC_API_URL + featureImgUrl.substring(0, featureImgUrl.length - 5) + ".webp"} />
-                        : <source srcSet={process.env.NEXT_PUBLIC_API_URL + featureImgUrl.substring(0, featureImgUrl.length - 4) + ".webp"} />
+                        ? <source type="image/webp" srcSet={process.env.NEXT_PUBLIC_API_URL + featureImgUrl.substring(0, featureImgUrl.length - 5) + ".webp"} />
+                        : <source type="image/webp" srcSet={process.env.NEXT_PUBLIC_API_URL + featureImgUrl.substring(0, featureImgUrl.length - 4) + ".webp"} />
                     }
                     <StyledImage src={process.env.NEXT_PUBLIC_API_URL + featureImgUrl} alt="Feature Image" onLoad={() => setLoading(false)} />
                 </picture>
