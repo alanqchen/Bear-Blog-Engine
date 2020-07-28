@@ -25,6 +25,11 @@ export const fetchCategoryNew = (category) => ({
     category: category
 })
 
+export const fetchCategorySetMinID = minID => ({
+    type: types.FETCH_CATEGORY_SET_MINID,
+    minID: minID
+});
+
 export function fetchCategory(category) {
     return (dispatch, getState) => {
         

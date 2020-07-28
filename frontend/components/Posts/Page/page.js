@@ -9,7 +9,6 @@ function Pagination({posts}) {
 
     return (
         <>
-            {loading && <LoadingProgress />}
             {posts.map(post => (
             <React.Fragment key={post.id}>
                 <Link href="/[year]/[month]/[slug]" as={`/${post.slug}`} passHref>

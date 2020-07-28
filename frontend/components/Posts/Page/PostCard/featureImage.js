@@ -21,7 +21,6 @@ function FeatureImage({featureImgUrl, tags, skeleton}) {
         <FeatureImageWrapper>
             {!skeleton && loading 
                 &&  <>
-                        <StyledLinearProgressWrapper><LinearProgress /></StyledLinearProgressWrapper>
                         <ImageSkeleton variant="rect" width="100%" height="300px" />
                     </>
             }

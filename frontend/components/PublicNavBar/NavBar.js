@@ -52,7 +52,7 @@ function NavBar({props, atTop, className}) {
                         </Typography>
                         <CategoriesWrapper>
                             <NavLinks>
-                            {config.tempcategories.map((category, i) => (
+                            {config.navlinks.map((category, i) => (
                                 category.primary && !category.external ? 
                                 <NavLink key={i}>
                                     <Typography variant="h6" color="textPrimary">
@@ -82,7 +82,7 @@ function NavBar({props, atTop, className}) {
 
                     <SideMenuNavigation>
                         <SideMenuNavLinks>
-                        {isWideScreen ? config.tempcategories.map((category, i) => (
+                        {isWideScreen ? config.navlinks.map((category, i) => (
                             !category.primary && !category.external ?
                             <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: (i-config.numPrimaryLinks) * 0.025 + "s"} : null }>
                                 <Typography variant="h6" color="textPrimary">
@@ -99,7 +99,7 @@ function NavBar({props, atTop, className}) {
                                     </MUILink>
                                 </Typography>
                             </SideMenuNavLinkItem>    
-                        )) : config.tempcategories.map((category, i) => (
+                        )) : config.navlinks.map((category, i) => (
                             !category.external ?
                             <SideMenuNavLinkItem key={i} isOpen={isActive} style={isActive ? { transitionDelay: i * 0.025 + "s"} : null }>
                                 <Typography variant="h6" color="textPrimary">

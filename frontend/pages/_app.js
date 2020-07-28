@@ -1,8 +1,9 @@
 import { Provider as ReduxProvider } from 'react-redux';
 import NextApp from 'next/app'
+import Router from 'next/router';
+import React, { useEffect, useState } from 'react';
 import { wrapper } from '../redux/store';
 import Head from 'next/head';
-import React from 'react';
 import '../assets/css/fonts.css';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { ThemeProvider as MUIThemeProvider } from '@material-ui/core/styles';
@@ -10,6 +11,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../assets/theme/MUItheme';
 import SCtheme from '../assets/theme/SCtheme';
 import useScrollRestoration from '../components/utils/useScrollRestoration';
+import { RouteIndicator } from '../components/Theme/routeIndicator';
 import config from '../config.json';
 
 const GlobalStyle = createGlobalStyle`
@@ -19,7 +21,7 @@ const GlobalStyle = createGlobalStyle`
 `
 
 const App = ({Component, pageProps, router}) => {
-    
+
     useScrollRestoration(router);
 
     return (
@@ -32,8 +34,9 @@ const App = ({Component, pageProps, router}) => {
             </Head>
             <MUIThemeProvider theme={theme}>
                 <ThemeProvider theme={SCtheme}>
-                    <GlobalStyle/>
+                    <GlobalStyle />
                     <CssBaseline />
+                    <RouteIndicator />
                     <Component {...pageProps} />
                 </ThemeProvider>
             </MUIThemeProvider>
