@@ -21,7 +21,7 @@ export async function getStaticProps({ params }) {
     return {
       // Set the timeout for generating to 1 second
       // This timeout could be longer depending on how often data changes
-      unstable_revalidate: 10,
+      revalidate: 10,
       props: {
         initialData: initialData,
         time: Date.now()
