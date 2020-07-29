@@ -317,12 +317,11 @@ func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*mo
 	} else {
 		rows, err = pr.Conn.Query(context.Background(), "SELECT * FROM post_schema.post WHERE NOT hidden AND id < $1 AND tags @> $2::text[] ORDER BY created_at DESC, id DESC LIMIT $3", maxID, tags, perPage)
 	}
-
+	defer rows.Close()
 	if err != nil {
 		log.Println(err)
 		return nil, -1, err
 	}
-	defer rows.Close()
 	var minID int
 	for rows.Next() {
 		p := new(models.Post)
@@ -349,8 +348,6 @@ func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*mo
 		log.Println(err)
 		return nil, -1, err
 	}
-	
-	log.Println("Posts",posts)
 
 	//var minID int
 	//err = pr.QueryRow(context.Background(), "SELECT id FROM (SELECT * FROM post_schema.post WHERE id < $1 AND NOT hidden ORDER BY created_at DESC, id DESC LIMIT $2) AS trash_alias WHERE tags @> $3::text[] ORDER BY created_at LIMIT 1;", maxID, perPage, &tags).Scan(&minID)
