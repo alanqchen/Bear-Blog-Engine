@@ -32,7 +32,7 @@ export async function getStaticPaths() {
         }
         return linkPaths;
     });
-    
+
     return {
         paths: linkPaths,
         fallback: true
@@ -44,7 +44,7 @@ export async function getStaticProps({ params }) {
     const initialData = await res.json();
     
     return {
-      unstable_revalidate: 10,
+      revalidate: 10,
       props: {
         initialData: initialData
       },
