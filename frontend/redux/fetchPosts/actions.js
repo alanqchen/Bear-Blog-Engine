@@ -19,6 +19,11 @@ export const fetchPostsNoMore = () => ({
     type: types.FETCH_POSTS_NO_MORE
 });
 
+export const fetchPostsSetMinID = minID => ({
+    type: types.FETCH_POSTS_SET_MINID,
+    minID: minID
+});
+
 export function fetchPosts() {
     return (dispatch, getState) => {
         const params = {

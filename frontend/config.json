@@ -1,64 +1,48 @@
 {
     "apiURL": "http://localhost:8080",
     "blogName": "Bear Post Blog",
-    "categories": [
-        "Projects",
-        "Technology",
-        "Coasters",
-        "Travel",
-        "Gaming"
-    ],
-    "categoryLinks": [
-        "/",
-        "/",
-        "/",
-        "/",
-        "/"
-    ],
-    "secondaryCategories": [
-        "About",
-        "Github"
-    ],
-    "secondaryLinks": [
-        "/",
-        "/"
-    ],
     "numPrimaryLinks": 3,
-    "tempcategories": [
+    "navlinks": [
         {
             "name": "category1",
-            "link": "/",
+            "link": "/category/test",
             "external": false,
+            "isCategory": true,
             "primary": true
         },
         {
             "name": "category2",
-            "link": "https://google.com",
-            "external": true,
+            "link": "/category/iSSG",
+            "external": false,
+            "isCategory": true,
             "primary": true
         },
         {
-            "name": "category3",
-            "link": "/",
-            "external": false,
+            "name": "external link",
+            "link": "https://google.com",
+            "external": true,
+            "isCategory": false,
             "primary": true
         },
         {
             "name": "category4",
             "link": "/",
             "external": false,
+            "isCategory": false,
             "primary": false
         },
         {
             "name": "github",
             "link": "https://github.com",
             "external": true,
+            "isCategory": false,
             "primary": false
         },
         {
             "name": "about",
             "link": "https://aqchen.com",
             "external": true,
+            "isCategory": false,
             "primary": false
         }
     ],

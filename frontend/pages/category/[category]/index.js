@@ -5,10 +5,13 @@ import { Typography } from '@material-ui/core';
 import Layout from '../../../components/PublicLayout/publicLayout';
 import { HeaderWrapper } from '../../../components/PublicLayout/publicLayoutStyled';
 import PostsContainer from '../../../components/Posts/postsContainer';
+import PostCard from '../../../components/Posts/Page/PostCard/postCard';
+import config from '../../../config.json';
 
-const Index = () => {
+const Index = ({initialData}) => {
     const router = useRouter();
     const { category } = router.query;
+
     return (
         <Layout> 
             <HeaderWrapper>
@@ -16,15 +19,36 @@ const Index = () => {
                     Category: {category}
                 </Typography>
             </HeaderWrapper>
-            <PostsContainer category={category}/>
+            <PostsContainer category={category} initialData={initialData} />
         </Layout>
     );
 };
 
-export const getServerSideProps = wrapper.getServerSideProps(
-    ({store, req, res, params, ...etc}) => {
-        store.dispatch(fetchCategoryNew(params.category));
-    }
-);
+export async function getStaticPaths() {
+    let linkPaths = [];
+    config.navlinks.map((category, i) => {
+        if(category.isCategory) {
+            linkPaths = [...linkPaths, { params: { category: category.link.substring(10)} }];
+        }
+        return linkPaths;
+    });
+
+    return {
+        paths: linkPaths,
+        fallback: true
+    };
+}
+
+export async function getStaticProps({ params }) {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts/get?maxID=-1&tags=${params.category}`);
+    const initialData = await res.json();
+    
+    return {
+      revalidate: 10,
+      props: {
+        initialData: initialData
+      },
+    };
+}
 
 export default Index;

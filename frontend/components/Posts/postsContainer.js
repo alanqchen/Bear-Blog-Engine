@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import React, { useEffect, useState } from 'react';
-import { fetchPosts as fetchPostsAction } from '../../redux/fetchPosts/actions';
-import { fetchCategory as fetchCategoryAction } from '../../redux/fetchCategory/actions';
+import { fetchPosts as fetchPostsAction, fetchPostsSetMinID } from '../../redux/fetchPosts/actions';
+import { fetchCategory as fetchCategoryAction, fetchCategorySetMinID } from '../../redux/fetchCategory/actions';
 import { fetchCategoryNew } from '../../redux/fetchCategory/actions';
 import Page from '../Posts/Page/page';
 import { Waypoint } from 'react-waypoint';
@@ -25,12 +25,19 @@ const StyledPost = styled(PostContainer)`
     max-width: 800px;
 `
 
-function PostsContainer({fetchPosts, fetchCategory, dispatch, category }) {
+function PostsContainer({ initialData, fetchPosts, fetchCategory, dispatch, category }) {
 
     let fetchType = category === "" ? fetchPosts : fetchCategory;
     const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     const loadMorePosts = async() => {
+        if(isInitialLoad) {
+            if(category === "") {
+                dispatch(fetchPostsSetMinID(initialData.pagination.minID));
+            } else {
+                dispatch(fetchCategorySetMinID(initialData.pagination.minID));
+            }
+        }
         setIsInitialLoad(false)
         if(category === "") {
             await dispatch(fetchPostsAction());
@@ -41,13 +48,16 @@ function PostsContainer({fetchPosts, fetchCategory, dispatch, category }) {
 
     return (
         <>
+            {initialData ? 
+                <Page posts={[...initialData.data, ...fetchType.posts]} />
+            :
+                <Page posts={fetchType.posts} />
+            }
 
-            <Page posts={fetchType.posts}/>
-
-            {!fetchType.loading && fetchType.error === null && fetchType.hasMore
+            {initialData && !fetchType.loading && fetchType.error === null && fetchType.hasMore
                 && <Waypoint onEnter={() => loadMorePosts()} ></Waypoint>
             }
-            {fetchType.error === null && fetchType.posts.length === 0 && (fetchType.loading || isInitialLoad) ? 
+            {!initialData && fetchType.error === null && fetchType.posts.length === 0 && (fetchType.loading || isInitialLoad) ? 
                 <>
                     <PostCard post={null} skeleton={true} />
                     <PostCard post={null} skeleton={true} />

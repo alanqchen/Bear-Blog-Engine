@@ -197,7 +197,7 @@ func (uc *UserController) CreateFirstAdmin(w http.ResponseWriter, r *http.Reques
 
 	// This shouldn't be needed since this is server-side (closed automatically)
 	//defer r.Body.Close()
-	
+
 	log.Println("[AUTH] First admin user created")
 	NewAPIResponse(&APIResponse{Success: true, Message: "Admin user created"}, w, http.StatusOK)
 }
@@ -232,7 +232,7 @@ func (uc *UserController) GetById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := uc.UserRepository.FindById(id)
+	user, err := uc.UserRepository.FindByID(id)
 	if err != nil {
 		// user was not found
 		NewAPIError(&APIError{false, "Could not find user", http.StatusNotFound}, w)
@@ -250,7 +250,7 @@ func (uc *UserController) GetByIdDetailed(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	user, err := uc.UserRepository.FindByIdDetailed(id)
+	user, err := uc.UserRepository.FindByIDDetailed(id)
 	if err != nil {
 		// user was not found
 		NewAPIError(&APIError{false, "Could not find user", http.StatusNotFound}, w)
@@ -267,7 +267,7 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := uc.UserRepository.FindById(uid)
+	user, err := uc.UserRepository.FindByID(uid)
 	if err != nil {
 		NewAPIError(&APIError{false, "Could not find user", http.StatusBadRequest}, w)
 		return
@@ -331,7 +331,7 @@ func (uc *UserController) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := uc.UserRepository.FindByIdDetailed(id)
+	user, err := uc.UserRepository.FindByIDDetailed(id)
 	if err != nil {
 		// user was not found
 		NewAPIError(&APIError{false, "Could not find user", http.StatusNotFound}, w)
