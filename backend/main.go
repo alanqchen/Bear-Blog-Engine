@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"log"
 	"os"
 
@@ -38,7 +37,7 @@ func main() {
 
 	var db *database.Postgres
 	app, db := app.New(cfg)
-	defer db.Close(context.Background())
+	defer db.Close()
 	log.Println("Creating routes")
 	router := routes.NewRouter(app)
 	log.Println("Running api...")
