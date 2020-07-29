@@ -19,11 +19,6 @@ const PostContainer = ({className, children}) => {
     );
     
   }
-  
-const StyledPost = styled(PostContainer)`
-    width: 95%;
-    max-width: 800px;
-`
 
 function PostsContainer({ initialData, fetchPosts, fetchCategory, dispatch, category }) {
 
@@ -55,7 +50,7 @@ function PostsContainer({ initialData, fetchPosts, fetchCategory, dispatch, cate
             }
 
             {initialData && !fetchType.loading && fetchType.error === null && fetchType.hasMore
-                && <Waypoint onEnter={() => loadMorePosts()} ></Waypoint>
+                && <Waypoint onEnter={() => loadMorePosts()} />
             }
             {!initialData && fetchType.error === null && fetchType.posts.length === 0 && (fetchType.loading || isInitialLoad) ? 
                 <>

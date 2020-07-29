@@ -1,11 +1,22 @@
 import Link from 'next/link';
 import Layout from '../../../../components/PostLayout/postLayout'
+import { useRouter } from 'next/router'
 import fetch from 'isomorphic-unfetch'
 import Error from 'next/error'
-import { Typography } from '@material-ui/core';
+import { Typography, CircularProgress } from '@material-ui/core';
 import {timestamp2date} from '../../../../components/utils/helpers'
 
 const Index = props => {
+    const router = useRouter();
+
+    if (router.isFallback) {
+        return (
+            <Layout>
+                <CircularProgress />
+            </Layout>
+        );
+    }
+
     if (props.errorCode) {
         return <Error statusCode={props.errorCode} />
     }
@@ -35,7 +46,31 @@ const Index = props => {
     );
 };
 
-export async function getServerSideProps(context) {
+export async function getStaticPaths() {
+    let linkPaths = [];
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts/get?maxID=-1`);
+    const posts = await res.json();
+
+    posts.data.map((post, i) => {
+        linkPaths = [
+            ...linkPaths, 
+            { 
+                params: { 
+                    year: post.slug.substring(0,4),
+                    month: post.slug.substring(5,7),
+                    slug: post.slug.substring(8)
+                } 
+            }
+        ];
+    });
+
+    return {
+        paths: linkPaths,
+        fallback: true
+    };
+}
+
+export async function getStaticProps(context) {
 
     let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts/${context.params.year}/${context.params.month}/${context.params.slug}`);
     const post = await res.json();

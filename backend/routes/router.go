@@ -36,9 +36,9 @@ func NewRouter(a *app.App) *mux.Router {
 	r.HandleFunc("/", middleware.Logger(uc.HelloWorld)).Methods(http.MethodGet)
 
 	// Public assets
-	r.Path("/assets/images/{format:.*\\.webp$}").Handler(http.StripPrefix("/assets/images/", http.FileServer(http.Dir("./public/images/webp"))))
-	r.PathPrefix("/assets/images").Handler(http.StripPrefix("/assets/images", http.FileServer(http.Dir("./public/images/original"))))
-	r.PathPrefix("/assets/videos").Handler(http.StripPrefix("/assets/videos", http.FileServer(http.Dir("./public/videos/"))))
+	r.Path("/assets/images/{format:.*\\.webp$}").Handler(http.StripPrefix("/assets/images/", middleware.SetCache(http.FileServer(http.Dir("./public/images/webp")))))
+	r.PathPrefix("/assets/images").Handler(http.StripPrefix("/assets/images", middleware.SetCache(http.FileServer(http.Dir("./public/images/original")))))
+	r.PathPrefix("/assets/videos").Handler(http.StripPrefix("/assets/videos", middleware.SetCache(http.FileServer(http.Dir("./public/videos/")))))
 	//r.PathPrefix("/public").Handler(http.StripPrefix("/public/", http.FileServer(http.Dir("./public/images/"))))
 
 	api := r.PathPrefix("/api/v1").Subrouter()
@@ -61,8 +61,8 @@ func NewRouter(a *app.App) *mux.Router {
 	// Posts
 	api.HandleFunc("/posts/get", middleware.Logger(pc.GetPage)).Methods(http.MethodGet)
 	api.HandleFunc("/posts/search", middleware.Logger(pc.Search)).Methods(http.MethodGet)
-	api.HandleFunc("/posts/{id:[0-9]+}", middleware.Logger(pc.GetById)).Methods(http.MethodGet)
-	api.HandleFunc("/posts/admin/{id:[0-9]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.GetByIdAdmin, false))).Methods(http.MethodGet)
+	api.HandleFunc("/posts/{id:[0-9]+}", middleware.Logger(pc.GetByID)).Methods(http.MethodGet)
+	api.HandleFunc("/posts/admin/{id:[0-9]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.GetByIDAdmin, false))).Methods(http.MethodGet)
 	api.HandleFunc("/posts/admin/{slug:[a-zA-Z0-9=\\-\\/]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.GetBySlugAdmin, false))).Methods(http.MethodGet)
 	api.HandleFunc("/posts/{slug:[a-zA-Z0-9=\\-\\/]+}", middleware.Logger(pc.GetBySlug)).Methods(http.MethodGet)
 	api.HandleFunc("/posts", middleware.Logger(middleware.RequireAuthentication(a, pc.Create, false))).Methods(http.MethodPost)
