@@ -24,7 +24,7 @@ const Index = ({initialData}) => {
     );
 };
 
-export async function getStaticPaths() {
+export function getStaticPaths() {
     let linkPaths = [];
     config.navlinks.map((category, i) => {
         if(category.isCategory) {

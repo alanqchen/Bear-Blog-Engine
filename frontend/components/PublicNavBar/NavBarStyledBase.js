@@ -71,7 +71,7 @@ export const SideMenuClose =  styled.div`
     height: 100%;
     z-index: 11;
     background-color: rgba(0, 0, 0, 0.5);
-    animation: 0.4s ${({ isOpen }) => isOpen ? fadeIn : fadeOut };
+    animation: 0.2s ${({ isOpen }) => isOpen ? fadeIn : fadeOut };
     animation-timing-function: cubic-bezier(0.25, 1, 0.25, 1);
     animation-fill-mode: forwards;
     ${({ isOpen }) => isOpen && `
@@ -92,7 +92,12 @@ export const SideMenuWrapper = styled.div`
     overflow: hidden;
     z-index: 12;
     ${({ isOpen }) => isOpen ? `
-        width: 300px;` : `
+        @media (max-width: 800px) {
+            width: 250px;
+        }
+        @media (min-width: 800px) {
+            width: 300px;
+        }` : `
         width: 0px;
     `}
     transition: width 0.4s cubic-bezier(0.25, 1, 0.25, 1);
@@ -102,7 +107,12 @@ export const SideMenuNavigation = styled.div`
     position: absolute;
     top: 75px;
     right: 50px;
-    width: 200px;  
+    @media (max-width: 800px) {
+        width: 150px;
+    }
+    @media (min-width: 800px) {
+        width: 200px;
+    }
 `;
 
 export const SideMenuNavLinks = styled.ul`

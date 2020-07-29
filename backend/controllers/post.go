@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
 	"time"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/repositories"
 	"github.com/alanqchen/Bear-Post/backend/services"
 	"github.com/alanqchen/Bear-Post/backend/util"
+	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgtype"
 	"github.com/jackc/pgx/v4"
@@ -69,6 +71,18 @@ func (pc *PostController) GetPage(w http.ResponseWriter, r *http.Request) {
 			NewAPIResponse(&res, w, http.StatusOK)
 			return
 		}
+	} else if len(tagsSlice) == 1 {
+		resStatus, resCache := pc.checkCategoryCache(tagsSlice[0], maxIDString)
+		if resStatus {
+			var res APIResponse
+			err := json.Unmarshal(resCache, &res)
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Println("[INFO] Returned result from category cache")
+			NewAPIResponse(&res, w, http.StatusOK)
+			return
+		}
 	}
 
 	// May add changing num posts per page in the future
@@ -96,7 +110,7 @@ func (pc *PostController) GetPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(tagsSlice) == 0 {
-		//Add query result to Redis cache, only if no tags were searched for
+		//Add query result to Redis cache, only if no tags is searched for
 		jPosts, err := json.Marshal(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator})
 		if err != nil {
 			log.Println("[WARN] Failed to add posts to cache")
@@ -113,12 +127,28 @@ func (pc *PostController) GetPage(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 		}
 		log.Println("Query result added to cache")
+	} else if len(tagsSlice) == 1 {
+		// Add query result to Redis cache, only if a single tag (category) is searched for
+		jPosts, err := json.Marshal(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator})
+		if err != nil {
+			log.Println("[WARN] Failed to add category posts to cache")
+			log.Println(err)
+			// Still send result, but failed to add to cache
+			NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
+			return
+		}
+		val := pc.App.Redis.HSet(tagsSlice[0], maxIDString, []byte(jPosts))
+		if val.Err() != nil {
+			log.Println("[WARN] Failed to add category posts to cache")
+			log.Println(err)
+		}
+		log.Println("Category query result added to cache")
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
 }
 
-func (pc *PostController) GetById(w http.ResponseWriter, r *http.Request) {
+func (pc *PostController) GetByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -134,7 +164,7 @@ func (pc *PostController) GetById(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
 }
 
-func (pc *PostController) GetByIdAdmin(w http.ResponseWriter, r *http.Request) {
+func (pc *PostController) GetByIDAdmin(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -156,12 +186,40 @@ func (pc *PostController) GetBySlug(w http.ResponseWriter, r *http.Request) {
 	slug := r.URL.EscapedPath()
 	slugRune := []rune(slug)
 	slug = string(slugRune[14:])
-	log.Println(slug)
+
+	resStatus, resCache := pc.checkSlugCache(slug)
+	if resStatus {
+		var res APIResponse
+		err := json.Unmarshal(resCache, &res)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("[INFO] Returned result from cache")
+		NewAPIResponse(&res, w, http.StatusOK)
+		return
+	}
+
 	post, err := pc.PostRepository.FindBySlug(slug)
 	if err != nil {
 		NewAPIError(&APIError{false, "Could not find post", http.StatusNotFound}, w)
 		return
 	}
+
+	jPost, err := json.Marshal(&APIResponse{Success: true, Data: post})
+	if err != nil {
+		log.Println("[WARN] Failed to add post to cache")
+		log.Println(err)
+		// Still send result, but failed to add to cache
+		NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
+		return
+	}
+	// Add query result to Redis cache
+	val := pc.App.Redis.Set(slug, []byte(jPost), 0)
+	if val.Err() != nil {
+		log.Println("[WARN] Failed to add posts to cache")
+		log.Println(err)
+	}
+	log.Println("Query result added to cache")
 
 	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
 }
@@ -249,6 +307,10 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 
 	tags = rmDuplicateTags(tags)
 
+	if !checkTags(tags) {
+		NewAPIError(&APIError{false, "Contains bad tag", http.StatusBadRequest}, w)
+	}
+
 	imgURL, err := j.GetString("image-url")
 	if err != nil || imgURL == "" {
 		imgURL = "/assets/images/feature-default.png"
@@ -284,6 +346,8 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 		}
 	*/
 	pc.flushCache()
+	pc.flushTagsCache(tags)
+	pc.flushSlugCache(slug)
 
 	defer r.Body.Close()
 	NewAPIResponse(&APIResponse{Success: true, Message: "Post created", Data: post}, w, http.StatusOK)
@@ -360,6 +424,10 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 
 	tags = rmDuplicateTags(tags)
 
+	if !checkTags(tags) {
+		NewAPIError(&APIError{false, "Contains bad tag", http.StatusBadRequest}, w)
+	}
+
 	imgURL, err := j.GetString("image-url")
 	if err != nil || imgURL == "" {
 		imgURL = "/assets/images/feature-default.png"
@@ -381,6 +449,8 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	pc.flushCache()
+	pc.flushTagsCache(tags)
+	pc.flushSlugCache(slug)
 
 	NewAPIResponse(&APIResponse{Success: true, Message: "Post updated", Data: post}, w, http.StatusOK)
 }
@@ -447,7 +517,6 @@ func (pc *PostController) Search(w http.ResponseWriter, r *http.Request) {
 // True -> pagination in cache
 func (pc *PostController) checkCache(key string) (bool, []byte) {
 
-	//val, err := pc.App.Redis.Get(key).Result()
 	val := pc.App.Redis.HGet("page-hash", key)
 	if val.Val() == "" {
 		log.Println("[INFO] Key " + key + " not found in cache")
@@ -459,14 +528,64 @@ func (pc *PostController) checkCache(key string) (bool, []byte) {
 	return true, []byte(val.Val())
 }
 
+func (pc *PostController) checkSlugCache(slug string) (bool, []byte) {
+
+	val, err := pc.App.Redis.Get(slug).Result()
+	if err != nil && err != redis.Nil {
+		log.Println(err)
+		log.Println("[WARN] Failed to check slug cache")
+		return false, []byte("")
+	}
+	if err == redis.Nil || val == "" {
+		log.Println("[INFO] Slug " + slug + " not found in cache")
+		return false, []byte("")
+	}
+	log.Println("[INFO] Slug " + slug + " found in cache")
+	return true, []byte(val)
+}
+
+func (pc *PostController) checkCategoryCache(category string, key string) (bool, []byte) {
+
+	val := pc.App.Redis.HGet(category, key)
+	if val.Val() == "" {
+		log.Println("[INFO] Key " + key + " not found in cache")
+		return false, []byte("")
+	} else if val.Err() != nil {
+		log.Println(val.Err())
+	}
+	log.Println("[INFO] Key " + key + " found in cache")
+	return true, []byte(val.Val())
+}
+
 func (pc *PostController) flushCache() {
 
 	err := pc.App.Redis.Del("page-hash")
 	if err.Err() != nil {
-		panic(err.Err())
+		log.Println(err.Err())
 	}
-	log.Println(err.Val())
 	log.Println("[INFO] Flushed pagination hash")
+	return
+}
+
+func (pc *PostController) flushSlugCache(slug string) {
+	err := pc.App.Redis.Del(slug)
+	if err.Err() != nil {
+		log.Println(err.Err())
+		log.Println("[WARN] Failed to flush slug cache")
+		return
+	}
+	log.Println("[INFO] Flushed tags slug hash")
+	return
+}
+
+func (pc *PostController) flushTagsCache(tags []string) {
+	for _, tag := range tags {
+		err := pc.App.Redis.Del(tag)
+		if err.Err() != nil {
+			log.Println(err.Err())
+		}
+	}
+	log.Println("[INFO] Flushed tags pagination hash")
 	return
 }
 
@@ -484,4 +603,25 @@ func rmDuplicateTags(tags []string) []string {
 		index++
 	}
 	return tags
+}
+
+// Returns true if tags contains no keywords, false otherwise
+func checkTags(tags []string) bool {
+	for _, tag := range tags {
+		// Check if page-hash
+		if tag == "page-hash" {
+			return false
+		}
+		// Check if slug
+		matched, err := regexp.Match(`^\d{4}[\/]\d{2}[\/].`, []byte(tag))
+		if err != nil {
+			log.Println(err)
+			log.Println("[WARN] Failed to check tags using regexp")
+			return false
+		}
+		if matched {
+			return false
+		}
+	}
+	return true
 }
