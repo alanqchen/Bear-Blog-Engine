@@ -462,12 +462,22 @@ func (pc *PostController) Delete(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
 		return
 	}
+	post, err := pc.PostRepository.FindByIDAdmin(id)
+	if err != nil {
+		log.Println(err)
+		NewAPIError(&APIError{false, "Could not find post to delete", http.StatusNotFound}, w)
+		return
+	}
 	err = pc.PostRepository.Delete(id)
 	if err != nil {
+		log.Println(err)
 		NewAPIError(&APIError{false, "Could not find post to delete", http.StatusNotFound}, w)
 		return
 	}
 	pc.flushCache()
+	pc.flushTagsCache(post.Tags)
+	pc.flushSlugCache(post.Slug)
+
 	NewAPIResponse(&APIResponse{Success: true, Data: id}, w, http.StatusOK)
 }
 

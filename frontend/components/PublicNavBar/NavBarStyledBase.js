@@ -92,10 +92,10 @@ export const SideMenuWrapper = styled.div`
     overflow: hidden;
     z-index: 12;
     ${({ isOpen }) => isOpen ? `
-        @media (max-width: 800px) {
+        @media (max-width: 700px) {
             width: 250px;
         }
-        @media (min-width: 800px) {
+        @media (min-width: 700px) {
             width: 300px;
         }` : `
         width: 0px;
@@ -107,10 +107,10 @@ export const SideMenuNavigation = styled.div`
     position: absolute;
     top: 75px;
     right: 50px;
-    @media (max-width: 800px) {
+    @media (max-width: 700px) {
         width: 150px;
     }
-    @media (min-width: 800px) {
+    @media (min-width: 700px) {
         width: 200px;
     }
 `;
