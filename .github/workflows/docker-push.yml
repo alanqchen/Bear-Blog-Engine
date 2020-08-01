@@ -17,12 +17,15 @@ jobs:
 
     - name: Check out code
       uses: actions/checkout@v2
-
-    - name: Build backend docker image and run
+    
+    - name: Print env
       run: |
         echo " event - ${{ env.GITHUB_EVENT_NAME }}" \
         echo " head - ${{ env.GITHUB_HEAD_REF }}" \
         echo " base - ${{ env.GITHUB_BASE_REF }}" \
+
+    - name: Build backend docker image and run
+      run: |
         docker-compose up -d --build api-dev || docker-compose up -d --build api-dev
       working-directory: ${{ env.working-directory }}
 
