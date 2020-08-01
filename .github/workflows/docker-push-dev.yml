@@ -1,8 +1,8 @@
-name: Docker Push
+name: Docker Push Development
 
 on:
   push:
-    branches: [ master, '*-dev', login-page ]
+    branches: [ '*-dev', login-page ]
   pull_request:
     branches: [ master ]
 
@@ -21,7 +21,7 @@ jobs:
     - name: Print env
       run: |
         echo " event - ${{ env.GITHUB_EVENT_NAME }}" \
-        echo " head - ${{ env.GITHUB_HEAD_REF }}" \
+        echo " head - ${{ github.head_ref }}" \
         echo " base - ${{ env.GITHUB_BASE_REF }}" \
 
     - name: Build backend docker image and run
@@ -32,27 +32,12 @@ jobs:
     - name: Login to Docker Hub
       run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }}
 
-    - if: (github.event == 'push' && github.base_ref != 'master') || (github.event == 'pull_request')
-      name: Build and push frontend docker file (master pull request or non-master push)
+    - name: Build and push frontend docker file (master pull request or non-master push)
       run: |
         docker build --network="host" -t aqchen/bearpost-frontend:${{ github.head_ref }} frontend/ \
         docker push aqchen/bearpost-frontend
-    
-    - if: github.event == 'push' && github.base_ref == 'master'
-      name: Build and push frontend docker file (master push)
-      run: |
-        docker build --network="host" -t aqchen/bearpost-frontend:latest frontend/ \
-        docker push aqchen/bearpost-frontend
         
-    - if: (github.event == 'push' && github.base_ref != 'master') || (github.event == 'pull_request')
-      name: Build and push backend docker file (master pull request or non-master push)
+    - name: Build and push backend docker file (master pull request or non-master push)
       run: |
         docker tag bear-post_api-dev:latest aqchen/bearpost-api:${{ github.head_ref }} \
         docker push aqchen/bearpost-api
-    
-    - if: github.event == 'push' && github.base_ref == 'master'
-      name: Build and push backend docker file (master push)
-      run: |
-        docker tag bear-post_api-dev:latest aqchen/bearpost-api:latest \
-        docker push aqchen/bearpost-api
-

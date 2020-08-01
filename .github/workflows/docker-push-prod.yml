@@ -1,0 +1,42 @@
+name: Docker Push Production
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    name: Build and Push to Dockerhub
+    runs-on: ubuntu-latest
+    env:
+      working-directory: .
+    steps:
+
+    - name: Check out code
+      uses: actions/checkout@v2
+    
+    - name: Print env
+      run: |
+        echo " event - ${{ env.GITHUB_EVENT_NAME }}" \
+        echo " head - ${{ env.GITHUB_HEAD_REF }}" \
+        echo " base - ${{ env.GITHUB_BASE_REF }}" \
+
+    - name: Build backend docker image and run
+      run: |
+        docker-compose up -d --build api-dev || docker-compose up -d --build api-dev
+      working-directory: ${{ env.working-directory }}
+
+    - name: Login to Docker Hub
+      run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }}
+    
+    - name: Build and push frontend docker file (master push)
+      run: |
+        docker build --network="host" -t aqchen/bearpost-frontend:latest frontend/ \
+        docker push aqchen/bearpost-frontend
+    
+    - name: Build and push backend docker file (master push)
+      run: |
+        docker tag bear-post_api-dev:latest aqchen/bearpost-api:latest \
+        docker push aqchen/bearpost-api
+
