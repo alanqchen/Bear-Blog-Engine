@@ -34,10 +34,10 @@ jobs:
 
     - name: Build and push frontend docker file (master pull request or non-master push)
       run: |
-        docker build --network="host" -t aqchen/bearpost-frontend:${{ github.head_ref }} frontend/ \
+        docker build --network="host" -t aqchen/bearpost-frontend:${GITHUB_REF##*/} frontend/ \
         docker push aqchen/bearpost-frontend
         
     - name: Build and push backend docker file (master pull request or non-master push)
       run: |
-        docker tag bear-post_api-dev:latest aqchen/bearpost-api:${{ github.head_ref }} \
+        docker tag bear-post_api-dev:latest aqchen/bearpost-api:${GITHUB_REF##*/} \
         docker push aqchen/bearpost-api
