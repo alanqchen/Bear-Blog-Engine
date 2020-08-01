@@ -10,7 +10,13 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/routes"
 )
 
-/* Big thanks to steffen for Backend File Structure from https://github.com/steffen25/golang.zone.
+/*
+ * BEARPOST API - main.go
+ * @author Alan Chen
+ *
+ * This handles calling the initialization steps and starting the API
+ *
+ * Big thanks to steffen for Backend File Structure from https://github.com/steffen25/golang.zone.
  */
 
 func main() {

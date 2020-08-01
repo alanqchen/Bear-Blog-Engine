@@ -1,22 +1,23 @@
-# build stage
-FROM golang:alpine
-ADD . /bearpost
+# Ubuntu is used since the webp wrapper doesn't support alpine
+FROM ubuntu:latest
+# Copy source
+COPY . /bearpost/backend
 WORKDIR /bearpost/backend
-RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh openssl
+
+# Set timezone for ubuntu
+RUN export TZ=America/New_York
+# Get packages
+RUN apt-get update -y -q && apt-get upgrade -y -q && \
+    DEBIAN_FRONTEND=noninteractive apt-get install golang git openssl jq -y
+
 # Gen jwt keys
 RUN openssl genrsa -out config/api.rsa 4096
 RUN openssl rsa -in config/api.rsa -pubout > config/api.rsa.pub
 # Add Info
 LABEL maintainer="Alan Chen <chen.8943@osu.edu>"
 LABEL Name=bear-post Version=0.0.1
-# Copy go mod and sum files
-COPY backend/go.mod backend/go.sum backend/config/app-docker.json ./
-COPY backend/config/app-docker.json ./config/app.json
 # Download dependencies
 RUN go mod download
-# Copy source to working directory in container
-COPY /backend .
 # Build
 RUN go build -o /bearpost/backend/main .
 
