@@ -27,23 +27,26 @@ jobs:
       run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }}
 
     - if: (github.event == 'push' && github.base_ref != 'master') || (github.event == 'pull_request')
-    - name: Build and push frontend docker file
+      name: Build and push frontend docker file (master pull request or non-master push)
       run: |
         docker build --network="host" -t aqchen/bearpost-frontend:${{ github.head_ref }} frontend/ \
         docker push aqchen/bearpost-frontend
     
     - if: github.event == 'push' && github.base_ref == 'master'
-    - name: Build and push frontend docker file
+      name: Build and push frontend docker file (master push)
       run: |
         docker build --network="host" -t aqchen/bearpost-frontend:latest frontend/ \
         docker push aqchen/bearpost-frontend
+        
+    - if: (github.event == 'push' && github.base_ref != 'master') || (github.event == 'pull_request')
+      name: Build and push backend docker file (master pull request or non-master push)
+      run: |
+        docker tag bear-post_api-dev:latest aqchen/bearpost-api:${{ github.head_ref }} \
+        docker push aqchen/bearpost-api
+    
+    - if: github.event == 'push' && github.base_ref == 'master'
+      name: Build and push backend docker file (master push)
+      run: |
+        docker tag bear-post_api-dev:latest aqchen/bearpost-api:latest \
+        docker push aqchen/bearpost-api
 
-    - name: Build and push backend docker file
-      uses: docker/build-push-action@v1
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: aqchen/bearpost-api
-        dockerfile: ./backend/Dockerfile
-        tag_with_ref: true
-        push: ${{ startsWith(github.ref, 'refs/tags/') }}
