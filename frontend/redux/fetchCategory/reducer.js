@@ -48,13 +48,13 @@ export default function fetchCategoryReducer( state = initialFetchCategoryState,
                 ...state,
                 hasMore: true,
                 lastCategory: action.category
-            }
+            };
 
         case fetchCategoryTypes.FETCH_CATEGORY_SET_MINID:
             return {
                 ...state,
                 minID: action.minID
-            }
+            };
 
         default:
             return state;

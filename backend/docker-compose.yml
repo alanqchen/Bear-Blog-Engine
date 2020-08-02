@@ -18,7 +18,7 @@ services:
         networks:
             - bearpost_default
         volumes: 
-            - bearpost_api_data:/go/src
+            - ${UPLOADS_DIR}:/bearpost/backend/public
             - ${PWD}/config/app-docker-dev.json:/bearpost/backend/config/app-custom.json
             
     ################################################################################

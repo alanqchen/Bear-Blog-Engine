@@ -1,5 +1,5 @@
 {
-    "env": "local",
+    "env": "prod",
     "postgreSQL": {
         "host": "postgres",
         "port": "5432",
@@ -10,7 +10,7 @@
     },
     "RedisDB": {
         "host": "redis",
-        "port": 6379,
+        "port": "6379",
         "password": "bearpost"
     },
     "jwt": {
@@ -18,5 +18,8 @@
         "public_key": "config/api.rsa.pub",
         "private_key": "config/api.rsa"
     },
-    "port": 8080
+    "port": "8080",
+    "allowedOrigins": [
+        "*"
+    ]
 }

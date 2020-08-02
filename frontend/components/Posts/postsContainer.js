@@ -49,7 +49,7 @@ function PostsContainer({ initialData, fetchPosts, fetchCategory, dispatch, cate
                 <Page posts={fetchType.posts} />
             }
 
-            {initialData && !fetchType.loading && fetchType.error === null && fetchType.hasMore
+            {initialData && initialData.data.length !== 0 && !fetchType.loading && fetchType.error === null && fetchType.hasMore
                 && <Waypoint onEnter={() => loadMorePosts()} />
             }
             {!initialData && fetchType.error === null && fetchType.posts.length === 0 && (fetchType.loading || isInitialLoad) ? 
@@ -60,7 +60,7 @@ function PostsContainer({ initialData, fetchPosts, fetchCategory, dispatch, cate
             : fetchType.loading &&
                 <PostCard post={null} skeleton={true} />
             }
-            {!fetchType.hasMore &&
+            {((initialData && initialData.data.length === 0) || !fetchType.hasMore) &&
                 <Typography align="center" fontWeight="fontWeightLight" variant="subtitle1" color="textSecondary" component="h1">
                     No more posts to show!
                 </Typography>

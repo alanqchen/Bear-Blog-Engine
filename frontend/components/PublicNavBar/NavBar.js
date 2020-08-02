@@ -56,7 +56,7 @@ function NavBar({props, atTop, className}) {
                                 category.primary && !category.external ? 
                                 <NavLink key={i}>
                                     <Typography variant="h6" color="textPrimary">
-                                        <Link href={category.link} passHref>
+                                        <Link href={category.link}>
                                             <a>{category.name}</a>
                                         </Link>
                                     </Typography>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { 
@@ -16,6 +16,10 @@ import { Skeleton } from '@material-ui/lab';
 function FeatureImage({featureImgUrl, tags, skeleton}) {
 
     const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+
+    }, [loading]);
     
     return (
         <FeatureImageWrapper>

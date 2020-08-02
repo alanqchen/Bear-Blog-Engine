@@ -1,10 +1,15 @@
-# build stage
-FROM golang:alpine
+# Ubuntu is used since the webp wrapper doesn't support alpine
+FROM ubuntu:latest
 # Copy source
 COPY . /bearpost/backend
 WORKDIR /bearpost/backend
-RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh openssl jq
+
+# Set timezone for ubuntu
+RUN export TZ=America/New_York
+# Get packages
+RUN apt-get update -y -q && apt-get upgrade -y -q && \
+    DEBIAN_FRONTEND=noninteractive apt-get install golang git openssl jq -y
+
 # Gen jwt keys
 RUN openssl genrsa -out config/api.rsa 4096
 RUN openssl rsa -in config/api.rsa -pubout > config/api.rsa.pub

@@ -10,11 +10,13 @@ RUN mkdir -p /bearpost/frontend
 WORKDIR /bearpost/frontend
 
 # Installing dependencies
-COPY frontend/package*.json /bearpost/frontend/
+COPY package*.json /bearpost/frontend/
 RUN npm install
 
 # Copying source files
-COPY frontend/. /bearpost/frontend
+COPY . /bearpost/frontend
+
+COPY docker.env.build /bearpost/frontend/.env.development
 
 # Building app
 RUN npm run build

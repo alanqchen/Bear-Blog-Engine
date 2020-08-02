@@ -9,7 +9,7 @@ const PostCardLinkBase = React.forwardRef((props, ref) => (
 
 export const PostCardLink = styled(PostCardLinkBase)`
     text-decoration: none;
-    max-width: 800px;
+    max-width: 700px;
     width: 95%;
 `;
 

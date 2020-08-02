@@ -1,63 +1,60 @@
-version: '3.4'
+################################################################################
+##            THIS IS FOR GITHUB ACTIONS (DON'T COPY THIS)
+################################################################################
+
+version: '3.8'
 
 services:
     ################################################################################
     ##                                  API
     ################################################################################
-    api:
-        image: aqchen/bearpost-api
-        container_name: bearpost_api
+    api-dev:
+        build: backend/.
+        container_name: bearpost_api_dev
         restart: unless-stopped
         ports: 
-            - 8080
+            - 8080:8080
         environment: 
             - GOPATH=/go
         depends_on: 
             - postgres
             - redis
+        volumes: 
+            - ./backend/config/app-docker.json:/bearpost/backend/config/app-custom.json
         networks:
             - bearpost_default
-        volumes: 
-            - bearpost_api_data:/go/src
+
     ################################################################################
     ##                               Frontend
     ################################################################################
-    frontend:
-        image: aqchen/bearpost-frontend
-        container_name: bearpost_frontend
+    frontend-dev:
+        build:
+            context: frontend/.
+            network: host
+        container_name: bearpost_frontend_dev
         restart: unless-stopped
         ports:
-            - 3000:3000
+            - 3000
         depends_on:
-            - api
+            - api-dev
         networks:
             - bearpost_default
-        volumes:
-            - bearpost_frontend_data:/app
-            - bearpost_frontend_data:/app/node_modules
-            - bearpost_frontend_data:/app/.next
-        networks:
-            bearpost_default:
-                aliases:
-                    - bearpost_frontend
 
-            
     ################################################################################
     ##                               PostgreSQL
     ################################################################################
     postgres:
         image: postgres:latest
-        container_name: bearpost_postgres
+        container_name: bearpost_postgres_dev
         restart: always
         environment:
             POSTGRES_USER: bearpost
             POSTGRES_PASSWORD: bearpost
-            POSTGRES_DB: bearpost # not recommend to change this
+            POSTGRES_DB: bearpost
         ports:
             - 5432
         volumes: 
-            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-            - ${LOCAL_POSTGRES_DIR}:/var/lib/postgresql/data
+            - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
         networks: 
             - bearpost_default
     
@@ -66,23 +63,14 @@ services:
     ################################################################################
     redis:
         image: redis:latest
-        container_name: bearpost_redis
+        container_name: bearpost_redis_dev
         command: redis-server --requirepass bearpost
         ports: 
             - 6379
-        volumes: 
-            - ${LOCAL_REDIS_DIR}:/data
         networks: 
             - bearpost_default
         sysctls:
             net.core.somaxconn: '511'
-    
-volumes:
-    bearpost_api_data:
-        driver: local
-    bearpost_frontend_data:
-        driver: local
 
 networks:
     bearpost_default:
-    

@@ -12,7 +12,7 @@ export const StyledCard = styled(Card).withConfig({
     ` : `
         width: 100%;
     `}
-    max-width: 800px;
+    max-width: 700px;
     margin-bottom: 20px;
     background-color: ${SCtheme.backgroundDarkAlt};
     transition: transform 0.2s ease-in-out !important;

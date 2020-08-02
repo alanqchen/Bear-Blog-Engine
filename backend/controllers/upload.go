@@ -99,14 +99,15 @@ func (uc *UploadController) UploadImage(w http.ResponseWriter, r *http.Request) 
 			// Decode to get image type
 			img, _, err := image.Decode(bytes.NewReader(Buf.Bytes()))
 			if err != nil {
-				NewAPIError(&APIError{false, "Failed to decode original image", http.StatusBadRequest}, w)
 				log.Println(err)
+				NewAPIError(&APIError{false, "Failed to decode original image", http.StatusBadRequest}, w)
 				return
 			}
 
 			// Create webp image writer
 			outWebp, err := os.Create("./public/images/webp/" + fileName + ".webp")
 			if err != nil {
+				log.Println(err)
 				NewAPIError(&APIError{false, "Failed to create webp image", http.StatusBadRequest}, w)
 				return
 			}
@@ -115,9 +116,11 @@ func (uc *UploadController) UploadImage(w http.ResponseWriter, r *http.Request) 
 			// Encode image to webp
 			err = webpbin.Encode(outWebp, img)
 			if err != nil {
+				log.Println(err)
 				NewAPIError(&APIError{false, "Failed to encode original image", http.StatusBadRequest}, w)
 				err = os.Remove("./public/images/webp/" + fileName + ".webp")
 				if err != nil {
+					log.Println(err)
 					log.Println("[WARN] Failed to delete webp image after failed encoding")
 				}
 				return

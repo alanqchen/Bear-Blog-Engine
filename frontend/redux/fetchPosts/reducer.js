@@ -46,7 +46,7 @@ export default function fetchPostsReducer( state = initialFetchPostsState, actio
             return {
                 ...state,
                 minID: action.minID
-            }
+            };
 
         default:
             return state;

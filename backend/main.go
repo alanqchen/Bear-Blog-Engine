@@ -10,11 +10,17 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/routes"
 )
 
-/* Big thanks to steffen for Backend File Structure from https://github.com/steffen25/golang.zone.
+/*
+ * BEARPOST API - main.go
+ * @author Alan Chen
+ *
+ * This handles calling the initialization steps and starting the API
+ *
+ * Big thanks to steffen for Backend File Structure from https://github.com/steffen25/golang.zone.
  */
 
 func main() {
-	log.Println("Starting up")
+	log.Println("Starting up API...")
 	var cfg config.Config
 	log.Println("Looking for a config file")
 	if _, err := os.Stat("config/app-custom.json"); !os.IsNotExist(err) {
