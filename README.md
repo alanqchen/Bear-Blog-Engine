@@ -7,9 +7,7 @@
     <a href="https://hub.docker.com/repository/docker/aqchen/bearpost-api">
         <img alt="Docker Cloud Build Status (API)" src="https://img.shields.io/docker/cloud/build/aqchen/bearpost-api?label=docker%20build%20api" />
     </a>
-    <a href="https://hub.docker.com/repository/docker/aqchen/bearpost-frontend">
-        <img alt="Docker Cloud Build Status (Frontend)" src="https://img.shields.io/docker/cloud/build/aqchen/bearpost-frontend?label=docker%20build%20frontend" />
-    </a>
+    <img alt="CI status" src="https://github.com/alanqchen/Bear-Post/workflows/CI%20Production/badge.svg" />
     <a href="https://example.aqchen.com">
         <img alt="Example Website" src="https://img.shields.io/website?label=example%20site&up_message=Online&url=https%3A%2F%2Fexample.aqchen.com" />
     </a>
