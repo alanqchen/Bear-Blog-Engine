@@ -16,12 +16,14 @@
 </p>
 
 # Bear Post
-A Modern Blog Engine.
+A Modern Blog Engine. Server-side, not JAMStack.
 
 Uses Go for the backend and React (Next) for the frontend.
 Databases used are PostgreSQL and Redis.
 
 All you need to use Bear-Post is a server to host the backend API. The frontend CDN and SSL certs can be handled by Vercel with your own domain for free!
+
+![image](https://user-images.githubusercontent.com/18543142/89113712-70958a80-d442-11ea-8e79-f373feb44990.png)
 
 Current lighthouse stats(PWA hopefully soon):
 
@@ -34,7 +36,7 @@ Current lighthouse stats(PWA hopefully soon):
 * Support for one admin user and multiple editor users
 * Support for hidden/draft posts
 
-## Using Bear-Post
+# Using Bear-Post
 
 Find the start up information in the [`templates/backend-only` directory](templates/backend-only).
 It will guide you through starting the API and deploying the frontend to Vercel.
