@@ -15,12 +15,6 @@ jobs:
 
     - name: Check out code
       uses: actions/checkout@v2
-    
-    - name: Print env
-      run: |
-        echo " event - ${{ env.GITHUB_EVENT_NAME }}" \
-        echo " head - ${{ env.GITHUB_HEAD_REF }}" \
-        echo " base - ${{ env.GITHUB_BASE_REF }}" \
 
     - name: Build backend docker image and run
       run: |
@@ -32,11 +26,11 @@ jobs:
     
     - name: Build and push frontend docker file (master push)
       run: |
-        docker build --network="host" -t aqchen/bearpost-frontend:latest frontend/ \
+        docker build --network="host" -t aqchen/bearpost-frontend:latest frontend/
         docker push aqchen/bearpost-frontend
     
     - name: Build and push backend docker file (master push)
       run: |
-        docker tag bear-post_api-dev:latest aqchen/bearpost-api:latest \
+        docker tag bear-post_api-dev:latest aqchen/bearpost-api:latest
         docker push aqchen/bearpost-api
 
