@@ -13,6 +13,8 @@ Also by default, this template assumes you are using [docker-letsencrypt-nginx-p
 3. Copy the contents of the template `public` folder to the location where you mounted the container's  `public` folder
 4. Edit `app-docker.json`, particularly database names and passwords, and `allowedOrigins` (not recommended to change `host` and `port`)
 5. Run `docker-compose up` or `docker-compose up -d` to start the backend
+6. Fork the repo on GitHub add edit `frontend/config.json` and `.env.local` to fit the backend parameters and customization options
+7. [Follow the instructions for connecting Vercel to your forked repo](https://vercel.com/docs/v2/git-integrations/vercel-for-github#connecting-with-github)
 
 ### External Databases
 Follow the same steps as *Internal Databases*, but for step 4, make sure to edit the databases host, port, username, password, etc. to the correct values.

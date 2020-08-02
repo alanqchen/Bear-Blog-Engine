@@ -20,7 +20,7 @@ import (
  */
 
 func main() {
-	log.Println("Starting up")
+	log.Println("Starting up API...")
 	var cfg config.Config
 	log.Println("Looking for a config file")
 	if _, err := os.Stat("config/app-custom.json"); !os.IsNotExist(err) {

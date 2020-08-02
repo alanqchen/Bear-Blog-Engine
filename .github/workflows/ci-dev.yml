@@ -1,4 +1,4 @@
-name: Docker Push Development
+name: CI Development
 
 on:
   push:
