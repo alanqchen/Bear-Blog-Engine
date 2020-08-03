@@ -4,7 +4,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { Typography, InputAdornment } from '@material-ui/core';
 import { Person, Lock, Toys, DonutLargeOutlined } from '@material-ui/icons';
 import { WaveButton } from '../Theme/StyledComponents';
-import { Formik } from "formik";
+import { Formik, Field } from "formik";
 import * as Yup from "yup";
 import {
     StyledTextField
@@ -21,9 +21,16 @@ export const LoginForm = ({ dispatch }) => {
 
     useEffect(() => {}, [isActive]);
 
-    const loadMorePosts = async() => {
+    const doLogin = async(username, password) => {
         setPassedCaptcha(true);
-        await dispatch(login());   
+        console.log("Dispatching...");
+        await dispatch(login(username, password));   
+        recaptchaRef.current.reset();
+    };
+
+    const submitLogin = (username, password) => {
+        console.log("Logging in");
+        recaptchaRef.current.execute();
     };
 
     return (
@@ -84,7 +91,7 @@ export const LoginForm = ({ dispatch }) => {
                         <WaveButton variant="contained" color="primary" disabled={
                                 (!touched.email || !touched.password || errors.email || errors.password) ? true : false
                             }
-                            onClick={() => { recaptchaRef.current.execute() }}
+                            onClick={() => { submitLogin(values.email, values.password) }}
                         >
                             Login
                         </WaveButton>
@@ -92,10 +99,9 @@ export const LoginForm = ({ dispatch }) => {
                             ref={recaptchaRef}
                             size="invisible"
                             sitekey={process.env.NEXT_PUBLIC_CAPTCHA_KEY}
-                            onChange={() => {setPassedCaptcha(true)}}
+                            onChange={() => {doLogin(values.email, values.password)}}
                             onErrored={() => {setFailedCaptcha(true)}}
                         />
-                        {passedCaptcha && <p>Passed Captcha!</p>}
                         {failedCaptcha && <p>Couldn't complete captcha, try again.</p>}
                     </>
                 );
@@ -103,6 +109,26 @@ export const LoginForm = ({ dispatch }) => {
         </Formik>
     );
 }
+
+const FormikMUIInput = ({ name }) => (
+    <Field name={name}>
+    {({ field: { value }, form: { setFieldValue } }) => (
+        <StyledTextField name="password" label="Password" type="password" variant="outlined" 
+            InputProps={{
+                startAdornment: (
+                    <InputAdornment position="start">
+                        <Lock />
+                    </InputAdornment>
+                ),
+            }}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={errors.password && touched.password}
+            helperText={errors.password && touched.password && errors.password}
+        />
+    )}
+    </Field>
+);
 
 const mapStateToProps = (state, ownProps) => {
     return {
