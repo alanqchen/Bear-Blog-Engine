@@ -2,10 +2,12 @@ import { combineReducers } from 'redux';
 import { HYDRATE } from 'next-redux-wrapper';
 import fetchPosts from './fetchPosts/reducer';
 import fetchCategory from './fetchCategory/reducer';
+import authReducer from './auth/reducer';
 
 const combinedReducers = combineReducers({
     fetchPosts: fetchPosts,
-    fetchCategory: fetchCategory
+    fetchCategory: fetchCategory,
+    auth: authReducer
 });
 
 const reducer = (state, action) => {
@@ -22,6 +24,9 @@ const reducer = (state, action) => {
                     ...action.payload, // HYDRATION DATA
                     fetchPosts: {
                         ...state.fetchPosts
+                    },
+                    auth: {
+                        ...state.auth
                     }
                 };
             } else {

@@ -1,15 +1,17 @@
+import {connect} from 'react-redux';
 import React, { useEffect, useState, useRef } from 'react';
 import ReCAPTCHA from "react-google-recaptcha";
 import { Typography, InputAdornment } from '@material-ui/core';
-import { Person, Lock, Toys } from '@material-ui/icons';
+import { Person, Lock, Toys, DonutLargeOutlined } from '@material-ui/icons';
 import { WaveButton } from '../Theme/StyledComponents';
 import { Formik } from "formik";
 import * as Yup from "yup";
 import {
     StyledTextField
 } from './loginStyled';
+import { login } from '../../redux/auth/actions';
 
-export const LoginForm = () => {
+export const LoginForm = ({ dispatch }) => {
 
     const [isActive, setIsActive] = useState(false);
     const [passedCaptcha, setPassedCaptcha] = useState(false);
@@ -18,6 +20,11 @@ export const LoginForm = () => {
     const recaptchaRef = useRef();
 
     useEffect(() => {}, [isActive]);
+
+    const loadMorePosts = async() => {
+        setPassedCaptcha(true);
+        await dispatch(login());   
+    };
 
     return (
         <Formik
@@ -96,4 +103,17 @@ export const LoginForm = () => {
         </Formik>
     );
 }
-export default LoginForm;
+
+const mapStateToProps = (state, ownProps) => {
+    return {
+        auth: {
+            accessToken: state.auth.accessToken,
+            refreshToken: state.auth.refreshToken,
+            userData: state.auth.userData,
+            loading: state.auth.loading,
+            error: state.auth.error
+        },
+    }
+}
+
+export default connect(mapStateToProps)(LoginForm);

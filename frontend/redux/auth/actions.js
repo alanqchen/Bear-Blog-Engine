@@ -1,4 +1,5 @@
 import * as types from './types';
+import { getDisplayName } from 'next/dist/next-server/lib/utils';
 
 export const loginBegin = () => ({
     type: types.LOGIN_BEGIN
@@ -40,3 +41,73 @@ export const refreshFailure = (error) => ({
     type: types.REFRESH_FAILURE,
     payload: { error }
 });
+
+export function login(username, password) {
+    return (dispatch) => {
+        const params = {
+            email: username,
+            password: password
+        };
+        dispatch(loginBegin());
+        return fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/auth/login', {
+            method: 'POST',
+            body: JSON.stringify(params)
+        })
+            .then(handleErrors)
+            .then(res => res.json())
+            .then(json => {
+                if(json.success) {
+                    dispatch(loginSuccess(json));
+                }
+            })
+            .catch(error => dispatch(loginFailure(error)));
+    }
+}
+
+export function logout() {
+    return (dispatch, getState) => {
+        dispatch(loginBegin());
+        return fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/auth/logout', {
+            credentials: 'include',
+            headers: {
+                'Authorization': 'Bearer ' + getState().auth.accessToken
+            }
+        })
+            .then(handleErrors)
+            .then(res => res.json())
+            .then(json => {
+                if(json.success) {
+                    dispatch(logoutSuccess());
+                }
+            })
+            .catch(error => dispatch(logoutFailure(error)));
+    }
+}
+
+export function refresh() {
+    return (dispatch, getState) => {
+        dispatch(loginBegin());
+        return fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/auth/refresh', {
+            credentials: 'include',
+            headers: {
+                'Authorization': 'Bearer ' + getState().auth.accessToken
+            }
+        })
+            .then(handleErrors)
+            .then(res => res.json())
+            .then(json => {
+                if(json.success) {
+                    dispatch(refreshSuccess(json));
+                }
+            })
+            .catch(error => dispatch(refreshFailure(error)));
+    }
+}
+
+// Handle HTTP errors since fetch won't.
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
+}

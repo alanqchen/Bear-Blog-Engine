@@ -1,5 +1,4 @@
 import * as types from './types';
-import config from '../../config';
 
 export const fetchCategoryBegin = () => ({
     type: types.FETCH_CATEGORY_BEGIN,
@@ -45,17 +44,17 @@ export function fetchCategory(category) {
         };
         dispatch(fetchCategoryBegin());
         return fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/posts/get?maxID='+ params.maxID + '&tags=' + params.tags)
-          .then(handleErrors)
-          .then(res => res.json())
-          .then(json => {
-            if(json.success && json.data.length === 0) {
-                dispatch(fetchCategoryNoMore());
-            } else {
-                dispatch(fetchCategorySuccess(json));
-            }
-            return json;
-          })
-          .catch(error => dispatch(fetchCategoryFailure(error)));
+            .then(handleErrors)
+            .then(res => res.json())
+            .then(json => {
+                if(json.success && json.data.length === 0) {
+                    dispatch(fetchCategoryNoMore());
+                } else {
+                    dispatch(fetchCategorySuccess(json));
+                }
+                return json;
+            })
+            .catch(error => dispatch(fetchCategoryFailure(error)));
     };
 }
 
