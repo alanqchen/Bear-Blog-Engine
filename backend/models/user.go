@@ -22,6 +22,7 @@ type User struct {
 	Admin     bool       `json:"admin"`
 	CreatedAt time.Time  `json:"createdAt"`
 	UpdatedAt *time.Time `json:"updatedAt"`
+	Username  string     `json:"username"`
 }
 
 // AuthUser represents a user account for private visibility (used for login and update response)
@@ -41,7 +42,8 @@ func (u *User) MarshalJSON() ([]byte, error) {
 			Email     string     `json:"email"`
 			CreatedAt time.Time  `json:"createdAt"`
 			UpdatedAt *time.Time `json:"updatedAt"`
-		}{u.ID, u.Name, u.Email, u.CreatedAt, nil})
+			Username  string     `json:"username"`
+		}{u.ID, u.Name, u.Email, u.CreatedAt, nil, u.Username})
 	}
 	return json.Marshal(struct {
 		ID        uuid.UUID  `json:"id"`
@@ -49,7 +51,8 @@ func (u *User) MarshalJSON() ([]byte, error) {
 		Email     string     `json:"email"`
 		CreatedAt time.Time  `json:"createdAt"`
 		UpdatedAt *time.Time `json:"updatedAt"`
-	}{u.ID, u.Name, u.Email, u.CreatedAt, u.UpdatedAt})
+		Username  string     `json:"username"`
+	}{u.ID, u.Name, u.Email, u.CreatedAt, u.UpdatedAt, u.Username})
 }
 
 func (u *AuthUser) MarshalJSON() ([]byte, error) {
@@ -63,7 +66,8 @@ func (u *AuthUser) MarshalJSON() ([]byte, error) {
 			Admin     bool       `json:"admin"`
 			CreatedAt time.Time  `json:"createdAt"`
 			UpdatedAt *time.Time `json:"updatedAt"`
-		}{u.ID, u.Name, u.Email, u.Admin, u.CreatedAt, nil})
+			Username  string     `json:"username"`
+		}{u.ID, u.Name, u.Email, u.Admin, u.CreatedAt, nil, u.Username})
 	}
 	return json.Marshal(struct {
 		ID        uuid.UUID  `json:"id"`
@@ -72,7 +76,8 @@ func (u *AuthUser) MarshalJSON() ([]byte, error) {
 		Admin     bool       `json:"admin"`
 		CreatedAt time.Time  `json:"createdAt"`
 		UpdatedAt *time.Time `json:"updatedAt"`
-	}{u.ID, u.Name, u.Email, u.Admin, u.CreatedAt, u.UpdatedAt})
+		Username  string     `json:"username"`
+	}{u.ID, u.Name, u.Email, u.Admin, u.CreatedAt, u.UpdatedAt, u.Username})
 }
 
 func (u *User) SetPassword(password string) {

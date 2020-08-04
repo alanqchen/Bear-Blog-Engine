@@ -45,7 +45,7 @@ export const refreshFailure = (error) => ({
 export function login(username, password) {
     return (dispatch) => {
         const params = {
-            email: username,
+            username: username,
             password: password
         };
         dispatch(loginBegin());

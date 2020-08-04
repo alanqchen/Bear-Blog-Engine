@@ -25,7 +25,9 @@ type UserRepository interface {
 	FindByID(id string) (*models.User, error)
 	FindByIDDetailed(id string) (*models.User, error)
 	FindByEmail(email string) (*models.User, error)
+	FindByUsername(username string) (*models.User, error)
 	Exists(email string) bool
+	ExistsUsername(username string) bool
 	Delete(id string) error
 	Update(u *models.User) error
 }
@@ -52,8 +54,8 @@ func (ur *userRepository) Create(u *models.User) error {
 
 	//defer ur.Conn.Close(context.Background())
 	_, err := ur.Pool.Exec(context.Background(),
-		"INSERT INTO user_schema.\"user\"(id, name, email, password, created_at) VALUES ($1, $2, $3, $4, $5)",
-		u.ID, u.Name, u.Email, u.Password, (u.CreatedAt.UTC()),
+		"INSERT INTO user_schema.\"user\"(id, name, email, password, created_at, admin, username) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+		u.ID, u.Name, u.Email, u.Password, (u.CreatedAt.UTC()), false, u.Username,
 	)
 
 	log.Println(err)
@@ -85,8 +87,8 @@ func (ur *userRepository) CreateFirstAdmin(u *models.User) (bool, error) {
 	*/
 
 	_, err = ur.Pool.Exec(context.Background(),
-		"INSERT INTO user_schema.\"user\"(id, name, email, password, created_at, admin) VALUES ($1, $2, $3, $4, $5, $6)",
-		u.ID, u.Name, u.Email, u.Password, (u.CreatedAt.UTC()), u.Admin,
+		"INSERT INTO user_schema.\"user\"(id, name, email, password, created_at, admin, username) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+		u.ID, u.Name, u.Email, u.Password, (u.CreatedAt.UTC()), u.Admin, u.Username,
 	)
 	log.Println(err)
 	if err != nil {
@@ -109,14 +111,15 @@ func (ur *userRepository) Update(u *models.User) error {
 	*/
 	//defer ur.Conn.Close(context.Background())
 	_, err := ur.Pool.Exec(context.Background(),
-		"UPDATE user_schema.user SET name=$1, email=$2, password=$3, updated_at=$4 WHERE id=$5",
-		u.Name, u.Email, u.Password, u.UpdatedAt, u.ID,
+		"UPDATE user_schema.user SET name=$1, email=$2, password=$3, updated_at=$4, username=$5 WHERE id=$6",
+		u.Name, u.Email, u.Password, u.UpdatedAt, u.Username, u.ID,
 	)
 	if err != nil {
 		log.Println(u.Name)
 		log.Println(u.Email)
 		log.Println(u.Password)
 		log.Println(u.UpdatedAt)
+		log.Println(u.Username)
 		log.Println(u.ID)
 		log.Println(err)
 		return err
@@ -157,7 +160,7 @@ func (ur *userRepository) GetAll() ([]*models.User, error) {
 func (ur *userRepository) GetAllDetailed() ([]*models.User, error) {
 	var users []*models.User
 	log.Println(time.Now())
-	rows, err := ur.Pool.Query(context.Background(), "SELECT id, name, email, admin, created_at, updated_at FROM user_schema.\"user\"")
+	rows, err := ur.Pool.Query(context.Background(), "SELECT id, name, email, admin, created_at, updated_at, username FROM user_schema.\"user\"")
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -166,7 +169,7 @@ func (ur *userRepository) GetAllDetailed() ([]*models.User, error) {
 
 	for rows.Next() {
 		u := new(models.User)
-		err := rows.Scan(&u.ID, &u.Name, &u.Email, &u.Admin, &u.CreatedAt, &u.UpdatedAt)
+		err := rows.Scan(&u.ID, &u.Name, &u.Email, &u.Admin, &u.CreatedAt, &u.UpdatedAt, &u.Username)
 		log.Println(err)
 		if err != nil {
 			return nil, err
@@ -182,11 +185,26 @@ func (ur *userRepository) GetAllDetailed() ([]*models.User, error) {
 	return users, nil
 }
 
+// Not used anymore in latest version
 func (ur *userRepository) FindByEmail(email string) (*models.User, error) {
 	user := models.User{}
 
 	err := ur.Pool.QueryRow(context.Background(), "SELECT * FROM user_schema.\"user\" WHERE email = $1", email).Scan(
-		&user.ID, &user.Name, &user.Email, &user.Password, &user.Admin, &user.CreatedAt, &user.UpdatedAt,
+		&user.ID, &user.Name, &user.Email, &user.Password, &user.Admin, &user.CreatedAt, &user.UpdatedAt, &user.Username,
+	)
+
+	if err != nil && err != pgx.ErrNoRows {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (ur *userRepository) FindByUsername(username string) (*models.User, error) {
+	user := models.User{}
+
+	err := ur.Pool.QueryRow(context.Background(), "SELECT * FROM user_schema.\"user\" WHERE username = $1", username).Scan(
+		&user.ID, &user.Name, &user.Email, &user.Password, &user.Admin, &user.CreatedAt, &user.UpdatedAt, &user.Username,
 	)
 
 	if err != nil && err != pgx.ErrNoRows {
@@ -216,8 +234,8 @@ func (ur *userRepository) FindByIDDetailed(id string) (*models.User, error) {
 	user := models.User{}
 
 	err := ur.Pool.QueryRow(context.Background(),
-		"SELECT id, name, email, admin, created_at, updated_at FROM user_schema.\"user\" WHERE id = $1", id,
-	).Scan(&user.ID, &user.Name, &user.Email, &user.Admin, &user.CreatedAt, &user.UpdatedAt)
+		"SELECT id, name, email, admin, created_at, updated_at, username FROM user_schema.\"user\" WHERE id = $1", id,
+	).Scan(&user.ID, &user.Name, &user.Email, &user.Admin, &user.CreatedAt, &user.UpdatedAt, &user.Username)
 
 	log.Println(err)
 	if err != nil {
@@ -227,6 +245,7 @@ func (ur *userRepository) FindByIDDetailed(id string) (*models.User, error) {
 	return &user, nil
 }
 
+// Not used anymore in latest version
 func (ur *userRepository) Exists(email string) bool {
 
 	// Check if an user already exists with the email
@@ -240,6 +259,26 @@ func (ur *userRepository) Exists(email string) bool {
 
 	var exists pgtype.Bool
 	err := ur.Pool.QueryRow(context.Background(), "SELECT EXISTS(SELECT user_schema.\"user\".email FROM user_schema.\"user\" WHERE email = $1)", email).Scan(&exists)
+	if err != nil && err != pgx.ErrNoRows {
+		log.Println(err)
+		return true
+	}
+	return exists.Bool
+}
+
+func (ur *userRepository) ExistsUsername(username string) bool {
+
+	// Check if an user already exists with the email
+	/*
+		_, err := ur.Conn.Prepare(context.Background(), "email-exists-query", "SELECT EXISTS(SELECT user_schema.\"user\".email FROM user_schema.\"user\" WHERE email = $1)")
+		if err != nil {
+			log.Println(err)
+			return true
+		}
+	*/
+
+	var exists pgtype.Bool
+	err := ur.Pool.QueryRow(context.Background(), "SELECT EXISTS(SELECT user_schema.\"user\".username FROM user_schema.\"user\" WHERE username = $1)", username).Scan(&exists)
 	if err != nil && err != pgx.ErrNoRows {
 		log.Println(err)
 		return true

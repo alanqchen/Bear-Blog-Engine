@@ -37,15 +37,19 @@ create table user_schema."user"
 (
 	id uuid not null,
 	name text not null,
-	email text not null,
+	email text default '' not null,
 	password text not null,
 	admin boolean default false not null,
 	created_at timestamptz not null,
-	updated_at timestamptz default null
+	updated_at timestamptz default null,
+	username text not null
 );
 
 create unique index user_id_uindex
 	on user_schema."user" (id);
+
+create unique index user_username_uindex
+	on user_schema."user" (username);
 
 alter table user_schema."user"
 	add constraint user_pk

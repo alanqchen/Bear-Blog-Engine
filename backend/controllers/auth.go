@@ -8,7 +8,6 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/models"
 	"github.com/alanqchen/Bear-Post/backend/repositories"
 	"github.com/alanqchen/Bear-Post/backend/services"
-	"github.com/alanqchen/Bear-Post/backend/util"
 )
 
 // TODO repository, services
@@ -28,19 +27,9 @@ func (ac *AuthController) Authenticate(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
 		return
 	}
-	email, err := j.GetString("email")
+	username, err := j.GetString("username")
 	if err != nil {
-		NewAPIError(&APIError{false, "Email is required", http.StatusBadRequest}, w)
-		return
-	}
-	if ok := util.IsEmail(email); !ok {
-		NewAPIError(&APIError{false, "You must provide a valid email address", http.StatusBadRequest}, w)
-		return
-	}
-	u, err := ac.UserRepository.FindByEmail(email)
-	if err != nil {
-		log.Println("[BAD LOGIN] - username:", email)
-		NewAPIError(&APIError{false, "Incorrect email or password", http.StatusBadRequest}, w)
+		NewAPIError(&APIError{false, "username is required", http.StatusBadRequest}, w)
 		return
 	}
 
@@ -50,8 +39,21 @@ func (ac *AuthController) Authenticate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	/* NO LONGER REQUIRE A EMAIL
+	if ok := util.IsEmail(email); !ok {
+		NewAPIError(&APIError{false, "You must provide a valid email address", http.StatusBadRequest}, w)
+		return
+	}
+	*/
+	u, err := ac.UserRepository.FindByUsername(username)
+	if err != nil {
+		log.Println("[BAD LOGIN] - username:", username)
+		NewAPIError(&APIError{false, "Incorrect email or password", http.StatusBadRequest}, w)
+		return
+	}
+
 	if ok := u.CheckPassword(pw); !ok {
-		log.Printf("[BAD LOGIN] - username: %v password %v", email, pw)
+		log.Printf("[BAD LOGIN] - username: %v password %v", username, pw)
 		NewAPIError(&APIError{false, "Incorrect email or password", http.StatusBadRequest}, w)
 		return
 	}
@@ -75,7 +77,7 @@ func (ac *AuthController) Authenticate(w http.ResponseWriter, r *http.Request) {
 		authUser,
 	}
 
-	log.Println("[LOGIN SUCCESS] - username:", email)
+	log.Println("[LOGIN SUCCESS] - username:", username)
 	NewAPIResponse(&APIResponse{Success: true, Message: "Login successful", Data: data}, w, http.StatusOK)
 }
 
