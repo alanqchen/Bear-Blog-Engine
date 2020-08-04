@@ -78,7 +78,16 @@ export default function authReducer( state = initalAuthState, action) {
             return {
                 ...state,
                 loading: false,
+                accessToken: "",
+                refreshToken: "",
                 error: action.payload.error
+            };
+
+        case authTypes.SET_TOKENS:
+            return {
+                ...state,
+                accessToken: action.payload.accessToken,
+                refreshToken: action.payload.refreshToken
             };
 
         default:

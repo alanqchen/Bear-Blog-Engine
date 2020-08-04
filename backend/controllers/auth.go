@@ -168,6 +168,6 @@ func (ac *AuthController) RefreshTokens(w http.ResponseWriter, r *http.Request) 
 			return
 		}
 	}
-
+	log.Println("[AUTH] Created new refresh token for user", u.Username)
 	NewAPIResponse(&APIResponse{Success: true, Message: "Refresh successful", Data: tokens}, w, http.StatusOK)
 }

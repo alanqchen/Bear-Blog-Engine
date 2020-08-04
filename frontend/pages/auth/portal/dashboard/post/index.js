@@ -10,21 +10,21 @@ import EditorTheme from '../../../../../components/Theme/editorTheme';
 
 const Index = () => {
     return (
-            <Layout>
-                    <WidthWrapper>
-                    <InputsWrapper>
-                        <TextField name="title" label="Title" />
-                        <TextField name="subtitle" label="Subtitle" />
-                    </InputsWrapper>
-                    <Divider />
-                    <StyledEditor 
-                        theme={EditorTheme}
-                        onClickHashtag={tag => {
-                            history.push(`/category/${tag}`);
-                        }}
-                    />
-                </WidthWrapper>
-            </Layout>
+        <Layout>
+            <WidthWrapper>
+                <InputsWrapper>
+                    <TextField name="title" label="Title" />
+                    <TextField name="subtitle" label="Subtitle" />
+                </InputsWrapper>
+                <Divider />
+                <StyledEditor 
+                    theme={EditorTheme}
+                    onClickHashtag={tag => {
+                        history.push(`/category/${tag}`);
+                    }}
+                />
+            </WidthWrapper>
+        </Layout>
     );
 };
 

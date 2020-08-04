@@ -20,6 +20,6 @@
     },
     "port": "8080",
     "allowedOrigins": [
-        "*"
+        "http://localhost:3000"
     ]
 }

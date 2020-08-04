@@ -1,4 +1,4 @@
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import React, { useEffect, useState, useRef } from 'react';
 import ReCAPTCHA from "react-google-recaptcha";
 import { Typography, InputAdornment, LinearProgress } from '@material-ui/core';
@@ -13,7 +13,7 @@ import {
 import { login } from '../../redux/auth/actions';
 import { TextField } from 'formik-material-ui';
 
-export const LoginForm = ({ dispatch }) => {
+export const LoginForm = ({ auth, dispatch }) => {
 
     const [isActive, setIsActive] = useState(false);
     const [passedCaptcha, setPassedCaptcha] = useState(false);
@@ -34,6 +34,11 @@ export const LoginForm = ({ dispatch }) => {
         console.log("Logging in");
         recaptchaRef.current.execute();
     };
+
+    if(auth.accessToken != "") {
+        localStorage.setItem("bearpost.JWT", auth.accessToken);
+        localStorage.setItem("bearpost.REFRESH", auth.refreshToken);
+    }
 
     return (
         <FormWrapper>
