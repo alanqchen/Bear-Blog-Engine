@@ -65,10 +65,16 @@ export function login(username, password) {
             .then(res => res.json())
             .then(json => {
                 if(json.success) {
+                    localStorage.setItem("bearpost.JWT", json.data.tokens.accessToken);
+                    localStorage.setItem("bearpost.REFRESH", json.data.tokens.refreshToken);
                     dispatch(loginSuccess(json));
                 }
             })
-            .catch(error => dispatch(loginFailure(error)));
+            .catch(error => {
+                localStorage.removeItem("bearpost.JWT");
+                localStorage.removeItem("bearpost.REFRESH");
+                dispatch(loginFailure(error));
+            });
     }
 }
 
@@ -85,6 +91,8 @@ export function logout() {
             .then(res => res.json())
             .then(json => {
                 if(json.success) {
+                    localStorage.removeItem("bearpost.JWT");
+                    localStorage.removeItem("bearpost.REFRESH");
                     dispatch(logoutSuccess());
                 }
             })
@@ -105,10 +113,16 @@ export function refresh() {
             .then(res => res.json())
             .then(json => {
                 if(json.success) {
+                    localStorage.setItem("bearpost.JWT", json.data.accessToken);
+                    localStorage.setItem("bearpost.REFRESH", json.data.refreshToken);
                     dispatch(refreshSuccess(json));
                 }
             })
-            .catch(error => dispatch(refreshFailure(error)));
+            .catch(error => {
+                localStorage.removeItem("bearpost.JWT");
+                localStorage.removeItem("bearpost.REFRESH");
+                dispatch(refreshFailure(error));
+            });
     }
 }
 

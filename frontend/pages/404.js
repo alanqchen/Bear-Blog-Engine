@@ -21,11 +21,11 @@ export default function Custom404() {
         <Layout>
             <ErrorWrapper>
                 <Lottie options={defaultOptions}
-                width={"90%"}
-                isStopped={false}
-                isPaused={false}
-                isClickToPauseDisabled={true}
-                style={{maxWidth: "400px"}}
+                    width={"90%"}
+                    isStopped={false}
+                    isPaused={false}
+                    isClickToPauseDisabled={true}
+                    style={{maxWidth: "400px"}}
                 />
                 <Typography fontWeight="fontWeightLight" color="textSecondary" variant="subtitle1" component="h1">404 - Page Not Found</Typography>
                 <Typography fontWeight="fontWeightRegular" variant="h5" component="h2" display="block" gutterBottom>You're lost in the cosmos!</Typography>
@@ -34,4 +34,3 @@ export default function Custom404() {
         </Layout>
     );
 }
-

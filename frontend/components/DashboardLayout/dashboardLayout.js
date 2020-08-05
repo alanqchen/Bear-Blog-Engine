@@ -1,23 +1,70 @@
+import { connect } from 'react-redux';
+import Router from "next/router";
 import React, { useEffect, useState } from 'react';
-import { StyledCenteredContainer } from './dashboardLayoutStyled';
+import { StyledCenteredContainer, DashBoardWrapper } from './dashboardLayoutStyled';
 import { NavBar } from '../DashboardNavbar/NavBar';
+import { refresh, setTokens } from '../../redux/auth/actions';
 
 const dashboardLayoutStyle = {
-    marginTop: 20,
+    marginTop: 64,
     marginBottom: 20,
+    flexGrow: 1,
 };
 
-function dashboardLayout({children}) {
+function DashboardLayout({ auth, dispatch, children}) {
+    const [initAuth, setInitAuth] = useState(false);
+
+    useEffect(() => {
+        const accessToken = localStorage.getItem("bearpost.JWT");
+        const refreshToken = localStorage.getItem("bearpost.REFRESH");
+
+        if(accessToken) {
+            const setGetNewRefreshToken = async() => {
+                await dispatch(setTokens(accessToken, refreshToken));
+                await dispatch(refresh());
+            }
+            setGetNewRefreshToken();
+            if(auth.error) {
+                Router.push("/auth/portal/login");
+            }
+        } else if(auth.accessToken != "") {
+            const getNewRefreshToken = async() => {
+                await dispatch(refresh());
+            }
+            getNewRefreshToken();
+            if(auth.error) {
+                Router.push("/auth/portal/login");
+            }
+        } else {
+            Router.push("/auth/portal/login");
+        }
+        setInitAuth(true);
+    }, []);
+
     return (
         <>
-            <NavBar />
-            <div style={dashboardLayoutStyle}>
-                <StyledCenteredContainer>
-                    {children}
-                </StyledCenteredContainer>
-            </div>
+            <DashBoardWrapper>
+                <NavBar />
+                <div style={dashboardLayoutStyle}>
+                    <StyledCenteredContainer>
+                        {children}
+                    </StyledCenteredContainer>
+                </div>
+            </DashBoardWrapper>
         </>
-    )
+    );
 }
 
-export default dashboardLayout;
+const mapStateToProps = (state, ownProps) => {
+    return {
+        auth: {
+            accessToken: state.auth.accessToken,
+            refreshToken: state.auth.refreshToken,
+            userData: state.auth.userData,
+            loading: state.auth.loading,
+            error: state.auth.error
+        },
+    }
+}
+
+export default connect(mapStateToProps)(DashboardLayout);

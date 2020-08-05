@@ -26,3 +26,7 @@ export const WidthWrapper = styled.div`
     max-width: 700px;
     width: 100%;
 `;
+
+export const DashBoardWrapper = styled.div`
+    display: flex;
+`;

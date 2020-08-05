@@ -14,6 +14,8 @@ export const StyledLoginPaper = styled(Paper)`
     background-color: ${GlobalTheme.backgroundAlt1} !important;
     max-height: 400px;
     height: 100%;
+    padding-top: 40px;
+    padding-bottom: 40px;
 `;
 
 export const LoginPaperWrapper = styled.div`

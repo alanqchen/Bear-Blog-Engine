@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
-import React, { useEffect, useState, useRef } from 'react';
+import Router from "next/router";
+import { useEffect, useState, useRef } from 'react';
 import ReCAPTCHA from "react-google-recaptcha";
 import { Typography, InputAdornment, LinearProgress } from '@material-ui/core';
 import { Person, Lock, Toys, DonutLargeOutlined } from '@material-ui/icons';
@@ -11,34 +12,19 @@ import {
     FormWrapper
 } from './loginStyled';
 import { login } from '../../redux/auth/actions';
-import { TextField } from 'formik-material-ui';
 
 export const LoginForm = ({ auth, dispatch }) => {
 
-    const [isActive, setIsActive] = useState(false);
     const [passedCaptcha, setPassedCaptcha] = useState(false);
     const [failedCaptcha, setFailedCaptcha] = useState(false);
 
     const recaptchaRef = useRef();
 
-    useEffect(() => {}, [isActive]);
-
     const doLogin = async(username, password) => {
         setPassedCaptcha(true);
         setFailedCaptcha(false);
-        console.log("Dispatching...");
-        await dispatch(login(username, password));   
+        await dispatch(login(username, password)); 
     };
-
-    const submitLogin = (username, password) => {
-        console.log("Logging in");
-        recaptchaRef.current.execute();
-    };
-
-    if(auth.accessToken != "") {
-        localStorage.setItem("bearpost.JWT", auth.accessToken);
-        localStorage.setItem("bearpost.REFRESH", auth.refreshToken);
-    }
 
     return (
         <FormWrapper>
@@ -60,6 +46,9 @@ export const LoginForm = ({ auth, dispatch }) => {
                             recaptchaRef.current.execute();
                         }
                         setSubmitting(false);
+                        if(!auth.error) {
+                            Router.push("/auth/portal/dashboard");
+                        }
                 }}
             >
             {({ values, submitForm, isSubmitting }) => (
@@ -80,6 +69,7 @@ export const LoginForm = ({ auth, dispatch }) => {
                     />
                     {isSubmitting && <LinearProgress />}
                     {failedCaptcha && <p>Failed Captcha. Try again.</p>}
+                    {auth.error && <Typography variant="body1" color="error">Failed to login. Try again.</Typography>}
                     <WaveButton
                         variant="contained"
                         color="primary"

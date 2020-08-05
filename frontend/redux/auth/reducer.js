@@ -23,7 +23,8 @@ export default function authReducer( state = initalAuthState, action) {
                 loading: false,
                 accessToken: action.payload.response.data.tokens.accessToken,
                 refreshToken: action.payload.response.data.tokens.refreshToken,
-                userData: action.payload.response.data.user
+                userData: action.payload.response.data.user,
+                error: null
             };
 
         case authTypes.LOGIN_FAILURE:
@@ -49,7 +50,8 @@ export default function authReducer( state = initalAuthState, action) {
                 loading: false,
                 accessToken: "",
                 refreshToken: "",
-                userData: null
+                userData: null,
+                error: null
             };
 
         case authTypes.LOGOUT_FAILURE:
@@ -71,7 +73,8 @@ export default function authReducer( state = initalAuthState, action) {
                 ...state,
                 loading: false,
                 accessToken: action.payload.response.data.accessToken,
-                refreshToken: action.payload.response.data.refreshToken
+                refreshToken: action.payload.response.data.refreshToken,
+                error: null
             };
 
         case authTypes.REFRESH_FAILURE:
