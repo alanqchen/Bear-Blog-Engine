@@ -50,3 +50,11 @@ export const WaveButton = styled(Button).withConfig({
         color: ${GlobalTheme.backgroundAlt2} !important;
     }
 `;
+
+export const ErrorWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    max-width: 800px;
+`;

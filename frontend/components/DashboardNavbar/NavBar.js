@@ -12,7 +12,7 @@ export function NavBar({ className }) {
             <Toolbar>
                 <Typography variant="h6">
                     <Link href="/" passHref>
-                        <HeaderLink>{config.blogName}</HeaderLink>
+                        <HeaderLink>{config.blogName}<Typography variant="overline">Editor</Typography></HeaderLink>
                     </Link>
                 </Typography>
             </Toolbar>

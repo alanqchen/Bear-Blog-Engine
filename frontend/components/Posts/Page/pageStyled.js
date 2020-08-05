@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 const PostCardLinkBase = React.forwardRef((props, ref) => (
@@ -13,7 +13,15 @@ export const PostCardLink = styled(PostCardLinkBase)`
     width: 95%;
 `;
 
+const fadeIn = keyframes`
+    0% { opacity:0; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+`;
+
 export const LoadingProgress = styled(LinearProgress)`
+    animation: 2s ease 0s normal forwards 1 ${fadeIn};
+    z-index: 9999;
     position: fixed !important;
     width: 100%;
     top: 0;
