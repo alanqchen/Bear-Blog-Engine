@@ -29,7 +29,6 @@ const Index = ({ setup, auth }) => {
     useEffect(() => {
         const token = localStorage.getItem("bearpost.JWT");
         if(token && auth.accessToken && !setup) {
-            console.log("Pushings")
             Router.push("/auth/portal/dashboard");
         }
     }, []);

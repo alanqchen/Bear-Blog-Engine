@@ -26,6 +26,12 @@ export const LoginForm = ({ auth, dispatch }) => {
         await dispatch(login(username, password)); 
     };
 
+    useEffect(() => {
+        if(passedCaptcha && auth.accessToken != "" && !auth.error) {
+            Router.push("/auth/portal/dashboard");
+        }
+    })
+
     return (
         <FormWrapper>
             <Formik
@@ -39,16 +45,13 @@ export const LoginForm = ({ auth, dispatch }) => {
                     password: Yup.string()
                     .required("Required")
                 })}
-                onSubmit={async (values, { setSubmitting }) => {
+                onSubmit={async(values, { setSubmitting }) => {
                         if(passedCaptcha) {
                             await doLogin(values.username, values.password);
                         } else {
-                            recaptchaRef.current.execute();
+                            await recaptchaRef.current.executeAsync();
                         }
                         setSubmitting(false);
-                        if(!auth.error) {
-                            Router.push("/auth/portal/dashboard");
-                        }
                 }}
             >
             {({ values, submitForm, isSubmitting }) => (
