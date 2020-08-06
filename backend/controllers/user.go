@@ -404,6 +404,26 @@ func (uc *UserController) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check that the only admin isn't being deleted
+	if user.Admin {
+		multipleAdmins := false
+		users, err := uc.UserRepository.GetAll()
+		if err != nil {
+			NewAPIError(&APIError{false, "Failed to perform admin check", http.StatusInternalServerError}, w)
+			return
+		}
+		for _, iUser := range users {
+			if iUser.Admin && iUser.ID != user.ID {
+				multipleAdmins = true
+				break
+			}
+		}
+		if !multipleAdmins {
+			NewAPIError(&APIError{false, "Cannot delete only admin", http.StatusBadRequest}, w)
+			return
+		}
+	}
+
 	err = uc.UserRepository.Delete(id)
 	if err != nil {
 		// user was not found

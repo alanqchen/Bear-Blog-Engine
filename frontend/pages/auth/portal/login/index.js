@@ -15,15 +15,10 @@ import {
 import { WaveButton } from '../../../../components/Theme/StyledComponents';
 import fetch from 'isomorphic-unfetch';
 import LoginForm from '../../../../components/Login/loginForm';
+import StarParticles from '../../../../components/Theme/particles.json';
 
 const Index = ({ setup, auth }) => {
-    /*
-    tryLogin = async () => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`, {
-            method: 'post'
-        })
-    }
-    */
+
     const [init, setInit] = useState(false);
 
     useEffect(() => {
@@ -35,49 +30,7 @@ const Index = ({ setup, auth }) => {
 
     return (
         <>
-            {!auth.accessToken && <Particles params={{
-                "particles": {
-                    "number": {
-                        "value": 60,
-                        "density": {
-                            "enable": true,
-                            "value_area": 1500
-                        }
-                    },
-                    "line_linked": {
-                        "enable": true,
-                        "opacity": 0.02
-                    },
-                    "move": {
-                        "direction": "right",
-                        "speed": 0.05
-                    },
-                    "size": {
-                        "value": 1
-                    },
-                    "opacity": {
-                        "anim": {
-                            "enable": true,
-                            "speed": 1,
-                            "opacity_min": 0.05
-                        }
-                    }
-                },
-                "interactivity": {
-                    "events": {
-                        "onclick": {
-                            "enable": true,
-                            "mode": "push"
-                        }
-                    },
-                    "modes": {
-                        "push": {
-                            "particles_nb": 1
-                        }
-                    }
-                },
-                "retina_detect": true
-            }} style={{ position: "absolute", top: 0 }} />}
+            {!auth.accessToken && <Particles params={StarParticles} style={{ position: "absolute", top: 0 }} />}
             <Layout> 
                 <LoginPaperWrapper>
                     <StyledLoginPaper>
