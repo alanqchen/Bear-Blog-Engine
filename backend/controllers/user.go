@@ -409,7 +409,7 @@ func (uc *UserController) Delete(w http.ResponseWriter, r *http.Request) {
 		multipleAdmins := false
 		users, err := uc.UserRepository.GetAll()
 		if err != nil {
-			NewAPIError(&APIError{false, "Failed to perform admin check", http.StatusInternalServerError}, w)
+			NewAPIError(&APIError{false, "Failed to perform only admin check", http.StatusInternalServerError}, w)
 			return
 		}
 		for _, iUser := range users {
