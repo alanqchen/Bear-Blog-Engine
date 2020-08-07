@@ -31,6 +31,6 @@ jobs:
     
     - name: Build and push backend docker file (master push)
       run: |
-        docker tag bear-post_api-dev:latest aqchen/bearpost-api:latest
+        docker tag bear-blog-engine_api-dev:latest aqchen/bearpost-api:latest
         docker push aqchen/bearpost-api
 
