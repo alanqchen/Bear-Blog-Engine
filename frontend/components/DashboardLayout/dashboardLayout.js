@@ -18,6 +18,12 @@ function DashboardLayout({ auth, dispatch, children}) {
         const accessToken = localStorage.getItem("bearpost.JWT");
         const refreshToken = localStorage.getItem("bearpost.REFRESH");
 
+        const clearTokens = async() => {
+            await dispatch(setTokens("", ""));
+            localStorage.removeItem("bearpost.JWT");
+            localStorage.removeItem("bearpost.REFRESH");
+        }
+
         if(accessToken) {
             const setGetNewRefreshToken = async() => {
                 await dispatch(setTokens(accessToken, refreshToken));
@@ -25,10 +31,7 @@ function DashboardLayout({ auth, dispatch, children}) {
             }
             setGetNewRefreshToken();
             if(auth.error) {
-                await dispatch(setTokens("", ""));
-                localStorage.removeItem("bearpost.JWT");
-                localStorage.removeItem("bearpost.REFRESH");
-                Router.push("/auth/portal/login");
+                await clearTokens();
             }
         } else if(auth.accessToken != "") {
             const getNewRefreshToken = async() => {
@@ -36,10 +39,7 @@ function DashboardLayout({ auth, dispatch, children}) {
             }
             getNewRefreshToken();
             if(auth.error) {
-                await dispatch(setTokens("", ""));
-                localStorage.removeItem("bearpost.JWT");
-                localStorage.removeItem("bearpost.REFRESH");
-                Router.push("/auth/portal/login");
+                await clearTokens();
             }
         } else {
             Router.push("/auth/portal/login");
