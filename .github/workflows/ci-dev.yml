@@ -39,5 +39,5 @@ jobs:
         echo "old GITHUB_REF is $GITHUB_REF"
         GITHUB_REF=$(echo $GITHUB_REF | sed -e "s#refs/heads/##g")
         echo "new GITHUB_REF is $GITHUB_REF"
-        docker tag bear-post_api-dev:latest aqchen/bearpost-api:$GITHUB_REF
+        docker tag bear-blog-engine_api-dev:latest aqchen/bearpost-api:$GITHUB_REF
         docker push aqchen/bearpost-api
