@@ -20,7 +20,6 @@ export const StyledCard = styled(Card).withConfig({
         cursor: pointer;
         transform: scale(1.007);
     }
-    min-height: 300px;
     box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2), 
                 0px 5px 8px 0px rgba(0,0,0,0.14), 
                 0px 1px 14px 0px rgba(0,0,0,0.12);
@@ -31,14 +30,19 @@ export const StyledImageWrapper = styled.div`
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    min-height: 300px;
     max-height: 300px;
 `;
 
+export const StyledPicture = styled.picture`
+    z-index: 1;
+    width: 100%;
+`;
+
 export const StyledImage = styled.img`
+    display: block;
     flex-shrink: 0;
-    min-width: 100%;
-    min-height: 100%
+    width: 100%;
+    height: auto;
 `;
 
 export const FeatureImageWrapper = styled.div`
@@ -55,6 +59,7 @@ export const StyledLinearProgressWrapper = styled.div`
 `;
 
 export const TagsWrapper = styled.div`
+    z-index: 2;
     position: absolute;
     bottom: 5px;
     left: 5px;
@@ -77,5 +82,7 @@ export const StyledChip = styled(Chip)`
 `;
 
 export const ImageSkeleton = styled(Skeleton)`
+    z-index: 0;
+    height: 300px;
     position: absolute;
 `

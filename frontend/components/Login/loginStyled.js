@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { Paper, TextField } from '@material-ui/core';
+import { Paper } from '@material-ui/core';
+import { TextField } from 'formik-material-ui';
 import GlobalTheme from '../Theme/theme';
 
 export const StyledLoginPaper = styled(Paper)`
@@ -11,8 +12,9 @@ export const StyledLoginPaper = styled(Paper)`
     max-width: 500px;
     width: 90%;
     background-color: ${GlobalTheme.backgroundAlt1} !important;
-    max-height: 400px;
     height: 100%;
+    padding-top: 40px;
+    padding-bottom: 40px;
 `;
 
 export const LoginPaperWrapper = styled.div`
@@ -27,8 +29,15 @@ export const LoginPaperWrapper = styled.div`
     width: 100vw;
 `;
 
-export const StyledTextField = styled(TextField)`
+export const FormWrapper = styled.div`
     width: 80%;
+    max-width: 300px
+`;
+
+export const StyledTextField = styled(TextField).withConfig({
+    shouldForwardProp: prop => true
+})`
+    width: 100%;
     margin-top: 15px !important;
     margin-bottom: 15px !important;
     ${({ error }) => error && `

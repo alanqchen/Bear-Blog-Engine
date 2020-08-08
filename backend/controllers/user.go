@@ -75,21 +75,51 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Name must be between 2 and 32 characters", http.StatusBadRequest}, w)
 		return
 	}
-
+	/*
+		email, err := j.GetString("email")
+		if err != nil {
+			NewAPIError(&APIError{false, "Email is required", http.StatusBadRequest}, w)
+			return
+		}
+		if ok := util.IsEmail(email); !ok {
+			NewAPIError(&APIError{false, "You must provide a valid email address", http.StatusBadRequest}, w)
+			return
+		}
+		exists := uc.UserRepository.Exists(email)
+		if exists {
+			NewAPIError(&APIError{false, "The email address is already in use", http.StatusBadRequest}, w)
+			return
+		}
+	*/
+	// Email is not required, but the API still takes it for backwards compatibility
 	email, err := j.GetString("email")
+	usedDefault := false
 	if err != nil {
-		NewAPIError(&APIError{false, "Email is required", http.StatusBadRequest}, w)
-		return
+		email = ""
+		usedDefault = true
 	}
-	if ok := util.IsEmail(email); !ok {
+	if ok := util.IsEmail(email); !usedDefault && !ok {
 		NewAPIError(&APIError{false, "You must provide a valid email address", http.StatusBadRequest}, w)
 		return
+	} else if !usedDefault {
+		exists := uc.UserRepository.Exists(email)
+		if exists {
+			NewAPIError(&APIError{false, "The email address is already in use", http.StatusBadRequest}, w)
+			return
+		}
 	}
-	exists := uc.UserRepository.Exists(email)
-	if exists {
-		NewAPIError(&APIError{false, "The email address is already in use", http.StatusBadRequest}, w)
+
+	username, err := j.GetString("username")
+	if err != nil {
+		NewAPIError(&APIError{false, "Username is required", http.StatusBadRequest}, w)
 		return
 	}
+	exists := uc.UserRepository.ExistsUsername(username)
+	if exists {
+		NewAPIError(&APIError{false, "The username is already in use", http.StatusBadRequest}, w)
+		return
+	}
+
 	pw, err := j.GetString("password")
 	if err != nil {
 		NewAPIError(&APIError{false, "Password is required", http.StatusBadRequest}, w)
@@ -112,6 +142,7 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 		Email:     email,
 		Admin:     false,
 		CreatedAt: time.Now(),
+		Username:  username,
 	}
 	u.SetPassword(pw)
 
@@ -144,20 +175,35 @@ func (uc *UserController) CreateFirstAdmin(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	// Email is not required, but the API still takes it for backwards compatibility
 	email, err := j.GetString("email")
+	usedDefault := false
 	if err != nil {
-		NewAPIError(&APIError{false, "Email is required", http.StatusBadRequest}, w)
-		return
+		email = ""
+		usedDefault = true
 	}
-	if ok := util.IsEmail(email); !ok {
+	if ok := util.IsEmail(email); !usedDefault && !ok {
 		NewAPIError(&APIError{false, "You must provide a valid email address", http.StatusBadRequest}, w)
 		return
+	} else if !usedDefault {
+		exists := uc.UserRepository.Exists(email)
+		if exists {
+			NewAPIError(&APIError{false, "The email address is already in use", http.StatusBadRequest}, w)
+			return
+		}
 	}
-	exists := uc.UserRepository.Exists(email)
-	if exists {
-		NewAPIError(&APIError{false, "The email address is already in use", http.StatusBadRequest}, w)
+
+	username, err := j.GetString("username")
+	if err != nil {
+		NewAPIError(&APIError{false, "Username is required", http.StatusBadRequest}, w)
 		return
 	}
+	exists := uc.UserRepository.ExistsUsername(username)
+	if exists {
+		NewAPIError(&APIError{false, "The username is already in use", http.StatusBadRequest}, w)
+		return
+	}
+
 	pw, err := j.GetString("password")
 	if err != nil {
 		NewAPIError(&APIError{false, "Password is required", http.StatusBadRequest}, w)
@@ -180,6 +226,7 @@ func (uc *UserController) CreateFirstAdmin(w http.ResponseWriter, r *http.Reques
 		Email:     email,
 		Admin:     true,
 		CreatedAt: time.Now(),
+		Username:  username,
 	}
 	u.SetPassword(pw)
 
@@ -284,6 +331,25 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 		user.Name = name
 	}
 
+	// Email is not required, but the API still takes it for backwards compatibility
+	email, err := j.GetString("email")
+	usedDefault := false
+	if err != nil {
+		user.Email = ""
+		usedDefault = true
+	}
+	if ok := util.IsEmail(email); !usedDefault && !ok {
+		NewAPIError(&APIError{false, "You must provide a valid email address", http.StatusBadRequest}, w)
+		return
+	} else if !usedDefault {
+		exists := uc.UserRepository.Exists(email)
+		if exists {
+			NewAPIError(&APIError{false, "The email address is already in use", http.StatusBadRequest}, w)
+			return
+		}
+		user.Email = email
+	}
+
 	newpw, err := j.GetString("newpassword")
 	if newpw != "" && err == nil {
 		// confirm password
@@ -336,6 +402,26 @@ func (uc *UserController) Delete(w http.ResponseWriter, r *http.Request) {
 		// user was not found
 		NewAPIError(&APIError{false, "Could not find user", http.StatusNotFound}, w)
 		return
+	}
+
+	// Check that the only admin isn't being deleted
+	if user.Admin {
+		multipleAdmins := false
+		users, err := uc.UserRepository.GetAll()
+		if err != nil {
+			NewAPIError(&APIError{false, "Failed to perform only admin check", http.StatusInternalServerError}, w)
+			return
+		}
+		for _, iUser := range users {
+			if iUser.Admin && iUser.ID != user.ID {
+				multipleAdmins = true
+				break
+			}
+		}
+		if !multipleAdmins {
+			NewAPIError(&APIError{false, "Cannot delete only admin", http.StatusBadRequest}, w)
+			return
+		}
 	}
 
 	err = uc.UserRepository.Delete(id)

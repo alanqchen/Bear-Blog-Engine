@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import { 
-    StyledImage, 
+    StyledImage,
+    StyledPicture,
     StyledImageWrapper,
     FeatureImageWrapper,
     StyledLinearProgressWrapper,
@@ -17,6 +18,10 @@ function FeatureImage({featureImgUrl, tags, skeleton}) {
 
     const [loading, setLoading] = useState(true);
 
+    const handleLoad = () => {
+        setLoading(false)
+    }
+
     useEffect(() => {
 
     }, [loading]);
@@ -25,7 +30,7 @@ function FeatureImage({featureImgUrl, tags, skeleton}) {
         <FeatureImageWrapper>
             {!skeleton && loading 
                 &&  <>
-                        <ImageSkeleton variant="rect" width="100%" height="300px" />
+                        <Skeleton variant="rect" width="100%" height="300px" />
                     </>
             }
             <TagsWrapper>
@@ -42,13 +47,26 @@ function FeatureImage({featureImgUrl, tags, skeleton}) {
             <StyledImageWrapper>
                 {skeleton ? <Skeleton variant="rect" width="100%" height="300px"/>
                 :
-                <picture>
+                <StyledPicture>
                     {featureImgUrl.substring(featureImgUrl.length - 5, featureImgUrl.length) == ".jpeg" 
                         ? <source type="image/webp" srcSet={process.env.NEXT_PUBLIC_API_URL + featureImgUrl.substring(0, featureImgUrl.length - 5) + ".webp"} />
                         : <source type="image/webp" srcSet={process.env.NEXT_PUBLIC_API_URL + featureImgUrl.substring(0, featureImgUrl.length - 4) + ".webp"} />
                     }
-                    <StyledImage src={process.env.NEXT_PUBLIC_API_URL + featureImgUrl} alt="Feature Image" onLoad={() => setLoading(false)} />
-                </picture>
+                    <StyledImage ref={(input) => {
+    // onLoad replacement for SSR
+    if (!input) { return; }
+    const img = input;
+
+    const updateFunc = () => {
+      this.setState({ loaded: true });
+    };
+    img.onload = updateFunc;
+    if (img.complete) {
+        handleLoad();
+    }
+    img.onload = null
+  }} src={process.env.NEXT_PUBLIC_API_URL + featureImgUrl} alt="Feature Image" onLoad={() => handleLoad()} />
+                </StyledPicture>
                 } 
             </StyledImageWrapper>
         </FeatureImageWrapper>

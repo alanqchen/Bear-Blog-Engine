@@ -17,7 +17,7 @@ const Index = ({initialData, time}) => {
 export async function getStaticProps({ params }) {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts/get?maxID=-1`);
     const initialData = await res.json();
-    //console.log(posts)
+
     return {
       // Set the timeout for generating to 1 second
       // This timeout could be longer depending on how often data changes

@@ -31,17 +31,17 @@ export function fetchPosts() {
         };
         dispatch(fetchPostsBegin());
         return fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/posts/get?maxID=' + params.maxID)
-          .then(handleErrors)
-          .then(res => res.json())
-          .then(json => {
-            if(json.success && json.data.length === 0) {
-                dispatch(fetchPostsNoMore());
-            } else {
-                dispatch(fetchPostsSuccess(json));
-            }
-            return json;
-          })
-          .catch(error => dispatch(fetchPostsFailure(error)));
+            .then(handleErrors)
+            .then(res => res.json())
+            .then(json => {
+                if(json.success && json.data.length === 0) {
+                    dispatch(fetchPostsNoMore());
+                } else {
+                    dispatch(fetchPostsSuccess(json));
+                }
+                return json;
+            })
+            .catch(error => dispatch(fetchPostsFailure(error)));
     };
 }
 

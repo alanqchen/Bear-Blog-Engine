@@ -42,7 +42,7 @@ func (a *App) Run(r *mux.Router) {
 	addr := fmt.Sprintf(":%v", port)
 
 	fmt.Printf("API is listening on port: %v\n", port)
-	log.Fatal(http.ListenAndServe(addr, handlers.CORS(originsOk, headersOk, methodsOk)(r)))
+	log.Fatal(http.ListenAndServe(addr, handlers.CORS(originsOk, headersOk, methodsOk, handlers.AllowCredentials())(r)))
 }
 
 func (a *App) IsProd() bool {

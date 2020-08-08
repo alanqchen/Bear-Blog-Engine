@@ -1,25 +1,16 @@
 import Router from 'next/router'
-import React from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { LoadingProgress } from '../Posts/Page/pageStyled'
 
-const DONE_DURATION = 250
-
 export const RouteIndicator = () => {
-    const [loading, setLoading] = React.useState(null);
-    const [timeoutId, setTimeoutId] = React.useState(null);
+    const [loading, setLoading] = useState(false);
 
     const onLoad = () => setLoading(true);
     const onDone = () => {
         setLoading(false);
-        setTimeoutId(
-            setTimeout(() => {
-            setTimeoutId(null)
-            setLoading(null)
-            }, DONE_DURATION)
-        );
     }
 
-  React.useEffect(() => {
+  useEffect(() => {
     Router.events.on('routeChangeStart', onLoad)
     Router.events.on('routeChangeComplete', onDone)
     Router.events.on('routeChangeError', onDone)
@@ -31,11 +22,9 @@ export const RouteIndicator = () => {
     }
   })
 
-  React.useEffect(
-    () => () => {
-      if (timeoutId) clearTimeout(timeoutId)
-    },
-    [timeoutId]
+  useEffect(
+    () => { },
+    [loading]
   );
 
   return (
