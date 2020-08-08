@@ -25,6 +25,9 @@ function DashboardLayout({ auth, dispatch, children}) {
             }
             setGetNewRefreshToken();
             if(auth.error) {
+                await dispatch(setTokens("", ""));
+                localStorage.removeItem("bearpost.JWT");
+                localStorage.removeItem("bearpost.REFRESH");
                 Router.push("/auth/portal/login");
             }
         } else if(auth.accessToken != "") {
@@ -33,6 +36,9 @@ function DashboardLayout({ auth, dispatch, children}) {
             }
             getNewRefreshToken();
             if(auth.error) {
+                await dispatch(setTokens("", ""));
+                localStorage.removeItem("bearpost.JWT");
+                localStorage.removeItem("bearpost.REFRESH");
                 Router.push("/auth/portal/login");
             }
         } else {
