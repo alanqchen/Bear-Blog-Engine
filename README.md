@@ -13,7 +13,7 @@
     </a>
 </p>
 
-# Bear Post
+# Bear Blog Engine / Bear Post
 A Modern Blog Engine. Server-side, not JAMStack.
 
 Uses Go for the backend and React (Next) for the frontend.
@@ -40,8 +40,10 @@ Find the start up information in the [`templates/backend-only` directory](templa
 It will guide you through starting the API and deploying the frontend to Vercel.
 
 ### Q: Why not a static blog?
-A: A dynamic blog gives me the opportunity to learn working with databases and React. This is my first large project working with these, so while a static blog has lots of advantages, a dynamic blog is better my personal development.
+A: A dynamic blog gives me the opportunity to learn working with databases and React. This is my first large project working with these, so while a static blog has lots of advantages, a dynamic blog gives lots of opportunities to learn more.
+
+> What I cannot create, I do not understand - Richard Feynman
 
 *Later down the line*
-- Comment support? (Very low-priority)
-- Search by month/year (Need to add backend route)
+- Comment support
+- Search by month/year
