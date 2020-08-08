@@ -31,7 +31,7 @@ function DashboardLayout({ auth, dispatch, children}) {
             }
             setGetNewRefreshToken();
             if(auth.error) {
-                await clearTokens();
+                clearTokens();
             }
         } else if(auth.accessToken != "") {
             const getNewRefreshToken = async() => {
@@ -39,7 +39,7 @@ function DashboardLayout({ auth, dispatch, children}) {
             }
             getNewRefreshToken();
             if(auth.error) {
-                await clearTokens();
+                clearTokens();
             }
         } else {
             Router.push("/auth/portal/login");
