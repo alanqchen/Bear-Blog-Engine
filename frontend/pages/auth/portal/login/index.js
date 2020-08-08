@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import Router from "next/router";
 import { useState, useEffect } from 'react';
-import { Typography, InputAdornment } from '@material-ui/core';
+import { Typography, CircularProgress } from '@material-ui/core';
 import { Person, Lock } from '@material-ui/icons';
 import Particles from 'react-particles-js';
 import Layout from '../../../../components/PublicLayout/publicLayout';
@@ -15,15 +15,14 @@ import {
 import { WaveButton } from '../../../../components/Theme/StyledComponents';
 import fetch from 'isomorphic-unfetch';
 import LoginForm from '../../../../components/Login/loginForm';
+import SetupForm from '../../../../components/Login/setupForm';
 import StarParticles from '../../../../components/Theme/particles.json';
 
-const Index = ({ setup, auth }) => {
-
-    const [init, setInit] = useState(false);
+const Index = ({ data, auth }) => {
 
     useEffect(() => {
         const token = localStorage.getItem("bearpost.JWT");
-        if(token && auth.accessToken && !setup) {
+        if(token && auth.accessToken && !data.setup) {
             Router.push("/auth/portal/dashboard");
         }
     }, []);
@@ -34,7 +33,11 @@ const Index = ({ setup, auth }) => {
             <Layout> 
                 <LoginPaperWrapper>
                     <StyledLoginPaper>
+                        { data.setup ? 
+                        <SetupForm />
+                        :
                         <LoginForm />
+                        }
                     </StyledLoginPaper>
                 </LoginPaperWrapper>
             </Layout>
@@ -43,10 +46,10 @@ const Index = ({ setup, auth }) => {
 };
 
 async function getSetup() {
-    let res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users`);
     const users = await res.json();
     const errorCode = users.status > 200 ? users.status : false;
-    if(errorCode || users.data.length !== 0) {
+    if(errorCode || (users.data && users.data.length !== 0)) {
         return {
             data: {
                 errorCode: errorCode,
@@ -64,6 +67,7 @@ async function getSetup() {
 }
 
 export async function getServerSideProps() {
+
     return {
         props: {
             ...await getSetup()

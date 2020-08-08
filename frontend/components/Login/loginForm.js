@@ -74,6 +74,7 @@ export const LoginForm = ({ auth, dispatch }) => {
                     {failedCaptcha && <p>Failed Captcha. Try again.</p>}
                     {auth.error && <Typography variant="body1" color="error">Failed to login. Try again.</Typography>}
                     <WaveButton
+                        type="submit"
                         variant="contained"
                         color="primary"
                         disabled={isSubmitting}

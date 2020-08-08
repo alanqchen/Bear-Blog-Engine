@@ -61,20 +61,20 @@ export function login(username, password) {
             method: 'POST',
             body: JSON.stringify(params)
         })
-            .then(handleErrors)
-            .then(res => res.json())
-            .then(json => {
-                if(json.success) {
-                    localStorage.setItem("bearpost.JWT", json.data.tokens.accessToken);
-                    localStorage.setItem("bearpost.REFRESH", json.data.tokens.refreshToken);
-                    dispatch(loginSuccess(json));
-                }
-            })
-            .catch(error => {
-                localStorage.removeItem("bearpost.JWT");
-                localStorage.removeItem("bearpost.REFRESH");
-                dispatch(loginFailure(error));
-            });
+        .then(handleErrors)
+        .then(res => res.json())
+        .then(json => {
+            if(json.success) {
+                localStorage.setItem("bearpost.JWT", json.data.tokens.accessToken);
+                localStorage.setItem("bearpost.REFRESH", json.data.tokens.refreshToken);
+                dispatch(loginSuccess(json));
+            }
+        })
+        .catch(error => {
+            localStorage.removeItem("bearpost.JWT");
+            localStorage.removeItem("bearpost.REFRESH");
+            dispatch(loginFailure(error));
+        });
     }
 }
 
