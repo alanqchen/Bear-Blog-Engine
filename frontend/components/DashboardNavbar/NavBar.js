@@ -8,10 +8,17 @@ import {
     IconButton,
     List,
     ListItem,
-    ListItemText
+    ListItemText,
+    ListItemIcon,
+    Divider
 } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
-import CloseIcon from '@material-ui/icons/Close';
+import {
+    Menu as MenuIcon,
+    Close as CloseIcon,
+    List as ListIcon,
+    HomeOutlined as HomeIcon,
+    GroupOutlined as EditorsIcon
+} from '@material-ui/icons';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Link from 'next/link';
 import {
@@ -46,9 +53,10 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export function NavBar({ className }) {
+export function NavBar({ className, disabledCategory }) {
 
-    const categories = ['Cat 1', 'Cat 2', 'Cat 3', 'Cat 4', 'Cat 5']
+    const categories = ['Posts', 'Cat 2', 'Cat 3', 'Cat 4', 'Cat 5']
+    const categoriesIcons = [<ListIcon />, <ListIcon />, <ListIcon />, <ListIcon />, <ListIcon />]
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -56,15 +64,23 @@ export function NavBar({ className }) {
     function handleDrawerToggle() {
         setMobileOpen(!mobileOpen)
     }
-
+    
     const drawer = (
         <div>
             <List>
-                {categories.map((text, index) => (
-                    <ListItem button key={text}>
-                    <ListItemText primary={text} />
-                    </ListItem>
-                ))}
+                <ListItem button>
+                    <ListItemIcon><HomeIcon /></ListItemIcon>
+                    <ListItemText primary={'View site'} />
+                </ListItem>
+                <Divider />
+                <ListItem button disabled={disabledCategory === "Posts" ? true : false} >
+                    <ListItemIcon><ListIcon /></ListItemIcon>
+                    <ListItemText primary={'Posts'} />
+                </ListItem>
+                <ListItem button disabled={disabledCategory === "Editors" ? true : false} >
+                    <ListItemIcon><EditorsIcon /></ListItemIcon>
+                    <ListItemText primary={'Editors'} />
+                </ListItem>
             </List>
         </div>
     );

@@ -3,7 +3,7 @@ import Layout from '../../../../components/DashboardLayout/dashboardLayout';
 
 const Index = ({ auth, dispatch }) => {
     return (
-        <Layout>
+        <Layout disabledCategory={"Posts"}>
             <h1>You're logged in!</h1>
         </Layout>
     );
