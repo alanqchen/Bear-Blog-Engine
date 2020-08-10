@@ -22,6 +22,7 @@ type PostRepository interface {
 	Delete(id int) error
 	Update(p *models.Post) error
 	Paginate(maxID int, perPage int, tags []string) ([]*models.Post, int, error)
+	PaginateAdmin(maxID int, perPage int, tags []string) ([]*models.Post, int, error)
 	GetTotalPostCount() (int, error)
 	GetPublicPostCount() (int, error)
 	ResetSeq() error
@@ -385,6 +386,53 @@ func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*mo
 	//	log.Println(err)
 	//	return nil, -1, err
 	//}
+	return posts, minID, nil
+}
+
+func (pr *postRepository) PaginateAdmin(maxID int, perPage int, tags []string) ([]*models.Post, int, error) {
+	var posts []*models.Post
+
+	var rows pgx.Rows
+	var err error
+
+	// For some reason, can't use same query w/ tags in latest pgx update
+	if len(tags) == 0 {
+		rows, err = pr.Pool.Query(context.Background(), "SELECT * FROM post_schema.post WHERE id < $1 ORDER BY created_at DESC, id DESC LIMIT $2", maxID, perPage)
+	} else {
+		rows, err = pr.Pool.Query(context.Background(), "SELECT * FROM post_schema.post WHERE id < $1 AND tags @> $2::text[] ORDER BY created_at DESC, id DESC LIMIT $3", maxID, tags, perPage)
+	}
+	defer rows.Close()
+	if err != nil {
+		log.Println(err)
+		return nil, -1, err
+	}
+	var minID int
+	for rows.Next() {
+		p := new(models.Post)
+		err := rows.Scan(&p.ID, &p.Title, &p.Slug, &p.Body, &p.CreatedAt, &p.UpdatedAt, &p.Tags, &p.Hidden, &p.AuthorID, &p.FeatureImgURL, &p.Subtitle, &p.Views)
+
+		if err != nil {
+			log.Println(err)
+			return nil, -1, err
+		}
+
+		// Limit p.Body to 250 characters
+		limit := len(p.Body)
+		if len(p.Body) > 250 {
+			limit = 250
+		}
+
+		p.Body = p.Body[:limit]
+
+		posts = append(posts, p)
+
+		minID = p.ID
+	}
+	if err := rows.Err(); err != nil {
+		log.Println(err)
+		return nil, -1, err
+	}
+
 	return posts, minID, nil
 }
 

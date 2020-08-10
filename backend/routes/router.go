@@ -60,6 +60,7 @@ func NewRouter(a *app.App) *mux.Router {
 	log.Println("Created users routes")
 	// Posts
 	api.HandleFunc("/posts/get", middleware.Logger(pc.GetPage)).Methods(http.MethodGet)
+	api.HandleFunc("/posts/admin/get", middleware.Logger(middleware.RequireAuthentication(a, pc.GetPageAdmin, false))).Methods(http.MethodGet)
 	api.HandleFunc("/posts/search", middleware.Logger(pc.Search)).Methods(http.MethodGet)
 	api.HandleFunc("/posts/{id:[0-9]+}", middleware.Logger(pc.GetByID)).Methods(http.MethodGet)
 	api.HandleFunc("/posts/admin/{id:[0-9]+}", middleware.Logger(middleware.RequireAuthentication(a, pc.GetByIDAdmin, false))).Methods(http.MethodGet)

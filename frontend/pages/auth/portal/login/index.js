@@ -75,6 +75,7 @@ export async function getServerSideProps() {
     };
 };
 
+
 const mapStateToProps = (state, ownProps) => {
     return {
         auth: {

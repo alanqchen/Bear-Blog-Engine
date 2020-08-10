@@ -148,6 +148,89 @@ func (pc *PostController) GetPage(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
 }
 
+func (pc *PostController) GetPageAdmin(w http.ResponseWriter, r *http.Request) {
+	//httpScheme := "https://"
+	total, _ := pc.PostRepository.GetPublicPostCount()
+	//page := r.URL.Query().Get("page")
+	//log.Println("Page: ", page)
+	//pageInt, err := strconv.Atoi(page)
+	//if err != nil {
+	//	pageInt = 1
+	//}
+
+	q := r.URL.Query()
+	maxIDString := q.Get("maxID")
+	maxID, err := strconv.Atoi(maxIDString)
+
+	log.Println(maxID)
+	if err != nil {
+		NewAPIError(&APIError{false, "Max ID is required (or -1 if first page)", http.StatusBadRequest}, w)
+		return
+	}
+
+	tagsSlice := q["tags"]
+	if len(tagsSlice) == 0 {
+		log.Println("No tags slice")
+	}
+
+	if maxID == -1 {
+		maxID, _ = pc.PostRepository.GetLastID()
+		maxID++
+	}
+
+	if len(tagsSlice) == 0 {
+		resStatus, resCache := pc.checkCache(maxIDString)
+		if resStatus {
+			var res APIResponse
+			err := json.Unmarshal(resCache, &res)
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Println("[INFO] Returned result from cache")
+			NewAPIResponse(&res, w, http.StatusOK)
+			return
+		}
+	} else if len(tagsSlice) == 1 {
+		resStatus, resCache := pc.checkCategoryCache(tagsSlice[0], maxIDString)
+		if resStatus {
+			var res APIResponse
+			err := json.Unmarshal(resCache, &res)
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Println("[INFO] Returned result from category cache")
+			NewAPIResponse(&res, w, http.StatusOK)
+			return
+		}
+	}
+
+	// May add changing num posts per page in the future
+	perPageInt := 5
+	posts, minID, err := pc.PostRepository.PaginateAdmin(maxID, perPageInt, tagsSlice)
+
+	if err != nil && err != pgx.ErrNoRows {
+		log.Println(err)
+		NewAPIError(&APIError{false, "Could not fetch posts", http.StatusBadRequest}, w)
+		return
+	}
+
+	if len(posts) == 0 {
+		log.Println("Could not find more posts")
+		posts = make([]*models.Post, 0)
+		NewAPIResponse(&APIResponse{Success: true, Message: "Could not find more posts", Data: posts}, w, http.StatusOK)
+		return
+	}
+
+	postPaginator := APIPagination{
+		total,
+		perPageInt,
+		minID,
+		tagsSlice,
+	}
+
+	NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
+}
+
 func (pc *PostController) GetByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
