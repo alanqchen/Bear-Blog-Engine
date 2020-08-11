@@ -11,7 +11,7 @@ const dashboardLayoutStyle = {
     flexGrow: 1,
 };
 
-function DashboardLayout({ auth, dispatch, children, disabledCategory }) {
+function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
     const [initAuth, setInitAuth] = useState(false);
 
     useEffect(() => {
@@ -50,7 +50,7 @@ function DashboardLayout({ auth, dispatch, children, disabledCategory }) {
     return (
         <>
             <DashBoardWrapper>
-                <NavBar disabledCategory={disabledCategory} />
+                <NavBar selectedCategory={selectedCategory} />
                 <div style={dashboardLayoutStyle}>
                     <StyledCenteredContainer>
                         {children}

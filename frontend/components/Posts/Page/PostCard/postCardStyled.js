@@ -12,6 +12,7 @@ export const StyledCard = styled(Card).withConfig({
     ` : `
         width: 100%;
     `}
+    border-radius: 1em !important;
     max-width: 700px;
     margin-bottom: 20px;
     background-color: ${SCtheme.backgroundDarkAlt};

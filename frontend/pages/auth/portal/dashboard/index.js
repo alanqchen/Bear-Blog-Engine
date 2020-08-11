@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../../../../components/DashboardLayout/dashboardLayout';
+import PostsList from '../../../../components/PostsTable/postsTable';
 
 const Index = ({ auth, dispatch }) => {
     return (
-        <Layout disabledCategory={"Posts"}>
-            <h1>You're logged in!</h1>
+        <Layout selectedCategory={"Posts"}>
+            <h1>No data fetched yet</h1>
+            <PostsList />
         </Layout>
     );
 };

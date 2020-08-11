@@ -20,6 +20,7 @@ import {
     GroupOutlined as EditorsIcon
 } from '@material-ui/icons';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import Router from "next/router";
 import Link from 'next/link';
 import {
     HeaderLink
@@ -53,13 +54,17 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export function NavBar({ className, disabledCategory }) {
+export function NavBar({ className, selectedCategory }) {
 
     const categories = ['Posts', 'Cat 2', 'Cat 3', 'Cat 4', 'Cat 5']
     const categoriesIcons = [<ListIcon />, <ListIcon />, <ListIcon />, <ListIcon />, <ListIcon />]
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = useState(false);
+
+    const pushLink = (link) => {
+        Router.push(link);
+    }
 
     function handleDrawerToggle() {
         setMobileOpen(!mobileOpen)
@@ -68,16 +73,16 @@ export function NavBar({ className, disabledCategory }) {
     const drawer = (
         <div>
             <List>
-                <ListItem button>
+                <ListItem button onClick={()=>{pushLink("/")}} >
                     <ListItemIcon><HomeIcon /></ListItemIcon>
                     <ListItemText primary={'View site'} />
                 </ListItem>
                 <Divider />
-                <ListItem button disabled={disabledCategory === "Posts" ? true : false} >
+                <ListItem button onClick={()=>{pushLink("/auth/portal/dashboard")}} selected={selectedCategory === "Posts" ? true : false} >
                     <ListItemIcon><ListIcon /></ListItemIcon>
                     <ListItemText primary={'Posts'} />
                 </ListItem>
-                <ListItem button disabled={disabledCategory === "Editors" ? true : false} >
+                <ListItem button onClick={()=>{pushLink("/auth/portal/dashboard")}} selected={selectedCategory === "Editors" ? true : false} >
                     <ListItemIcon><EditorsIcon /></ListItemIcon>
                     <ListItemText primary={'Editors'} />
                 </ListItem>

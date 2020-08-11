@@ -39,11 +39,11 @@ const theme = createMuiTheme({
             }
         },
         MuiPaper: {
+            root: {
+                backgroundColor: GlobalTheme.backgroundAlt3
+            },
             outlined: {
                 border: "1px solid #2f323c"
-            },
-            rounded: {
-                borderRadius: "1em"
             }
         },
     },
