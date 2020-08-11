@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@atlaskit/select": "^11.0.14",
+    "@atlaskit/select": "^12.0.2",
     "@atlaskit/spinner": "^12.1.7",
     "@babel/core": "^7.10.4",
     "@material-ui/core": "^4.11.0",
