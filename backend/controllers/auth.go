@@ -148,7 +148,7 @@ func (ac *AuthController) RefreshTokens(w http.ResponseWriter, r *http.Request) 
 		NewAPIError(&APIError{false, "Something went wrong", http.StatusBadRequest}, w)
 		return
 	}
-	u, err := ac.UserRepository.FindByID(uid)
+	u, err := ac.UserRepository.FindByIDDetailed(uid)
 	if err != nil {
 		NewAPIError(&APIError{false, "Could not find user", http.StatusBadRequest}, w)
 		return

@@ -2,12 +2,14 @@ import { combineReducers } from 'redux';
 import { HYDRATE } from 'next-redux-wrapper';
 import fetchPosts from './fetchPosts/reducer';
 import fetchCategory from './fetchCategory/reducer';
-import authReducer from './auth/reducer';
+import auth from './auth/reducer';
+import fetchDashboardPosts from './fetchDashboardPosts/reducer';
 
 const combinedReducers = combineReducers({
     fetchPosts: fetchPosts,
     fetchCategory: fetchCategory,
-    auth: authReducer
+    auth: auth,
+    fetchDashboardPosts: fetchDashboardPosts
 });
 
 const reducer = (state, action) => {

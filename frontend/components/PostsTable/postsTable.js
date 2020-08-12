@@ -1,3 +1,4 @@
+import {connect} from 'react-redux';
 import {
     Typography,
     CircularProgress,
@@ -12,7 +13,8 @@ import {
 import {
     StatusChip,
     PostsTableRow,
-    PostsTableContainer
+    PostsTableContainer,
+    PostsTableHead
 } from './postsTableStyled';
 
 function PostsList() {
@@ -20,14 +22,14 @@ function PostsList() {
         <>
             <PostsTableContainer component={Paper}>
                 <Table aria-label="posts table">
-                    <TableHead>
+                    <PostsTableHead>
                         <TableRow>
                             <TableCell>Title</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell>Last Updated</TableCell>
                             <TableCell>Author</TableCell>
                         </TableRow>
-                    </TableHead>
+                    </PostsTableHead>
                     <TableBody>
                         <PostsTableRow hover>
                             <TableCell>This is a test title (A little longer) Blah Blah Blah Lorem Ipsum</TableCell>
@@ -48,4 +50,18 @@ function PostsList() {
     );
 }
 
-export default PostsList;
+const mapStateToProps = (state, ownProps) => {
+    return {
+        fetchDashboardPosts: {
+            posts: state.fetchDashboardPosts.posts,
+            publishedPosts: state.fetchDashboardPosts.publishedPosts,
+            draftPosts: state.fetchDashboardPosts.draftPosts,
+            loading: state.fetchDashboardPosts.loading,
+            minID: state.fetchDashboardPosts.minID,
+            hasMore: state.fetchDashboardPosts.hasMore,
+            error: state.fetchDashboardPosts.error
+        },
+    }
+}
+
+export default connect(mapStateToProps)(PostsList);

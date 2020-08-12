@@ -19,7 +19,7 @@ const theme = createMuiTheme({
     overrides: {
         MuiTypography: {
             root: {
-                color: '#ffffff',
+                color: "#efefef",
             },
             colorTextPrimary: {
                 color: GlobalTheme.textPrimary,

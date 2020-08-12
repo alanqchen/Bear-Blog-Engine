@@ -2,7 +2,8 @@ import styled from "styled-components";
 import { 
     Chip,
     TableRow,
-    TableContainer
+    TableContainer,
+    TableHead
 } from '@material-ui/core';
 
 export const StatusChip = styled(Chip).withConfig({
@@ -18,8 +19,18 @@ export const PostsTableRow = styled(TableRow)`
     &:hover {
         cursor: pointer;
     }
+    & td {
+        color: #dbdde0 !important;
+    }
 `;
 
 export const PostsTableContainer = styled(TableContainer)`
     width: 97% !important;
+`;
+
+export const PostsTableHead = styled(TableHead)`
+    background-color: #25292f !important;
+    & tr th {
+        color: #a7aebb !important;
+    }
 `;
