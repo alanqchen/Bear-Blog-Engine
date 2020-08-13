@@ -5,7 +5,7 @@ import PostsList from '../../../../components/PostsTable/postsTable';
 const Index = ({ auth, dispatch }) => {
     return (
         <Layout selectedCategory={"Posts"}>
-            <h1>No data fetched yet</h1>
+            <h1>Posts</h1>
             <PostsList />
         </Layout>
     );

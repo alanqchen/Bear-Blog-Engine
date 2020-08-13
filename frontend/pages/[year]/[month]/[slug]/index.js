@@ -88,14 +88,7 @@ export async function getStaticProps(context) {
     let dateStr = post.data.createdAt;
     dateStr = timestamp2date(dateStr)
 
-    let resAuthor = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/${post.data.authorid}`);
-    const author = await resAuthor.json();
-    let authorName;
-    if(!author.success) {
-        authorName = "Unknown User";
-    } else {
-        authorName = author.data.name;
-    }
+    const authorName = post.data.authorid;
 
     return {
         props: {

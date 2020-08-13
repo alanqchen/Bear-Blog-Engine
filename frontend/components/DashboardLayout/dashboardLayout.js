@@ -27,7 +27,7 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
         if(accessToken) {
             const setGetNewRefreshToken = async() => {
                 await dispatch(setTokens(accessToken, refreshToken));
-                await dispatch(refresh());
+                //await dispatch(refresh());
             }
             setGetNewRefreshToken();
             if(auth.error) {
@@ -35,7 +35,7 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
             }
         } else if(auth.accessToken != "") {
             const getNewRefreshToken = async() => {
-                await dispatch(refresh());
+                //await dispatch(refresh());
             }
             getNewRefreshToken();
             if(auth.error) {
@@ -44,8 +44,11 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
         } else {
             Router.push("/auth/portal/login");
         }
+        if (auth.error) {
+            Router.push("/auth/portal/login");
+        }
         setInitAuth(true);
-    }, []);
+    }, [auth.error]);
 
     return (
         <>

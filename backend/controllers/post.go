@@ -30,14 +30,7 @@ func NewPostController(a *app.App, pr repositories.PostRepository, ur repositori
 }
 
 func (pc *PostController) GetPage(w http.ResponseWriter, r *http.Request) {
-	//httpScheme := "https://"
 	total, _ := pc.PostRepository.GetPublicPostCount()
-	//page := r.URL.Query().Get("page")
-	//log.Println("Page: ", page)
-	//pageInt, err := strconv.Atoi(page)
-	//if err != nil {
-	//	pageInt = 1
-	//}
 
 	q := r.URL.Query()
 	maxIDString := q.Get("maxID")
@@ -54,40 +47,61 @@ func (pc *PostController) GetPage(w http.ResponseWriter, r *http.Request) {
 		log.Println("No tags slice")
 	}
 
+	perPageString := q.Get("num")
+	perPage := 5
+
+	if perPageString != "" {
+		perPage, err := strconv.Atoi(perPageString)
+		if err != nil {
+			NewAPIError(&APIError{false, "Invalid num type", http.StatusBadRequest}, w)
+			return
+		}
+		if perPage < 1 || perPage > 10 {
+			NewAPIError(&APIError{false, "Query string num is not within bounds [1, 10]", http.StatusBadRequest}, w)
+			return
+		}
+	}
+
+	getAuthorIDString := q.Get("getAuthorID")
+	getAuthorID := false
+	if getAuthorIDString != "" {
+		getAuthorID = true
+	}
+
 	if maxID == -1 {
 		maxID, _ = pc.PostRepository.GetLastID()
 		maxID++
 	}
 
-	if len(tagsSlice) == 0 {
-		resStatus, resCache := pc.checkCache(maxIDString)
-		if resStatus {
-			var res APIResponse
-			err := json.Unmarshal(resCache, &res)
-			if err != nil {
-				log.Fatal(err)
+	if !getAuthorID && perPage == 5 {
+		if len(tagsSlice) == 0 {
+			resStatus, resCache := pc.checkCache(maxIDString)
+			if resStatus {
+				var res APIResponse
+				err := json.Unmarshal(resCache, &res)
+				if err != nil {
+					log.Fatal(err)
+				}
+				log.Println("[INFO] Returned result from cache")
+				NewAPIResponse(&res, w, http.StatusOK)
+				return
 			}
-			log.Println("[INFO] Returned result from cache")
-			NewAPIResponse(&res, w, http.StatusOK)
-			return
-		}
-	} else if len(tagsSlice) == 1 {
-		resStatus, resCache := pc.checkCategoryCache(tagsSlice[0], maxIDString)
-		if resStatus {
-			var res APIResponse
-			err := json.Unmarshal(resCache, &res)
-			if err != nil {
-				log.Fatal(err)
+		} else if len(tagsSlice) == 1 {
+			resStatus, resCache := pc.checkCategoryCache(tagsSlice[0], maxIDString)
+			if resStatus {
+				var res APIResponse
+				err := json.Unmarshal(resCache, &res)
+				if err != nil {
+					log.Fatal(err)
+				}
+				log.Println("[INFO] Returned result from category cache")
+				NewAPIResponse(&res, w, http.StatusOK)
+				return
 			}
-			log.Println("[INFO] Returned result from category cache")
-			NewAPIResponse(&res, w, http.StatusOK)
-			return
 		}
 	}
 
-	// May add changing num posts per page in the future
-	perPageInt := 5
-	posts, minID, err := pc.PostRepository.Paginate(maxID, perPageInt, tagsSlice)
+	posts, minID, err := pc.PostRepository.Paginate(maxID, perPage, tagsSlice)
 
 	if err != nil && err != pgx.ErrNoRows {
 		log.Println(err)
@@ -102,47 +116,61 @@ func (pc *PostController) GetPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !getAuthorID {
+		for _, post := range posts {
+			author, err := pc.UserRepository.FindByID(post.AuthorID)
+			if err != nil {
+				post.AuthorID = "Unknown"
+			} else {
+				post.AuthorID = author.Name
+			}
+		}
+	}
+
 	postPaginator := APIPagination{
 		total,
-		perPageInt,
+		perPage,
 		minID,
 		tagsSlice,
 	}
 
-	if len(tagsSlice) == 0 {
-		//Add query result to Redis cache, only if no tags is searched for
-		jPosts, err := json.Marshal(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator})
-		if err != nil {
-			log.Println("[WARN] Failed to add posts to cache")
-			log.Println(err)
-			// Still send result, but failed to add to cache
-			NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
-			return
+	// Only add to cache when the author ID was not requested
+	if !getAuthorID && perPage == 5 {
+		if len(tagsSlice) == 0 {
+			//Add query result to Redis cache, only if no tags is searched for
+			jPosts, err := json.Marshal(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator})
+			if err != nil {
+				log.Println("[WARN] Failed to add posts to cache")
+				log.Println(err)
+				// Still send result, but failed to add to cache
+				NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
+				return
+			}
+			// Add query result to Redis cache, only if no tags were searched for
+			//pc.App.Redis.Set(maxIDString, []byte(jPosts), 0)
+			val := pc.App.Redis.HSet("page-hash", maxIDString, []byte(jPosts))
+			if val.Err() != nil {
+				log.Println("[WARN] Failed to add posts to cache")
+				log.Println(err)
+			}
+			log.Println("Query result added to cache")
+		} else if len(tagsSlice) == 1 {
+			// Add query result to Redis cache, only if a single tag (category) is searched for
+			jPosts, err := json.Marshal(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator})
+			if err != nil {
+				log.Println("[WARN] Failed to add category posts to cache")
+				log.Println(err)
+				// Still send result, but failed to add to cache
+				NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
+				return
+			}
+			val := pc.App.Redis.HSet(tagsSlice[0], maxIDString, []byte(jPosts))
+			if val.Err() != nil {
+				log.Println("[WARN] Failed to add category posts to cache")
+				log.Println(err)
+			}
+			log.Println("Category query result added to cache")
 		}
-		// Add query result to Redis cache, only if no tags were searched for
-		//pc.App.Redis.Set(maxIDString, []byte(jPosts), 0)
-		val := pc.App.Redis.HSet("page-hash", maxIDString, []byte(jPosts))
-		if val.Err() != nil {
-			log.Println("[WARN] Failed to add posts to cache")
-			log.Println(err)
-		}
-		log.Println("Query result added to cache")
-	} else if len(tagsSlice) == 1 {
-		// Add query result to Redis cache, only if a single tag (category) is searched for
-		jPosts, err := json.Marshal(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator})
-		if err != nil {
-			log.Println("[WARN] Failed to add category posts to cache")
-			log.Println(err)
-			// Still send result, but failed to add to cache
-			NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
-			return
-		}
-		val := pc.App.Redis.HSet(tagsSlice[0], maxIDString, []byte(jPosts))
-		if val.Err() != nil {
-			log.Println("[WARN] Failed to add category posts to cache")
-			log.Println(err)
-		}
-		log.Println("Category query result added to cache")
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
@@ -173,13 +201,34 @@ func (pc *PostController) GetPageAdmin(w http.ResponseWriter, r *http.Request) {
 		log.Println("No tags slice")
 	}
 
+	perPageString := q.Get("num")
+	perPage := 10
+
+	if perPageString != "" {
+		perPage, err := strconv.Atoi(perPageString)
+		if err != nil {
+			NewAPIError(&APIError{false, "Invalid num type", http.StatusBadRequest}, w)
+			return
+		}
+		if perPage < 1 || perPage > 10 {
+			NewAPIError(&APIError{false, "Query string num is not within bounds [1, 10]", http.StatusBadRequest}, w)
+			return
+		}
+	}
+
+	getAuthorIDString := q.Get("getAuthorID")
+	getAuthorID := false
+	if getAuthorIDString != "" {
+		getAuthorID = true
+	}
+
 	if maxID == -1 {
-		maxID, _ = pc.PostRepository.GetLastID()
+		maxID, _ = pc.PostRepository.GetLastIDAdmin()
 		maxID++
 	}
 
-	if len(tagsSlice) == 0 {
-		resStatus, resCache := pc.checkCache(maxIDString)
+	if !getAuthorID && len(tagsSlice) == 0 && perPage == 10 {
+		resStatus, resCache := pc.checkAdminCache(maxIDString)
 		if resStatus {
 			var res APIResponse
 			err := json.Unmarshal(resCache, &res)
@@ -190,23 +239,9 @@ func (pc *PostController) GetPageAdmin(w http.ResponseWriter, r *http.Request) {
 			NewAPIResponse(&res, w, http.StatusOK)
 			return
 		}
-	} else if len(tagsSlice) == 1 {
-		resStatus, resCache := pc.checkCategoryCache(tagsSlice[0], maxIDString)
-		if resStatus {
-			var res APIResponse
-			err := json.Unmarshal(resCache, &res)
-			if err != nil {
-				log.Fatal(err)
-			}
-			log.Println("[INFO] Returned result from category cache")
-			NewAPIResponse(&res, w, http.StatusOK)
-			return
-		}
 	}
 
-	// May add changing num posts per page in the future
-	perPageInt := 5
-	posts, minID, err := pc.PostRepository.PaginateAdmin(maxID, perPageInt, tagsSlice)
+	posts, minID, err := pc.PostRepository.PaginateAdmin(maxID, perPage, tagsSlice)
 
 	if err != nil && err != pgx.ErrNoRows {
 		log.Println(err)
@@ -221,11 +256,43 @@ func (pc *PostController) GetPageAdmin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if !getAuthorID {
+		for _, post := range posts {
+			author, err := pc.UserRepository.FindByID(post.AuthorID)
+			if err != nil {
+				post.AuthorID = "Unknown"
+			} else {
+				post.AuthorID = author.Name
+			}
+		}
+	}
+
 	postPaginator := APIPagination{
 		total,
-		perPageInt,
+		perPage,
 		minID,
 		tagsSlice,
+	}
+
+	// Only add to cache when the author ID was not requested
+	if !getAuthorID && len(tagsSlice) == 0 && perPage == 10 {
+		//Add query result to Redis cache, only if no tags is searched for
+		jPosts, err := json.Marshal(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator})
+		if err != nil {
+			log.Println("[WARN] Failed to add posts to admin cache")
+			log.Println(err)
+			// Still send result, but failed to add to cache
+			NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
+			return
+		}
+		// Add query result to Redis cache, only if no tags were searched for
+		//pc.App.Redis.Set(maxIDString, []byte(jPosts), 0)
+		val := pc.App.Redis.HSet("admin-page-hash", maxIDString, []byte(jPosts))
+		if val.Err() != nil {
+			log.Println("[WARN] Failed to add posts to admin cache")
+			log.Println(err)
+		}
+		log.Println("Query result added to admin cache")
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
@@ -264,22 +331,30 @@ func (pc *PostController) GetByIDAdmin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (pc *PostController) GetBySlug(w http.ResponseWriter, r *http.Request) {
-	//vars := mux.Vars(r)
-	//slug := vars["slug"]
-	slug := r.URL.EscapedPath()
-	slugRune := []rune(slug)
-	slug = string(slugRune[14:])
+	vars := mux.Vars(r)
+	slug := vars["slug"]
+	//slug := r.URL.EscapedPath()
+	//slugRune := []rune(slug)
+	//slug = string(slugRune[14:])
+	q := r.URL.Query()
+	getAuthorIDString := q.Get("getAuthorID")
+	getAuthorID := false
+	if getAuthorIDString != "" {
+		getAuthorID = true
+	}
 
-	resStatus, resCache := pc.checkSlugCache(slug)
-	if resStatus {
-		var res APIResponse
-		err := json.Unmarshal(resCache, &res)
-		if err != nil {
-			log.Fatal(err)
+	if !getAuthorID {
+		resStatus, resCache := pc.checkSlugCache(slug)
+		if resStatus {
+			var res APIResponse
+			err := json.Unmarshal(resCache, &res)
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Println("[INFO] Returned result from cache")
+			NewAPIResponse(&res, w, http.StatusOK)
+			return
 		}
-		log.Println("[INFO] Returned result from cache")
-		NewAPIResponse(&res, w, http.StatusOK)
-		return
 	}
 
 	post, err := pc.PostRepository.FindBySlug(slug)
@@ -288,21 +363,32 @@ func (pc *PostController) GetBySlug(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jPost, err := json.Marshal(&APIResponse{Success: true, Data: post})
-	if err != nil {
-		log.Println("[WARN] Failed to add post to cache")
-		log.Println(err)
-		// Still send result, but failed to add to cache
-		NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
-		return
+	if !getAuthorID {
+		// Get author name
+		author, err := pc.UserRepository.FindByID(post.AuthorID)
+		if err != nil {
+			post.AuthorID = "Unknown"
+		} else {
+			post.AuthorID = author.Name
+		}
+
+		// Cache result if author ID is not returned
+		jPost, err := json.Marshal(&APIResponse{Success: true, Data: post})
+		if err != nil {
+			log.Println("[WARN] Failed to add post to cache")
+			log.Println(err)
+			// Still send result, but failed to add to cache
+			NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
+			return
+		}
+		// Add query result to Redis cache
+		val := pc.App.Redis.Set(slug, []byte(jPost), 0)
+		if val.Err() != nil {
+			log.Println("[WARN] Failed to add posts to cache")
+			log.Println(err)
+		}
+		log.Println("Query result added to cache")
 	}
-	// Add query result to Redis cache
-	val := pc.App.Redis.Set(slug, []byte(jPost), 0)
-	if val.Err() != nil {
-		log.Println("[WARN] Failed to add posts to cache")
-		log.Println(err)
-	}
-	log.Println("Query result added to cache")
 
 	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
 }
@@ -310,10 +396,59 @@ func (pc *PostController) GetBySlug(w http.ResponseWriter, r *http.Request) {
 func (pc *PostController) GetBySlugAdmin(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	slug := vars["slug"]
+
+	q := r.URL.Query()
+	getAuthorIDString := q.Get("getAuthorID")
+	getAuthorID := false
+	if getAuthorIDString != "" {
+		getAuthorID = true
+	}
+
+	if !getAuthorID {
+		resStatus, resCache := pc.checkAdminSlugCache(slug)
+		if resStatus {
+			var res APIResponse
+			err := json.Unmarshal(resCache, &res)
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.Println("[INFO] Returned result from admin cache")
+			NewAPIResponse(&res, w, http.StatusOK)
+			return
+		}
+	}
+
 	post, err := pc.PostRepository.FindBySlugAdmin(slug)
 	if err != nil {
 		NewAPIError(&APIError{false, "Could not find post", http.StatusNotFound}, w)
 		return
+	}
+
+	if !getAuthorID {
+		// Get author name
+		author, err := pc.UserRepository.FindByID(post.AuthorID)
+		if err != nil {
+			post.AuthorID = "Unknown"
+		} else {
+			post.AuthorID = author.Name
+		}
+
+		// Cache result if author ID is not returned
+		jPost, err := json.Marshal(&APIResponse{Success: true, Data: post})
+		if err != nil {
+			log.Println("[WARN] Failed to add posts to admin cache")
+			log.Println(err)
+			// Still send result, but failed to add to cache
+			NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
+			return
+		}
+
+		val := pc.App.Redis.HSet("admin-slug-hash", slug, []byte(jPost))
+		if val.Err() != nil {
+			log.Println("[WARN] Failed to add posts to admin cache")
+			log.Println(err)
+		}
+		log.Println("Query result added to admin cache")
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
@@ -431,6 +566,8 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 	pc.flushCache()
 	pc.flushTagsCache(tags)
 	pc.flushSlugCache(slug)
+	pc.flushAdminCache()
+	pc.flushAdminSlugCache(slug)
 
 	defer r.Body.Close()
 	NewAPIResponse(&APIResponse{Success: true, Message: "Post created", Data: post}, w, http.StatusOK)
@@ -534,6 +671,8 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 	pc.flushCache()
 	pc.flushTagsCache(tags)
 	pc.flushSlugCache(slug)
+	pc.flushAdminCache()
+	pc.flushAdminSlugCache(slug)
 
 	NewAPIResponse(&APIResponse{Success: true, Message: "Post updated", Data: post}, w, http.StatusOK)
 }
@@ -560,6 +699,8 @@ func (pc *PostController) Delete(w http.ResponseWriter, r *http.Request) {
 	pc.flushCache()
 	pc.flushTagsCache(post.Tags)
 	pc.flushSlugCache(post.Slug)
+	pc.flushAdminCache()
+	pc.flushAdminSlugCache(post.Slug)
 
 	NewAPIResponse(&APIResponse{Success: true, Data: id}, w, http.StatusOK)
 }
@@ -650,8 +791,35 @@ func (pc *PostController) checkCategoryCache(category string, key string) (bool,
 	return true, []byte(val.Val())
 }
 
-func (pc *PostController) flushCache() {
+// False -> pagination not in cache
+// True -> pagination in cache
+func (pc *PostController) checkAdminCache(key string) (bool, []byte) {
 
+	val := pc.App.Redis.HGet("admin-page-hash", key)
+	if val.Val() == "" {
+		log.Println("[INFO] Key " + key + " not found in admin hash")
+		return false, []byte("")
+	} else if val.Err() != nil {
+		panic(val.Err())
+	}
+	log.Println("[INFO] Key " + key + " found in admin hash")
+	return true, []byte(val.Val())
+}
+
+func (pc *PostController) checkAdminSlugCache(slug string) (bool, []byte) {
+
+	val := pc.App.Redis.HGet("admin-slug-hash", slug)
+	if val.Val() == "" {
+		log.Println("[INFO] Key " + slug + " not found in admin hash")
+		return false, []byte("")
+	} else if val.Err() != nil {
+		panic(val.Err())
+	}
+	log.Println("[INFO] Key " + slug + " found in admin hash")
+	return true, []byte(val.Val())
+}
+
+func (pc *PostController) flushCache() {
 	err := pc.App.Redis.Del("page-hash")
 	if err.Err() != nil {
 		log.Println(err.Err())
@@ -667,7 +835,7 @@ func (pc *PostController) flushSlugCache(slug string) {
 		log.Println("[WARN] Failed to flush slug cache")
 		return
 	}
-	log.Println("[INFO] Flushed tags slug hash")
+	log.Println("[INFO] Flushed tags slug cache")
 	return
 }
 
@@ -679,6 +847,24 @@ func (pc *PostController) flushTagsCache(tags []string) {
 		}
 	}
 	log.Println("[INFO] Flushed tags pagination hash")
+	return
+}
+
+func (pc *PostController) flushAdminCache() {
+	err := pc.App.Redis.Del("admin-page-hash")
+	if err.Err() != nil {
+		log.Println(err.Err())
+	}
+	log.Println("[INFO] Flushed admin pagination hash")
+	return
+}
+
+func (pc *PostController) flushAdminSlugCache(slug string) {
+	err := pc.App.Redis.Del("admin-slug-hash", slug)
+	if err.Err() != nil {
+		log.Println(err.Err())
+	}
+	log.Println("[INFO] Flushed admin slug cache")
 	return
 }
 

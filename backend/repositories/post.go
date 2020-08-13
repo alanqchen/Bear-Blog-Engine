@@ -27,6 +27,7 @@ type PostRepository interface {
 	GetPublicPostCount() (int, error)
 	ResetSeq() error
 	GetLastID() (int, error)
+	GetLastIDAdmin() (int, error)
 	SearchQuery(string, []string) ([]*models.Post, error)
 }
 
@@ -450,6 +451,17 @@ func (pr *postRepository) ResetSeq() error {
 func (pr *postRepository) GetLastID() (int, error) {
 	var lastID int
 	err := pr.Pool.QueryRow(context.Background(), "SELECT id FROM post_schema.post WHERE NOT hidden ORDER BY created_at DESC LIMIT 1").Scan(&lastID)
+	if err != nil {
+		log.Println(err)
+		return -1, err
+	}
+
+	return lastID, nil
+}
+
+func (pr *postRepository) GetLastIDAdmin() (int, error) {
+	var lastID int
+	err := pr.Pool.QueryRow(context.Background(), "SELECT id FROM post_schema.post ORDER BY created_at DESC LIMIT 1").Scan(&lastID)
 	if err != nil {
 		log.Println(err)
 		return -1, err

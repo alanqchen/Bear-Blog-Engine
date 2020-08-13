@@ -22,7 +22,7 @@ const Index = ({ data, auth }) => {
 
     useEffect(() => {
         const token = localStorage.getItem("bearpost.JWT");
-        if(token && auth.accessToken && !data.setup) {
+        if(token && !data.setup) {
             Router.push("/auth/portal/dashboard");
         }
     }, []);

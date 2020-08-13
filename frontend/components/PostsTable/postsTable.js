@@ -16,8 +16,12 @@ import {
     PostsTableContainer,
     PostsTableHead
 } from './postsTableStyled';
+import { Waypoint } from 'react-waypoint';
+import { fetchPosts } from '../../redux/fetchDashboardPosts/action';
+import { timestamp2date } from '../utils/helpers';
 
-function PostsList() {
+function PostsList({ fetchDashboardPosts, dispatch }) {
+
     return (
         <>
             <PostsTableContainer component={Paper}>
@@ -31,20 +35,17 @@ function PostsList() {
                         </TableRow>
                     </PostsTableHead>
                     <TableBody>
-                        <PostsTableRow hover>
-                            <TableCell>This is a test title (A little longer) Blah Blah Blah Lorem Ipsum</TableCell>
-                            <TableCell><StatusChip label="Published" published /></TableCell>
-                            <TableCell>Some Date Here</TableCell>
-                            <TableCell>Some Name Here</TableCell>
-                        </PostsTableRow>
-                        <PostsTableRow hover>
-                            <TableCell>This is a test title (A little longer)</TableCell>
-                            <TableCell><StatusChip label="Draft" /></TableCell>
-                            <TableCell>Some Date Here</TableCell>
-                            <TableCell>Some Name Here</TableCell>
-                        </PostsTableRow>
+                        {fetchDashboardPosts.posts.map((post, i) => (
+                            <PostsTableRow hover key={i}>
+                                <TableCell>{post.title}</TableCell>
+                                <TableCell>{post.hidden ? <StatusChip label="Draft" /> : <StatusChip label="Published" published /> }</TableCell>
+                                <TableCell>{post.updatedAt ? timestamp2date(post.updatedAt) : timestamp2date(post.createdAt)}</TableCell>
+                                <TableCell>{post.authorid}</TableCell>
+                            </PostsTableRow>
+                        ))}
                     </TableBody>
                 </Table>
+                {fetchDashboardPosts.hasMore && <Waypoint onEnter={() => {dispatch(fetchPosts())}} />}
             </PostsTableContainer>
         </>
     );
