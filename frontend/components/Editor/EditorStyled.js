@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import Editor from 'rich-markdown-editor';
-import { StepLabel } from "@material-ui/core";
 
 export const StyledEditor = styled(Editor)`
     width: 100%;
