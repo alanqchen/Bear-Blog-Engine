@@ -56,8 +56,6 @@ const useStyles = makeStyles(theme => ({
 
 export function NavBar({ className, selectedCategory }) {
 
-    const categories = ['Posts', 'Cat 2', 'Cat 3', 'Cat 4', 'Cat 5']
-    const categoriesIcons = [<ListIcon />, <ListIcon />, <ListIcon />, <ListIcon />, <ListIcon />]
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = useState(false);
