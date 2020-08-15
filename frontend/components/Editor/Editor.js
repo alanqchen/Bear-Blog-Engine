@@ -35,7 +35,7 @@ function Editor({ defaultValue, isPreview }) {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
 
-    // SNACKBAR CLOSE
+    // SNACKBAR
     const handleClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;

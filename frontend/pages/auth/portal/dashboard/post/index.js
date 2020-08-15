@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react';
 import { TextField } from '@material-ui/core';
-import { Typography, Divider, Snackbar } from '@material-ui/core';
+import { Fab, Typography, Divider, Button, Icon } from '@material-ui/core';
+import {
+    Save as SaveIcon,
+    Delete as DeleteIcon,
+    CloudUpload as CloudUploadIcon,
+} from '@material-ui/icons';
 import Layout from '../../../../../components/DashboardLayout/dashboardLayout';
 import {
     WidthWrapper,
     InputsWrapper
 } from '../../../../../components/DashboardLayout/dashboardLayoutStyled';
 import Editor from '../../../../../components/Editor/Editor';
+import { StyledFab, EditorButtonGroupWrapper, EditorButton, EditorButtonOutlined } from '../../../../../components/Editor/EditorStyled';
 import { WaveButton } from '../../../../../components/Theme/StyledComponents';
 
 const Index = () => {
@@ -26,6 +32,36 @@ const Index = () => {
 
     return (
         <Layout>
+            {/*
+            <StyledFab aria-label="save">
+                <SaveIcon color="action" />
+            </StyledFab>
+            */}
+            <EditorButtonGroupWrapper>
+                <EditorButtonOutlined
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<DeleteIcon />}
+                    type="danger"
+                >
+                    Delete
+                </EditorButtonOutlined>
+                <EditorButton
+                    variant="contained"
+                    color="secondary"
+                    startIcon={<SaveIcon />}
+                >
+                    Save
+                </EditorButton>
+                <EditorButton
+                    variant="contained"
+                    color="secondary"
+                    startIcon={<CloudUploadIcon />}
+                    type="publish"
+                >
+                    Publish
+                </EditorButton>
+            </EditorButtonGroupWrapper>
             <WidthWrapper>
                 <InputsWrapper>
                     <TextField name="title" label="Title" />

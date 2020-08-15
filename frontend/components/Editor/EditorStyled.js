@@ -1,8 +1,27 @@
 import styled from "styled-components";
 import Editor from 'rich-markdown-editor';
+import { Fab, Button } from '@material-ui/core';
+import GlobalStyle from '../Theme/theme';
 
 export const StyledEditor = styled(Editor)`
     width: 100%;
+    & p {
+        font-size: 1rem;
+        line-height: 1.7rem;
+    }
+    & h1 {
+        font-size: 2.25rem;
+    }
+    & h2 {
+        font-size: 1.5rem;
+    }
+    & h3 {
+        font-size: 1.25rem;
+    }
+    & h1, h2, h3, h4, h5, h6 {
+        line-height: 1.25;
+        margin: 1rem 0px 0.5rem;
+    }
 `;
 
 export const StyledYoutubeEmbed = styled.iframe`
@@ -17,3 +36,36 @@ export const StyledYoutubeEmbedWrapper = styled.div`
     border-radius: 3px;
     overflow: hidden;
 `;
+
+export const StyledFab = styled(Fab)`
+    position: fixed !important;
+    bottom: 30px;
+    right: 30px;
+    background-color: ${GlobalStyle.bluePrimary} !important;
+`;
+
+export const EditorButtonGroupWrapper = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    margin-right: 20px;
+`;
+
+export const EditorButton = styled(Button).withConfig({
+    shouldForwardProp: prop => !['type'].includes(prop)
+})`
+    background-color: ${({ type }) => type === "danger" ? GlobalStyle.dangerRed : type === "publish" ? GlobalStyle.publishGreen : GlobalStyle.bluePrimary } !important;
+    margin-left: 10px !important;
+`;
+
+export const EditorButtonOutlined = styled(Button).withConfig({
+    shouldForwardProp: prop => !['type'].includes(prop)
+})`
+    color: ${({ type }) => type === "danger" ? GlobalStyle.dangerRed : type === "publish" ? GlobalStyle.publishGreen : GlobalStyle.bluePrimary } !important;
+    margin-left: 10px !important;
+    border: 1px solid rgba(203, 36, 49, 0.5) !important;
+    &:hover {
+        background-color: rgba(203, 36, 49, 0.08) !important;
+    }
+`

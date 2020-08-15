@@ -9,7 +9,10 @@ const Theme = {
     textRoot: "#ffffff",
     textPrimary: "#efeff1",
     textSecondary: "#d0d0d0",
-    focused: "#277be8"
+    focused: "#277be8",
+    bluePrimary: "#085dbd",
+    dangerRed: "#cb2431",
+    publishGreen: "#2ea44f"
 }
 
 export default Theme;
