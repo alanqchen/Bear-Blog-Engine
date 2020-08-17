@@ -79,8 +79,6 @@ function Editor({ defaultValue, isPreview }) {
                     {errorMsg}
                 </CustAlert>
             </Snackbar>
-            <WaveButton onClick={() => {setSnackbarOpen(true)}}>Test Snackbar</WaveButton>
-            <WaveButton onClick={() => {setSnackbarOpen(true)}}>Save</WaveButton>
         </>
     );
 }

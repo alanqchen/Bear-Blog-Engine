@@ -529,7 +529,7 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Contains bad tag", http.StatusBadRequest}, w)
 	}
 
-	imgURL, err := j.GetString("image-url")
+	imgURL, err := j.GetString("featureImgUrl")
 	if err != nil || imgURL == "" {
 		imgURL = "/assets/images/feature-default.png"
 	}
@@ -648,7 +648,7 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Contains bad tag", http.StatusBadRequest}, w)
 	}
 
-	imgURL, err := j.GetString("image-url")
+	imgURL, err := j.GetString("featureImgUrl")
 	if err != nil || imgURL == "" {
 		imgURL = "/assets/images/feature-default.png"
 	}
