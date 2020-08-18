@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
+import Router from 'next/router';
 import { TextField } from '@material-ui/core';
 import { Fab, Typography, Divider, Button, Icon } from '@material-ui/core';
-import {
-    Save as SaveIcon,
-    Delete as DeleteIcon,
-    CloudUpload as CloudUploadIcon,
-} from '@material-ui/icons';
 import Layout from '../../../../../components/DashboardLayout/dashboardLayout';
 import {
     WidthWrapper,
@@ -13,6 +9,7 @@ import {
 } from '../../../../../components/DashboardLayout/dashboardLayoutStyled';
 import fetch from 'isomorphic-unfetch';
 import Editor from '../../../../../components/Editor/Editor';
+import MetaForm from '../../../../../components/Editor/MetaForm';
 import { StyledFab, EditorButtonGroupWrapper, EditorButton, EditorButtonOutlined } from '../../../../../components/Editor/EditorStyled';
 import { WaveButton } from '../../../../../components/Theme/StyledComponents';
 
@@ -37,7 +34,7 @@ const Index = () => {
         setLoaded(true);
     }, []);
 
-    const doSave = (isDraft) => {
+    const doSave = async(isDraft) => {
 
         const params = {
             title: "Temp",
@@ -56,8 +53,10 @@ const Index = () => {
         .then(async(json) => {
             if(json.success) {
                 setShowError(false);
-                setMsg("Created admin! Reloading in 5 seconds...");
+                setMsg("Saved successfully! Redirecting in 2 seconds...");
                 setOpen(true);
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                Router.push("/auth/portal/dashboard/post/" + json.data.slug);
             } else {
                 setErrMsg(json.message);
                 setShowError(true);
@@ -78,31 +77,7 @@ const Index = () => {
             </StyledFab>
             */}
             <WaveButton onClick={() => {setIsPreview(!isPreview)}}>Toggle Preview</WaveButton>
-            <EditorButtonGroupWrapper>
-                <EditorButtonOutlined
-                    variant="outlined"
-                    color="secondary"
-                    startIcon={<DeleteIcon />}
-                    type="danger"
-                >
-                    Delete
-                </EditorButtonOutlined>
-                <EditorButton
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<SaveIcon />}
-                >
-                    Save
-                </EditorButton>
-                <EditorButton
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<CloudUploadIcon />}
-                    type="publish"
-                >
-                    Publish
-                </EditorButton>
-            </EditorButtonGroupWrapper>
+            <MetaForm />
             <WidthWrapper>
                 <InputsWrapper>
                     <TextField name="title" label="Title" />

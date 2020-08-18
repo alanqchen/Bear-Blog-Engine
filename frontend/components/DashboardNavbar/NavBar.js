@@ -20,7 +20,7 @@ import {
     GroupOutlined as EditorsIcon
 } from '@material-ui/icons';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Router from "next/router";
+import Router from 'next/router';
 import Link from 'next/link';
 import {
     HeaderLink

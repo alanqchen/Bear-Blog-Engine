@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import Router from "next/router";
+import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { fetchPosts as fetchPostsAction, fetchPostsSetMinID } from '../../redux/fetchPosts/actions';
 import { fetchCategory as fetchCategoryAction, fetchCategorySetMinID } from '../../redux/fetchCategory/actions';

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import Router from "next/router";
+import Router from 'next/router';
 import { useEffect, useState, useRef } from 'react';
 import ReCAPTCHA from "react-google-recaptcha";
 import { Typography, Snackbar, LinearProgress } from '@material-ui/core';
@@ -119,16 +119,16 @@ export const SetupForm = ({ auth, dispatch }) => {
                         />
                         <Field
                             component={StyledTextField}
+                            name="password"
                             type="password"
                             label="Password"
-                            name="password"
                             variant="outlined" 
                         />
                         <Field
                             component={StyledTextField}
+                            name="passwordConfirm"
                             type="password"
                             label="Confirm Password"
-                            name="passwordConfirm"
                             variant="outlined" 
                         />
                         {isSubmitting && <LinearProgress />}

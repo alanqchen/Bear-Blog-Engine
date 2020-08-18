@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import Router from "next/router";
+import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { StyledCenteredContainer, DashBoardWrapper } from './dashboardLayoutStyled';
 import { NavBar } from '../DashboardNavbar/NavBar';
