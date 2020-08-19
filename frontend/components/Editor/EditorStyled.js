@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import Editor from 'rich-markdown-editor';
-import { Fab, Button } from '@material-ui/core';
+import { Fab, Button, StepLabel } from '@material-ui/core';
 import GlobalStyle from '../Theme/theme';
+import { Form } from 'formik';
 
 export const StyledEditor = styled(Editor)`
     width: 100%;
@@ -69,3 +70,17 @@ export const EditorButtonOutlined = styled(Button).withConfig({
         background-color: rgba(203, 36, 49, 0.08) !important;
     }
 `
+
+export const StyledForm = styled(Form)`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+`;
+
+export const FieldWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 700px;
+`;

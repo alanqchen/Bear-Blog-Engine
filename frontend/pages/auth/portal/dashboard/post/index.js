@@ -79,10 +79,6 @@ const Index = () => {
             <WaveButton onClick={() => {setIsPreview(!isPreview)}}>Toggle Preview</WaveButton>
             <MetaForm />
             <WidthWrapper>
-                <InputsWrapper>
-                    <TextField name="title" label="Title" />
-                    <TextField name="subtitle" label="Subtitle" />
-                </InputsWrapper>
                 <Divider style={{marginTop: "10px", marginBottom: "10px"}} />
                 {console.log(loaded)}
                 {loaded && <Editor defaultValue={editorValue} isPreview={isPreview} />

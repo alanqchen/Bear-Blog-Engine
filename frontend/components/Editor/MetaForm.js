@@ -10,7 +10,7 @@ import {
 import { WaveButton } from '../Theme/StyledComponents';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from "yup";
-import { EditorButtonGroupWrapper, EditorButton } from './EditorStyled';
+import { EditorButtonGroupWrapper, EditorButton, StyledForm, FieldWrapper } from './EditorStyled';
 import { login } from '../../redux/auth/actions';
 
 export const MetaForm = ({ isNew }) => {
@@ -20,33 +20,15 @@ export const MetaForm = ({ isNew }) => {
 
     return (
         <>
-            <EditorButtonGroupWrapper>
-                <EditorButton
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<SaveIcon />}
-                    onClick={async() => {await doSave()}}
-                >
-                    Save
-                </EditorButton>
-                <EditorButton
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<CloudUploadIcon />}
-                    type="publish"
-                >
-                    Publish
-                </EditorButton>
-            </EditorButtonGroupWrapper>
             <Formik
                 initialValues={{
-                    username: '',
-                    password: '',
+                    title: '',
+                    subtitle: '',
                 }}
                 validationSchema={Yup.object().shape({
-                    username: Yup.string()
+                    title: Yup.string()
                     .required("Required"),
-                    password: Yup.string()
+                    subtitle: Yup.string()
                     .required("Required")
                 })}
                 onSubmit={async(values, { setSubmitting }) => {
@@ -59,21 +41,42 @@ export const MetaForm = ({ isNew }) => {
                 }}
             >
             {({ values, submitForm, isSubmitting }) => (
-                <Form>
-                    <Field
-                        component={TextField}
-                        name="title"
-                        type="title"
-                        label="Title"
-                    />
-                    <Field
-                        component={TextField}
-                        name="subtitle"
-                        type="subtitle"
-                        label="Subtitle"
-                    />
+                <StyledForm>
+                    <EditorButtonGroupWrapper>
+                        <EditorButton
+                            variant="contained"
+                            color="secondary"
+                            startIcon={<SaveIcon />}
+                            onClick={async() => {await doSave()}}
+                        >
+                            Save
+                        </EditorButton>
+                        <EditorButton
+                            variant="contained"
+                            color="secondary"
+                            startIcon={<CloudUploadIcon />}
+                            type="publish"
+                        >
+                            Publish
+                        </EditorButton>
+                    </EditorButtonGroupWrapper>
+                    <FieldWrapper>
+                        <Field
+                            component={TextField}
+                            name="title"
+                            type="title"
+                            label="Title"
+                            style={{marginBottom: "10px"}}
+                        />
+                        <Field
+                            component={TextField}
+                            name="subtitle"
+                            type="subtitle"
+                            label="Subtitle"
+                        />
+                    </FieldWrapper>
                     {isSubmitting && <LinearProgress />}
-                </Form>
+                </StyledForm>
             )}
             </Formik>
         </>
