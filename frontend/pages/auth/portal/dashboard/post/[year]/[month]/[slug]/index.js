@@ -5,7 +5,7 @@ import {
     Delete as DeleteIcon,
     CloudUpload as CloudUploadIcon,
 } from '@material-ui/icons';
-import { StyledFab, EditorButtonGroupWrapper, EditorButton, EditorButtonOutlined } from '../../../../../../components/Editor/EditorStyled';
+import { StyledFab, EditorButtonGroupWrapper, EditorButton, EditorButtonOutlined } from '../../../../../../../../components/Editor/EditorStyled';
 import Layout from '../../../../../../../../components/DashboardLayout/dashboardLayout';
 
 const Index = ({ auth, dispatch }) => {
