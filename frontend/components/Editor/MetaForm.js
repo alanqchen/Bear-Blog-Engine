@@ -24,6 +24,7 @@ export const MetaForm = ({ isNew }) => {
                 initialValues={{
                     title: '',
                     subtitle: '',
+                    imageURL: ''
                 }}
                 validationSchema={Yup.object().shape({
                     title: Yup.string()
@@ -73,6 +74,7 @@ export const MetaForm = ({ isNew }) => {
                             name="subtitle"
                             type="subtitle"
                             label="Subtitle"
+                            style={{marginBottom: "10px"}}
                         />
                     </FieldWrapper>
                     {isSubmitting && <LinearProgress />}
