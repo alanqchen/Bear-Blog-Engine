@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import Router from 'next/router';
-import { TextField } from '@material-ui/core';
 import { Fab, Typography, Divider, Button, Icon } from '@material-ui/core';
 import Layout from '../../../../../components/DashboardLayout/dashboardLayout';
 import {
@@ -10,7 +9,6 @@ import {
 import fetch from 'isomorphic-unfetch';
 import Editor from '../../../../../components/Editor/Editor';
 import MetaForm from '../../../../../components/Editor/MetaForm';
-import { StyledFab, EditorButtonGroupWrapper, EditorButton, EditorButtonOutlined } from '../../../../../components/Editor/EditorStyled';
 import { WaveButton } from '../../../../../components/Theme/StyledComponents';
 
 const Index = () => {
