@@ -5,24 +5,7 @@ import { debounce } from 'lodash';
 import { StyledEditor, StyledYoutubeEmbed, StyledYoutubeEmbedWrapper } from './EditorStyled';
 import EditorTheme from '../Theme/editorTheme';
 import { WaveButton } from '../Theme/StyledComponents';
-
-// SNACKBAR FUNCS
-
-function CustAlert(props) {
-    return <Alert elevation={6} variant="filled" {...props} />;
-}
-
-// EDITOR FUNCS
-
-function YoutubeEmbed(props) {
-    return (
-        <StyledYoutubeEmbedWrapper>
-            <StyledYoutubeEmbed
-                src={`https://www.youtube.com/embed/${props.attrs.matches[1]}?modestbranding=1`}
-            />
-        </StyledYoutubeEmbedWrapper>
-    );
-}
+import { YoutubeEmbed } from './Embeds';
 
 const handleChange = debounce(value => {
     const text = value();
@@ -75,9 +58,9 @@ function Editor({ defaultValue, isPreview }) {
                 ]}
             />
             <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleClose}>
-                <CustAlert onClose={handleClose} severity="error">
+                <Alert elevation={6} variant="filled" onClose={handleClose} severity="error">
                     {errorMsg}
-                </CustAlert>
+                </Alert>
             </Snackbar>
         </>
     );
