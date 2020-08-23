@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import { 
     StyledImage,
     StyledPicture,
@@ -11,7 +10,6 @@ import {
     StyledChip,
     ImageSkeleton
 } from './postCardStyled';
-import config from '../../../../config';
 import { Skeleton } from '@material-ui/lab';
 
 function FeatureImage({featureImgUrl, tags, skeleton}) {
@@ -22,9 +20,7 @@ function FeatureImage({featureImgUrl, tags, skeleton}) {
         setLoading(false)
     }
 
-    useEffect(() => {
-
-    }, [loading]);
+    useEffect(() => { }, [loading]);
     
     return (
         <FeatureImageWrapper>
