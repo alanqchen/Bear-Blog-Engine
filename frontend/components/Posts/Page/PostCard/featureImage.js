@@ -12,7 +12,7 @@ import {
 } from './postCardStyled';
 import { Skeleton } from '@material-ui/lab';
 
-function FeatureImage({featureImgUrl, tags, skeleton}) {
+function FeatureImage({featureImgUrl, tags, skeleton, local }) {
 
     const [loading, setLoading] = useState(true);
 
@@ -24,13 +24,13 @@ function FeatureImage({featureImgUrl, tags, skeleton}) {
     
     return (
         <FeatureImageWrapper>
-            {!skeleton && loading 
+            {!local && !skeleton && loading 
                 &&  <>
                         <Skeleton variant="rect" width="100%" height="300px" />
                     </>
             }
             <TagsWrapper>
-            {!skeleton && tags.map((tag, i) => {
+            {!skeleton && tags && tags.map((tag, i) => {
                 let attr = {};
                 attr['href'] = "category/" + tag;
                 return (
@@ -40,6 +40,11 @@ function FeatureImage({featureImgUrl, tags, skeleton}) {
                 );
             })}
             </TagsWrapper>
+            {local ? 
+                <StyledImageWrapper>
+                    <StyledImage src={featureImgUrl} alt="Feature Image" />
+                </StyledImageWrapper>
+            :
             <StyledImageWrapper>
                 {skeleton ? <Skeleton variant="rect" width="100%" height="300px"/>
                 :
@@ -49,22 +54,23 @@ function FeatureImage({featureImgUrl, tags, skeleton}) {
                         : <source type="image/webp" srcSet={process.env.NEXT_PUBLIC_API_URL + featureImgUrl.substring(0, featureImgUrl.length - 4) + ".webp"} />
                     }
                     <StyledImage ref={(input) => {
-    // onLoad replacement for SSR
-    if (!input) { return; }
-    const img = input;
+                        // onLoad replacement for SSR
+                        if (!input) { return; }
+                        const img = input;
 
-    const updateFunc = () => {
-      this.setState({ loaded: true });
-    };
-    img.onload = updateFunc;
-    if (img.complete) {
-        handleLoad();
-    }
-    img.onload = null
-  }} src={process.env.NEXT_PUBLIC_API_URL + featureImgUrl} alt="Feature Image" onLoad={() => handleLoad()} />
-                </StyledPicture>
+                        const updateFunc = () => {
+                            this.setState({ loaded: true });
+                        };
+                        img.onload = updateFunc;
+                        if (img.complete) {
+                            handleLoad();
+                        }
+                        img.onload = null
+                        }} src={process.env.NEXT_PUBLIC_API_URL + featureImgUrl} alt="Feature Image" onLoad={() => handleLoad()} />
+                    </StyledPicture>
                 } 
             </StyledImageWrapper>
+            }
         </FeatureImageWrapper>
     )
 

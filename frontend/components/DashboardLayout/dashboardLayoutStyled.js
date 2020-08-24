@@ -25,7 +25,7 @@ export const InputsWrapper = styled.div`
 export const WidthWrapper = styled.div`
     margin-top: 10px;
     max-width: 700px;
-    width: 92%;
+    width: 87%;
 `;
 
 export const DashBoardWrapper = styled.div`

@@ -12,3 +12,7 @@ export const StyledCenteredContainer = styled(CenteredContainer)`
     display: flex;
     flex-direction: column;
 `;
+
+export const SpacingWrapper = styled.div`
+    margin: 10px;
+`;
