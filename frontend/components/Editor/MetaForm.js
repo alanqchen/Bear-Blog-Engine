@@ -1,7 +1,7 @@
 import Router from 'next/router';
 import { useEffect, useState, useRef } from 'react';
 import ReCAPTCHA from "react-google-recaptcha";
-import { Typography, InputAdornment, LinearProgress, TextField, Button } from '@material-ui/core';
+import { Typography, IconButton, LinearProgress, TextField, Button } from '@material-ui/core';
 import {
     Save as SaveIcon,
     Delete as DeleteIcon,
@@ -10,10 +10,20 @@ import {
 import { WaveButton } from '../Theme/StyledComponents';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from "yup";
-import { EditorButtonGroupWrapper, EditorButton, StyledForm, FieldWrapper } from './EditorStyled';
+import { 
+    EditorButtonGroupWrapper,
+    EditorButton,
+    StyledForm,
+    FieldWrapper,
+    LocalFeatureImageWrapper,
+    StyledImageWrapper,
+    StyledImage,
+    ImageInputWrapper
+} from './EditorStyled';
 import { login } from '../../redux/auth/actions';
 import FeatureImage from '../Posts/Page/PostCard/featureImage';
 import { WidthWrapper } from '../DashboardLayout/dashboardLayoutStyled';
+import SelectInput from '@material-ui/core/Select/SelectInput';
 
 export const ImagePreview = ({ file }) => {
 
@@ -26,6 +36,7 @@ export const ImagePreview = ({ file }) => {
             return;
         }
         if (!file) {
+            setImage(null);
             return;
         }
 
@@ -41,7 +52,13 @@ export const ImagePreview = ({ file }) => {
 
     return (
         <>
-            {image && <FeatureImage featureImgUrl={image} local /> }
+            {image &&
+                <LocalFeatureImageWrapper>
+                    <StyledImageWrapper>
+                        <StyledImage src={image} />
+                    </StyledImageWrapper>
+                </LocalFeatureImageWrapper>
+            }
         </>
     );
 }
@@ -66,12 +83,11 @@ export const MetaForm = ({ isNew }) => {
                     .required("Required")
                 })}
                 onSubmit={async(values, { setSubmitting }) => {
-                        if(passedCaptcha) {
-                            await doLogin(values.username, values.password);
-                        } else {
-                            await recaptchaRef.current.executeAsync();
-                        }
-                        setSubmitting(false);
+                    // Wait for 500ms so editor can save changes in localStorage
+                    await sleep(500);
+                    const editorVal = localStorage.getItem("bearpost.saved");
+
+                    setSubmitting(false);
                 }}
             >
             {({ values, submitForm, isSubmitting, setFieldValue }) => (
@@ -122,12 +138,21 @@ export const MetaForm = ({ isNew }) => {
                                 type="file"
                                 style={{ display: "none" }}
                             />
+                            <ImageInputWrapper>
+                                <label htmlFor="contained-button-file">
+                                    <Button variant="contained" color="primary" component="span">
+                                    Upload
+                                    </Button>
+                                </label>
+                                <IconButton color="primary" aria-label="upload picture" component="span"
+                                    onClick={() => {
+                                        setFieldValue("featureImage", '');
+                                    }}
+                                >
+                                    <DeleteIcon />
+                                </IconButton>
+                            </ImageInputWrapper>
                             <ImagePreview file={values.featureImage} />
-                            <label htmlFor="contained-button-file">
-                                <Button variant="contained" color="primary" component="span">
-                                Upload
-                                </Button>
-                            </label>
                         </FieldWrapper>
                         {isSubmitting && <LinearProgress />}
                     </WidthWrapper>

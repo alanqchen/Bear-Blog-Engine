@@ -12,7 +12,7 @@ import {
 } from './postCardStyled';
 import { Skeleton } from '@material-ui/lab';
 
-function FeatureImage({featureImgUrl, tags, skeleton, local }) {
+function FeatureImage({featureImgUrl, tags, skeleton }) {
 
     const [loading, setLoading] = useState(true);
 
@@ -40,11 +40,6 @@ function FeatureImage({featureImgUrl, tags, skeleton, local }) {
                 );
             })}
             </TagsWrapper>
-            {local ? 
-                <StyledImageWrapper>
-                    <StyledImage src={featureImgUrl} alt="Feature Image" />
-                </StyledImageWrapper>
-            :
             <StyledImageWrapper>
                 {skeleton ? <Skeleton variant="rect" width="100%" height="300px"/>
                 :
@@ -70,7 +65,6 @@ function FeatureImage({featureImgUrl, tags, skeleton, local }) {
                     </StyledPicture>
                 } 
             </StyledImageWrapper>
-            }
         </FeatureImageWrapper>
     )
 

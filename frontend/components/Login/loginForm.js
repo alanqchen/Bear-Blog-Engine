@@ -46,13 +46,13 @@ export const LoginForm = ({ auth, dispatch }) => {
                     .required("Required")
                 })}
                 onSubmit={async(values, { setSubmitting }) => {
-                        if(passedCaptcha) {
-                            await doLogin(values.username, values.password);
-                        } else {
-                            await recaptchaRef.current.executeAsync();
-                        }
-                        setSubmitting(false);
-                }}
+                    if(passedCaptcha) {
+                        await doLogin(values.username, values.password);
+                    } else {
+                        await recaptchaRef.current.executeAsync();
+                    }
+                    setSubmitting(false);
+            }}
             >
             {({ values, submitForm, isSubmitting }) => (
                 <Form>

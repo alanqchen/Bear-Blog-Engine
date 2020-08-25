@@ -7,13 +7,7 @@ import EditorTheme from '../Theme/editorTheme';
 import { WaveButton } from '../Theme/StyledComponents';
 import { YoutubeEmbed } from './Embeds';
 
-const handleChange = debounce(value => {
-    const text = value();
-    console.log(text);
-    localStorage.setItem("bearpost.saved", text);
-}, 1000);
-
-function Editor({ defaultValue, isPreview }) {
+function Editor({ defaultValue, isPreview, saveName }) {
 
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
@@ -26,6 +20,12 @@ function Editor({ defaultValue, isPreview }) {
     
         setSnackbarOpen(false);
     };
+
+    const handleChange = debounce(value => {
+        const text = value();
+        console.log(text);
+        localStorage.setItem("bearpost.saved", text);
+    }, 400);
 
     return (
         <>

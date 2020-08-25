@@ -84,3 +84,29 @@ export const FieldWrapper = styled.div`
     width: 100%;
     max-width: 700px;
 `;
+
+export const LocalFeatureImageWrapper = styled.div`
+    position: relative;
+    margin-top: 20px;
+`;
+
+export const StyledImageWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    max-height: 300px;
+`;
+
+export const StyledImage = styled.img`
+    display: block;
+    flex-shrink: 0;
+    width: 100%;
+    height: auto;
+`;
+
+export const ImageInputWrapper = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+`;

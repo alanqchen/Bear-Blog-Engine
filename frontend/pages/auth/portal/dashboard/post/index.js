@@ -22,12 +22,16 @@ const Index = () => {
 
     useEffect(() => {
         console.log("In use")
-        const savedText = localStorage.getItem("bearpost.saved");
-        console.log(savedText)
-        if(savedText) {
-            setEditorValue(savedText);
+        const savedPath = localStorage.getItem("bearpost.savePath");
+        if (savedPath && savedPath === "/") {
+            const savedText = localStorage.getItem("bearpost.saved");
+            console.log(savedText);
+            if(savedText) {
+                setEditorValue(savedText);
+            }
+            console.log("setting");
         }
-        console.log("setting")
+        localStorage.setItem("bearpost.savePath", "/");
         setInitialLoad(false);
         setLoaded(true);
     }, []);
