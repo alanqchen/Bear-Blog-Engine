@@ -1,13 +1,15 @@
+import {connect} from 'react-redux';
+import { refresh } from '../../redux/auth/actions';
 import { useState } from 'react';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { debounce } from 'lodash';
+import { debounce, throttle } from 'lodash';
 import { StyledEditor, StyledYoutubeEmbed, StyledYoutubeEmbedWrapper } from './EditorStyled';
 import EditorTheme from '../Theme/editorTheme';
 import { WaveButton } from '../Theme/StyledComponents';
 import { YoutubeEmbed } from './Embeds';
 
-function Editor({ defaultValue, isPreview, saveName }) {
+function Editor({ dispatch, defaultValue, isPreview, slug }) {
 
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
@@ -21,10 +23,16 @@ function Editor({ defaultValue, isPreview, saveName }) {
         setSnackbarOpen(false);
     };
 
+    // Refresh tokens every 30 seconds
+    const handleAuthRefresh = throttle(() => {
+        dispatch(refresh());
+    }, 30000);
+
     const handleChange = debounce(value => {
         const text = value();
         console.log(text);
         localStorage.setItem("bearpost.saved", text);
+        handleAuthRefresh();
     }, 400);
 
     return (
@@ -66,4 +74,4 @@ function Editor({ defaultValue, isPreview, saveName }) {
     );
 }
 
-export default Editor;
+export default connect()(Editor);

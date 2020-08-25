@@ -7,6 +7,7 @@ import {
     Delete as DeleteIcon,
     CloudUpload as CloudUploadIcon,
 } from '@material-ui/icons';
+import fetch from 'isomorphic-unfetch';
 import { WaveButton } from '../Theme/StyledComponents';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from "yup";
@@ -63,9 +64,26 @@ export const ImagePreview = ({ file }) => {
     );
 }
 
-export const MetaForm = ({ isNew }) => {
+export const MetaForm = ({ slug }) => {
+
+    const [originalFeatureImage, setOriginalFeatureImage] = useState("");
+    // Both false -> use original, rm (false/true) new (true) -> upload new
+    // rm (true) new (false) -> use default
+    const [rmOrigFeatureImage, setRmOrigFeatureImage] = useState(false);
+    const [uploadedNew, setUploadedNew] = useState(false);
+
+    useEffect(() => {
+
+    }, [rmOrigFeatureImage, uploadedNew]);
 
     const doSave = async() => {
+        console.log(uploadedNew);
+        console.log(rmOrigFeatureImage);
+        // TODO: Upload new image if needed
+
+        // TODO: If new post, use POST
+
+        // TODO: If old post, use PUT
     };
 
     return (
@@ -131,6 +149,10 @@ export const MetaForm = ({ isNew }) => {
                                 type="featureImage"
                                 onChange={(event) => {
                                     setFieldValue("featureImage", event.currentTarget.files[0]);
+                                    if(event.currentTarget.files[0]) {
+                                        setUploadedNew(true);
+                                        setRmOrigFeatureImage(true);
+                                    }
                                 }}
                                 accept="image/*"
                                 id="contained-button-file"
@@ -146,11 +168,24 @@ export const MetaForm = ({ isNew }) => {
                                 </label>
                                 <IconButton color="primary" aria-label="upload picture" component="span"
                                     onClick={() => {
+                                        setUploadedNew(false);
+                                        setRmOrigFeatureImage(true);
                                         setFieldValue("featureImage", '');
                                     }}
                                 >
                                     <DeleteIcon />
                                 </IconButton>
+                                {slug && rmOrigFeatureImage && 
+                                <Button variant="contained" color="primary" component="span"
+                                    onClick={() => {
+                                        setUploadedNew(false);
+                                        setRmOrigFeatureImage(false);
+                                        setFieldValue("featureImage", '');
+                                    }}
+                                >
+                                    Restore Original
+                                </Button>
+                                }
                             </ImageInputWrapper>
                             <ImagePreview file={values.featureImage} />
                         </FieldWrapper>
