@@ -1,7 +1,15 @@
 import Router from 'next/router';
 import { useEffect, useState, useRef } from 'react';
 import ReCAPTCHA from "react-google-recaptcha";
-import { Typography, IconButton, LinearProgress, TextField, Button } from '@material-ui/core';
+import { 
+    Typography,
+    IconButton,
+    LinearProgress,
+    TextField,
+    Button,
+    Snackbar
+} from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import {
     Save as SaveIcon,
     Delete as DeleteIcon,
@@ -25,6 +33,7 @@ import { login } from '../../redux/auth/actions';
 import FeatureImage from '../Posts/Page/PostCard/featureImage';
 import { WidthWrapper } from '../DashboardLayout/dashboardLayoutStyled';
 import SelectInput from '@material-ui/core/Select/SelectInput';
+import { FormData } from 'form-data';
 
 export const ImagePreview = ({ file }) => {
 
@@ -66,11 +75,24 @@ export const ImagePreview = ({ file }) => {
 
 export const MetaForm = ({ slug }) => {
 
+    // SNACKBAR
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+    
+        setSnackbarOpen(false);
+    };
+
     const [originalFeatureImage, setOriginalFeatureImage] = useState("");
     // Both false -> use original, rm (false/true) new (true) -> upload new
     // rm (true) new (false) -> use default
     const [rmOrigFeatureImage, setRmOrigFeatureImage] = useState(false);
     const [uploadedNew, setUploadedNew] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [errorMsg, setErrorMsg] = useState("");
+    
+    const formRef = useRef();
 
     useEffect(() => {
 
@@ -79,8 +101,23 @@ export const MetaForm = ({ slug }) => {
     const doSave = async() => {
         console.log(uploadedNew);
         console.log(rmOrigFeatureImage);
+        let featureImageUrl = "";
         // TODO: Upload new image if needed
+        if(uploadedNew) {
+            const imageData = new FormData(formRef.current.values.featureImage)
+            
+            await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/images/upload', {
+                headers: { 'Accept': 'application/json, */*' },
+                method: 'POST',
+                body: imageData
+            })
+            .then(res => res.json())
+            .then(async(json) => {
+                if(json.success) {
 
+                }
+            })
+        }
         // TODO: If new post, use POST
 
         // TODO: If old post, use PUT
@@ -89,6 +126,7 @@ export const MetaForm = ({ slug }) => {
     return (
         <>
             <Formik
+                innerRef={formRef}
                 initialValues={{
                     title: '',
                     subtitle: '',
@@ -194,6 +232,11 @@ export const MetaForm = ({ slug }) => {
                 </StyledForm>
             )}
             </Formik>
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleClose}>
+                <Alert elevation={6} variant="filled" onClose={handleClose} severity="error">
+                    {errorMsg}
+                </Alert>
+            </Snackbar>
         </>
     );
 }
