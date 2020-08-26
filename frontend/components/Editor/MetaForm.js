@@ -5,10 +5,10 @@ import {
     Typography,
     IconButton,
     LinearProgress,
-    TextField,
     Button,
     Snackbar
 } from '@material-ui/core';
+import { TextField } from 'formik-material-ui';
 import { Alert } from '@material-ui/lab';
 import {
     Save as SaveIcon,
@@ -33,7 +33,7 @@ import { login } from '../../redux/auth/actions';
 import FeatureImage from '../Posts/Page/PostCard/featureImage';
 import { WidthWrapper } from '../DashboardLayout/dashboardLayoutStyled';
 import SelectInput from '@material-ui/core/Select/SelectInput';
-import { FormData } from 'form-data';
+import { split } from 'lodash';
 
 export const ImagePreview = ({ file }) => {
 
@@ -84,14 +84,16 @@ export const MetaForm = ({ slug }) => {
         setSnackbarOpen(false);
     };
 
-    const [originalFeatureImage, setOriginalFeatureImage] = useState("");
     // Both false -> use original, rm (false/true) new (true) -> upload new
     // rm (true) new (false) -> use default
     const [rmOrigFeatureImage, setRmOrigFeatureImage] = useState(false);
     const [uploadedNew, setUploadedNew] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [errorMsg, setErrorMsg] = useState("");
-    
+    const [message, setMessage] = useState("");
+    const [isError, setIsError] = useState(false);
+    const [isDraft, setIsDraft] = useState(true);
+    const [featureImageURL, setFeatureImageURL] = useState("");
+
     const formRef = useRef();
 
     useEffect(() => {
@@ -99,27 +101,82 @@ export const MetaForm = ({ slug }) => {
     }, [rmOrigFeatureImage, uploadedNew]);
 
     const doSave = async() => {
-        console.log(uploadedNew);
-        console.log(rmOrigFeatureImage);
-        let featureImageUrl = "";
-        // TODO: Upload new image if needed
+        // Upload new image if needed
         if(uploadedNew) {
-            const imageData = new FormData(formRef.current.values.featureImage)
+            let formData = new FormData();
+            console.log(formRef.current.values.featureImage);
+            formData.append("image", formRef.current.values.featureImage, formRef.current.values.featureImage.name);
             
             await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/images/upload', {
-                headers: { 'Accept': 'application/json, */*' },
+                headers: { 
+                    'Authorization': 'Bearer ' + localStorage.getItem("bearpost.JWT"),
+                },
                 method: 'POST',
-                body: imageData
+                body: formData
             })
             .then(res => res.json())
             .then(async(json) => {
                 if(json.success) {
-
+                    setFeatureImageURL(json.data.imageUrl);
+                } else {
+                    setIsError(true);
+                    setMessage(json.message);
+                    setSnackbarOpen(true);
                 }
             })
+            .catch(error => {
+                setIsError(true);
+                setMessage("Failed to save! Couldn't upload feature image");
+                setSnackbarOpen(true);
+                console.log(error);
+            });
         }
-        // TODO: If new post, use POST
+        // If new post, use POST
+        if(!slug) {
 
+            let tags = split(formRef.current.values.tags, '\\');
+
+            if(tags[0] === '') {
+                tags = [];
+            }
+
+            const params = {
+                title: formRef.current.values.title,
+                subtitle: formRef.current.values.subtitle,
+                body: localStorage.getItem("bearpost.saved"),
+                tags: [],
+                hidden: isDraft,
+                featureImgUrl: featureImageURL
+            }
+
+            await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/posts', {
+                headers: { 
+                    'Authorization': 'Bearer ' + localStorage.getItem("bearpost.JWT"),
+                },
+                method: 'POST',
+                body: JSON.stringify(params)
+            })
+            .then(res => res.json())
+            .then(async(json) => {
+                if(json.success) {
+                    setIsError(false);
+                    setMessage("Saved successfully! Redirecting in 2 seconds...");
+                    setSnackbarOpen(true);
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    Router.push("/auth/portal/dashboard/post/" + json.data.slug);
+                } else {
+                    setIsError(true);
+                    setMessage(json.message);
+                    setSnackbarOpen(true);
+                }
+            })
+            .catch(error => {
+                setIsError(true);
+                setMessage("Failed to save! Couldn't create new post");
+                setSnackbarOpen(true);
+                console.log(error);
+            });
+        }
         // TODO: If old post, use PUT
     };
 
@@ -130,6 +187,7 @@ export const MetaForm = ({ slug }) => {
                 initialValues={{
                     title: '',
                     subtitle: '',
+                    tags: '',
                     featureImage: ''
                 }}
                 validationSchema={Yup.object().shape({
@@ -140,20 +198,23 @@ export const MetaForm = ({ slug }) => {
                 })}
                 onSubmit={async(values, { setSubmitting }) => {
                     // Wait for 500ms so editor can save changes in localStorage
-                    await sleep(500);
-                    const editorVal = localStorage.getItem("bearpost.saved");
-
-                    setSubmitting(false);
+                    await new Promise(r => setTimeout(r, 500));
+                    await doSave();
                 }}
             >
-            {({ values, submitForm, isSubmitting, setFieldValue }) => (
+            {({ values, submitForm, isSubmitting, setFieldValue, errors }) => (
                 <StyledForm>
                     <EditorButtonGroupWrapper>
                         <EditorButton
                             variant="contained"
                             color="secondary"
                             startIcon={<SaveIcon />}
-                            onClick={async() => {await doSave()}}
+                            onClick={() => {
+                                setIsDraft(true);
+                                submitForm();
+                            }}
+                            disabled={isSubmitting}
+                            type="submit"
                         >
                             Save
                         </EditorButton>
@@ -180,6 +241,13 @@ export const MetaForm = ({ slug }) => {
                                 name="subtitle"
                                 type="subtitle"
                                 label="Subtitle"
+                                style={{marginBottom: "10px"}}
+                            />
+                            <Field
+                                component={TextField}
+                                name="tags"
+                                type="tags"
+                                label="Tags (seperated by \\)"
                                 style={{marginBottom: "10px"}}
                             />
                             <input
@@ -233,8 +301,8 @@ export const MetaForm = ({ slug }) => {
             )}
             </Formik>
             <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleClose}>
-                <Alert elevation={6} variant="filled" onClose={handleClose} severity="error">
-                    {errorMsg}
+                <Alert elevation={6} variant="filled" onClose={handleClose} severity={isError ? "error" : "success"}>
+                    {message}
                 </Alert>
             </Snackbar>
         </>

@@ -54,7 +54,7 @@ export const EditorButtonGroupWrapper = styled.div`
 `;
 
 export const EditorButton = styled(Button).withConfig({
-    shouldForwardProp: prop => !['type'].includes(prop)
+    shouldForwardProp: prop => true
 })`
     background-color: ${({ type }) => type === "danger" ? GlobalStyle.dangerRed : type === "publish" ? GlobalStyle.publishGreen : GlobalStyle.bluePrimary } !important;
     margin-left: 10px !important;
