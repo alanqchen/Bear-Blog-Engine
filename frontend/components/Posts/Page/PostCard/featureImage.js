@@ -24,7 +24,7 @@ function FeatureImage({featureImgUrl, tags, skeleton }) {
     
     return (
         <FeatureImageWrapper>
-            {!local && !skeleton && loading 
+            {!skeleton && loading 
                 &&  <>
                         <Skeleton variant="rect" width="100%" height="300px" />
                     </>
