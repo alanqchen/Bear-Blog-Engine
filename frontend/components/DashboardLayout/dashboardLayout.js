@@ -27,7 +27,7 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
         if(accessToken) {
             const setGetNewRefreshToken = async() => {
                 await dispatch(setTokens(accessToken, refreshToken));
-                //await dispatch(refresh());
+                await dispatch(refresh());
             }
             setGetNewRefreshToken();
             if(auth.error) {
@@ -35,7 +35,7 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
             }
         } else if(auth.accessToken != "") {
             const getNewRefreshToken = async() => {
-                //await dispatch(refresh());
+                await dispatch(refresh());
             }
             getNewRefreshToken();
             if(auth.error) {
@@ -55,9 +55,11 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
             <DashBoardWrapper>
                 <NavBar selectedCategory={selectedCategory} />
                 <div style={dashboardLayoutStyle}>
+                    {initAuth && !auth.loading && 
                     <StyledCenteredContainer>
                         {children}
                     </StyledCenteredContainer>
+                    }
                 </div>
             </DashBoardWrapper>
         </>

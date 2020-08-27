@@ -19,6 +19,7 @@ import {
 import { Waypoint } from 'react-waypoint';
 import { fetchPosts } from '../../redux/fetchDashboardPosts/action';
 import { timestamp2date } from '../utils/helpers';
+import Router from 'next/router';
 
 function PostsList({ fetchDashboardPosts, dispatch }) {
 
@@ -36,7 +37,7 @@ function PostsList({ fetchDashboardPosts, dispatch }) {
                     </PostsTableHead>
                     <TableBody>
                         {fetchDashboardPosts.posts.map((post, i) => (
-                            <PostsTableRow hover key={i}>
+                            <PostsTableRow hover onClick={()=>{Router.push("/auth/portal/dashboard/post/" + post.slug)}} key={i}>
                                 <TableCell>{post.title}</TableCell>
                                 <TableCell>{post.hidden ? <StatusChip label="Draft" /> : <StatusChip label="Published" published /> }</TableCell>
                                 <TableCell>{post.updatedAt ? timestamp2date(post.updatedAt) : timestamp2date(post.createdAt)}</TableCell>

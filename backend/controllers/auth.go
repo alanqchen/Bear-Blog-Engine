@@ -168,6 +168,20 @@ func (ac *AuthController) RefreshTokens(w http.ResponseWriter, r *http.Request) 
 			return
 		}
 	}
+
+	authUser := &models.AuthUser{
+		User:  u,
+		Admin: u.Admin,
+	}
+
+	data := struct {
+		Tokens *services.Tokens `json:"tokens"`
+		User   *models.AuthUser `json:"user"`
+	}{
+		tokens,
+		authUser,
+	}
+
 	log.Println("[AUTH] Created new refresh token for user", u.Username)
-	NewAPIResponse(&APIResponse{Success: true, Message: "Refresh successful", Data: tokens}, w, http.StatusOK)
+	NewAPIResponse(&APIResponse{Success: true, Message: "Refresh successful", Data: data}, w, http.StatusOK)
 }

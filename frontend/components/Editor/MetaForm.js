@@ -22,6 +22,7 @@ import * as Yup from "yup";
 import { 
     EditorButtonGroupWrapper,
     EditorButton,
+    EditorButtonOutlined,
     StyledForm,
     FieldWrapper,
     LocalFeatureImageWrapper,
@@ -205,6 +206,14 @@ export const MetaForm = ({ slug }) => {
             {({ values, submitForm, isSubmitting, setFieldValue, errors }) => (
                 <StyledForm>
                     <EditorButtonGroupWrapper>
+                        <EditorButtonOutlined
+                            variant="outlined"
+                            color="secondary"
+                            startIcon={<DeleteIcon />}
+                            type="danger"
+                        >
+                            Delete
+                        </EditorButtonOutlined>
                         <EditorButton
                             variant="contained"
                             color="secondary"

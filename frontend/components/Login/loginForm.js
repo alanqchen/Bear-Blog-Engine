@@ -51,7 +51,6 @@ export const LoginForm = ({ auth, dispatch }) => {
                     } else {
                         await recaptchaRef.current.executeAsync();
                     }
-                    //setSubmitting(false);
                 }}
             >
             {({ values, submitForm, isSubmitting }) => (

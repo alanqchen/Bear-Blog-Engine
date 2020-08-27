@@ -72,8 +72,9 @@ export default function authReducer( state = initalAuthState, action) {
             return {
                 ...state,
                 loading: false,
-                accessToken: action.payload.response.data.accessToken,
-                refreshToken: action.payload.response.data.refreshToken,
+                accessToken: action.payload.response.data.tokens.accessToken,
+                refreshToken: action.payload.response.data.tokens.refreshToken,
+                userData: action.payload.response.data.user,
                 error: null
             };
 

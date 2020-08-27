@@ -80,7 +80,7 @@ export function login(username, password) {
 
 export function logout() {
     return (dispatch, getState) => {
-        dispatch(loginBegin());
+        dispatch(logoutBegin());
         return fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/auth/logout', {
             credentials: 'include',
             headers: {
@@ -102,7 +102,7 @@ export function logout() {
 
 export function refresh() {
     return (dispatch, getState) => {
-        dispatch(loginBegin());
+        dispatch(refreshBegin());
         return fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/auth/refresh', {
             credentials: 'include',
             headers: {
@@ -113,8 +113,8 @@ export function refresh() {
             .then(res => res.json())
             .then(json => {
                 if(json.success) {
-                    localStorage.setItem("bearpost.JWT", json.data.accessToken);
-                    localStorage.setItem("bearpost.REFRESH", json.data.refreshToken);
+                    localStorage.setItem("bearpost.JWT", json.data.tokens.accessToken);
+                    localStorage.setItem("bearpost.REFRESH", json.data.tokens.refreshToken);
                     dispatch(refreshSuccess(json));
                 }
             })

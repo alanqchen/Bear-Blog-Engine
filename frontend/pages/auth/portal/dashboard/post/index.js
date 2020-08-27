@@ -35,42 +35,7 @@ const Index = () => {
         setInitialLoad(false);
         setLoaded(true);
     }, []);
-
-    const doSave = async(isDraft) => {
-
-        const params = {
-            title: "Temp",
-            subtitle: "Temp",
-            body: "temp",
-            tags: ["temp", "temp2"],
-            hidden: isDraft,
-            featureImgUrl: ""
-        }
-
-        await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/posts', {
-            method: 'POST',
-            body: JSON.stringify(params)
-        })
-        .then(res => res.json())
-        .then(async(json) => {
-            if(json.success) {
-                setShowError(false);
-                setMsg("Saved successfully! Redirecting in 2 seconds...");
-                setOpen(true);
-                await new Promise(resolve => setTimeout(resolve, 5000));
-                Router.push("/auth/portal/dashboard/post/" + json.data.slug);
-            } else {
-                setErrMsg(json.message);
-                setShowError(true);
-            }
-        })
-        .catch(error => {
-            setErrMsg("Failed to save");
-            setShowError(true);
-            console.log(error);
-        });
-    }
-
+    
     return (
         <Layout>
             {/*
