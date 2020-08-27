@@ -27,7 +27,7 @@ export const LoginForm = ({ auth, dispatch }) => {
     };
 
     useEffect(() => {
-        if(passedCaptcha && auth.accessToken != "" && !auth.error) {
+        if(passedCaptcha && !auth.loading && auth.accessToken != "" && !auth.error) {
             Router.push("/auth/portal/dashboard");
         }
     })

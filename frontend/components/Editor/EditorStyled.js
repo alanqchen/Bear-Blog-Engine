@@ -46,11 +46,12 @@ export const StyledFab = styled(Fab)`
 `;
 
 export const EditorButtonGroupWrapper = styled.div`
-    width: 100%;
+    width: 97%;
     display: flex;
     justify-content: flex-end;
+    margin: auto;
     margin-top: 20px;
-    margin-right: 20px;
+    margin-bottom: 20px;
 `;
 
 export const EditorButton = styled(Button).withConfig({

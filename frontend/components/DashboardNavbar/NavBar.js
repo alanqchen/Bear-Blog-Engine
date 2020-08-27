@@ -1,3 +1,5 @@
+import { connect } from 'react-redux';
+import { logout } from '../../redux/auth/actions';
 import { useEffect, useState } from 'react';
 import { 
     AppBar,
@@ -17,7 +19,8 @@ import {
     Close as CloseIcon,
     List as ListIcon,
     HomeOutlined as HomeIcon,
-    GroupOutlined as EditorsIcon
+    GroupOutlined as EditorsIcon,
+    ExitToApp as ExitIcon
 } from '@material-ui/icons';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Router from 'next/router';
@@ -54,7 +57,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export function NavBar({ className, selectedCategory }) {
+function NavBar({ className, selectedCategory, dispatch }) {
 
     const classes = useStyles();
     const theme = useTheme();
@@ -83,6 +86,16 @@ export function NavBar({ className, selectedCategory }) {
                 <ListItem button onClick={()=>{pushLink("/auth/portal/dashboard")}} selected={selectedCategory === "Editors" ? true : false} >
                     <ListItemIcon><EditorsIcon /></ListItemIcon>
                     <ListItemText primary={'Editors'} />
+                </ListItem>
+                <Divider />
+                <ListItem button selected={selectedCategory === "Editors" ? true : false} 
+                    onClick={async() => {
+                        await dispatch(logout());
+                        pushLink("/auth/portal/login");
+                    }} 
+                >
+                    <ListItemIcon><ExitIcon /></ListItemIcon>
+                    <ListItemText primary={'Log Out'} />
                 </ListItem>
             </List>
         </div>
@@ -147,4 +160,4 @@ export function NavBar({ className, selectedCategory }) {
     );
 }
 
-export default NavBar;
+export default connect()(NavBar);

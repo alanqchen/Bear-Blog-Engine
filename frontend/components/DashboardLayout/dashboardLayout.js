@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { StyledCenteredContainer, DashBoardWrapper } from './dashboardLayoutStyled';
-import { NavBar } from '../DashboardNavbar/NavBar';
+import NavBar from '../DashboardNavbar/NavBar';
 import { refresh, setTokens } from '../../redux/auth/actions';
 
 const dashboardLayoutStyle = {
@@ -48,18 +48,20 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
             Router.push("/auth/portal/login");
         }
         setInitAuth(true);
-    }, [auth.error]);
+    }, []);
 
     return (
         <>
             <DashBoardWrapper>
                 <NavBar selectedCategory={selectedCategory} />
                 <div style={dashboardLayoutStyle}>
-                    {initAuth && !auth.loading && 
                     <StyledCenteredContainer>
-                        {children}
+                        {initAuth && 
+                        <>
+                            {children}
+                        </>
+                        }
                     </StyledCenteredContainer>
-                    }
                 </div>
             </DashBoardWrapper>
         </>
@@ -69,9 +71,6 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
 const mapStateToProps = (state, ownProps) => {
     return {
         auth: {
-            accessToken: state.auth.accessToken,
-            refreshToken: state.auth.refreshToken,
-            userData: state.auth.userData,
             loading: state.auth.loading,
             error: state.auth.error
         },

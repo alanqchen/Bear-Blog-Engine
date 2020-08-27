@@ -34,7 +34,7 @@ import { login } from '../../redux/auth/actions';
 import FeatureImage from '../Posts/Page/PostCard/featureImage';
 import { WidthWrapper } from '../DashboardLayout/dashboardLayoutStyled';
 import SelectInput from '@material-ui/core/Select/SelectInput';
-import { split } from 'lodash';
+import { split, join } from 'lodash';
 
 export const ImagePreview = ({ file }) => {
 
@@ -74,7 +74,7 @@ export const ImagePreview = ({ file }) => {
     );
 }
 
-export const MetaForm = ({ slug }) => {
+export const MetaForm = ({ postData }) => {
 
     // SNACKBAR
     const handleClose = (event, reason) => {
@@ -93,7 +93,6 @@ export const MetaForm = ({ slug }) => {
     const [message, setMessage] = useState("");
     const [isError, setIsError] = useState(false);
     const [isDraft, setIsDraft] = useState(true);
-    const [featureImageURL, setFeatureImageURL] = useState("");
 
     const formRef = useRef();
 
@@ -102,6 +101,9 @@ export const MetaForm = ({ slug }) => {
     }, [rmOrigFeatureImage, uploadedNew]);
 
     const doSave = async() => {
+
+        let featureImageURL = "";
+
         // Upload new image if needed
         if(uploadedNew) {
             let formData = new FormData();
@@ -118,7 +120,7 @@ export const MetaForm = ({ slug }) => {
             .then(res => res.json())
             .then(async(json) => {
                 if(json.success) {
-                    setFeatureImageURL(json.data.imageUrl);
+                    featureImageURL = json.data.imageUrl;
                 } else {
                     setIsError(true);
                     setMessage(json.message);
@@ -131,54 +133,65 @@ export const MetaForm = ({ slug }) => {
                 setSnackbarOpen(true);
                 console.log(error);
             });
+        } else if(!rmOrigFeatureImage && !uploadedNew) {
+            featureImageURL = postData.featureImgUrl;
         }
-        // If new post, use POST
-        if(!slug) {
 
-            let tags = split(formRef.current.values.tags, '\\');
+        // tags formatting
+        console.log(formRef.current.values.tags)
+        let tags = split(formRef.current.values.tags, '\\\\');
+        console.log(tags);
+        if(tags[0] === '') {
+            tags = [];
+        }
 
-            if(tags[0] === '') {
-                tags = [];
-            }
+        const params = {
+            title: formRef.current.values.title,
+            subtitle: formRef.current.values.subtitle,
+            body: localStorage.getItem("bearpost.saved"),
+            tags: tags,
+            hidden: isDraft,
+            featureImgUrl: featureImageURL
+        }
 
-            const params = {
-                title: formRef.current.values.title,
-                subtitle: formRef.current.values.subtitle,
-                body: localStorage.getItem("bearpost.saved"),
-                tags: [],
-                hidden: isDraft,
-                featureImgUrl: featureImageURL
-            }
+        const reqSlug = postData ? '/' + postData.id : '';
 
-            await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/posts', {
-                headers: { 
-                    'Authorization': 'Bearer ' + localStorage.getItem("bearpost.JWT"),
-                },
-                method: 'POST',
-                body: JSON.stringify(params)
-            })
-            .then(res => res.json())
-            .then(async(json) => {
-                if(json.success) {
-                    setIsError(false);
-                    setMessage("Saved successfully! Redirecting in 2 seconds...");
+        await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/posts' + reqSlug, {
+            headers: { 
+                'Authorization': 'Bearer ' + localStorage.getItem("bearpost.JWT"),
+            },
+            method: postData ? 'PUT' : 'POST',
+            body: JSON.stringify(params)
+        })
+        .then(res => res.json())
+        .then(async(json) => {
+            if(json.success) {
+                setIsError(false);
+                if(postData) {
+                    setMessage("Saved successfully!");
+                    setSnackbarOpen(true);
+                } else {
+                    setMessage("Created successfully! Redirecting in 2 seconds...");
                     setSnackbarOpen(true);
                     await new Promise(resolve => setTimeout(resolve, 2000));
                     Router.push("/auth/portal/dashboard/post/" + json.data.slug);
-                } else {
-                    setIsError(true);
-                    setMessage(json.message);
-                    setSnackbarOpen(true);
                 }
-            })
-            .catch(error => {
+            } else {
                 setIsError(true);
-                setMessage("Failed to save! Couldn't create new post");
+                setMessage(json.message);
                 setSnackbarOpen(true);
-                console.log(error);
-            });
-        }
-        // TODO: If old post, use PUT
+            }
+        })
+        .catch(error => {
+            setIsError(true);
+            if(postData) {
+                setMessage("Failed to save!");
+            } else {
+                setMessage("Failed to create new post!");
+            }
+            setSnackbarOpen(true);
+            console.log(error);
+        });
     };
 
     return (
@@ -186,9 +199,9 @@ export const MetaForm = ({ slug }) => {
             <Formik
                 innerRef={formRef}
                 initialValues={{
-                    title: '',
-                    subtitle: '',
-                    tags: '',
+                    title: postData ? postData.title : '',
+                    subtitle: postData ? postData.subtitle : '',
+                    tags: postData ? join(postData.tags, '\\\\') : '',
                     featureImage: ''
                 }}
                 validationSchema={Yup.object().shape({
@@ -231,6 +244,10 @@ export const MetaForm = ({ slug }) => {
                             variant="contained"
                             color="secondary"
                             startIcon={<CloudUploadIcon />}
+                            onClick={() => {
+                                setIsDraft(false);
+                                submitForm();
+                            }}
                             type="publish"
                         >
                             Publish
@@ -290,7 +307,7 @@ export const MetaForm = ({ slug }) => {
                                 >
                                     <DeleteIcon />
                                 </IconButton>
-                                {slug && rmOrigFeatureImage && 
+                                {postData && rmOrigFeatureImage && 
                                 <Button variant="contained" color="primary" component="span"
                                     onClick={() => {
                                         setUploadedNew(false);
@@ -303,6 +320,11 @@ export const MetaForm = ({ slug }) => {
                                 }
                             </ImageInputWrapper>
                             <ImagePreview file={values.featureImage} />
+                            {postData && !rmOrigFeatureImage && !uploadedNew &&
+                            <StyledImageWrapper>
+                                <StyledImage src={process.env.NEXT_PUBLIC_API_URL + postData.featureImgUrl} />
+                            </StyledImageWrapper>
+                            }
                         </FieldWrapper>
                         {isSubmitting && <LinearProgress />}
                     </WidthWrapper>

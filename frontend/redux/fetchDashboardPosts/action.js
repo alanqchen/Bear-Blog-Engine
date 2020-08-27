@@ -45,12 +45,12 @@ export function fetchPosts() {
                 } else {
                     dispatch(fetchPostsSuccess(json));
                 }
-                dispatch(refresh());
+                //dispatch(refresh());
                 return json;
             })
             .catch(error => {
                 dispatch(fetchPostsFailure(error));
-                dispatch(refresh());
+                //dispatch(refresh());
             });
     };
 }

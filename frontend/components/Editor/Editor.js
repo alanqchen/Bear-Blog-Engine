@@ -9,7 +9,7 @@ import EditorTheme from '../Theme/editorTheme';
 import { WaveButton } from '../Theme/StyledComponents';
 import { YoutubeEmbed } from './Embeds';
 
-function Editor({ dispatch, defaultValue, isPreview, slug }) {
+function Editor({ dispatch, defaultValue, isPreview, isNew }) {
 
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [errorMsg, setErrorMsg] = useState("");
@@ -19,19 +19,21 @@ function Editor({ dispatch, defaultValue, isPreview, slug }) {
         if (reason === 'clickaway') {
             return;
         }
-    
+        
         setSnackbarOpen(false);
     };
 
     // Refresh tokens every 30 seconds
     const handleAuthRefresh = throttle(() => {
+        console.log("Refreshing tokens");
         dispatch(refresh());
     }, 30000);
 
     const handleChange = debounce(value => {
-        const text = value();
-        console.log(text);
-        localStorage.setItem("bearpost.saved", text);
+        if(isNew) {
+            const text = value();
+            localStorage.setItem("bearpost.saved", text);
+        }
         handleAuthRefresh();
     }, 400);
 

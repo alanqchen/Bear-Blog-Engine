@@ -1,4 +1,5 @@
 import {connect} from 'react-redux';
+import { useEffect, useState } from 'react';
 import {
     Typography,
     CircularProgress,
@@ -21,7 +22,16 @@ import { fetchPosts } from '../../redux/fetchDashboardPosts/action';
 import { timestamp2date } from '../utils/helpers';
 import Router from 'next/router';
 
-function PostsList({ fetchDashboardPosts, dispatch }) {
+function PostsList({ fetchDashboardPosts, auth, dispatch }) {
+
+    const [loaded, setLoaded] = useState(false);
+
+    useEffect(()=> {
+        if(fetchDashboardPosts.error) {
+            Router.push("/auth/portal/login");
+        }
+        setLoaded(true);
+    }, [fetchDashboardPosts.error])
 
     return (
         <>
@@ -46,7 +56,7 @@ function PostsList({ fetchDashboardPosts, dispatch }) {
                         ))}
                     </TableBody>
                 </Table>
-                {fetchDashboardPosts.hasMore && <Waypoint onEnter={() => {dispatch(fetchPosts())}} />}
+                {loaded && !auth.loading && fetchDashboardPosts.hasMore && <Waypoint onEnter={() => {dispatch(fetchPosts())}} />}
             </PostsTableContainer>
         </>
     );
@@ -63,6 +73,9 @@ const mapStateToProps = (state, ownProps) => {
             hasMore: state.fetchDashboardPosts.hasMore,
             error: state.fetchDashboardPosts.error
         },
+        auth: {
+            loading: state.auth.loading
+        }
     }
 }
 

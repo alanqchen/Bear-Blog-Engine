@@ -1,8 +1,7 @@
-import { StyledFab, EditorButtonGroupWrapper, EditorButton, EditorButtonOutlined } from '../../../../../../../../components/Editor/EditorStyled';
 import Layout from '../../../../../../../../components/DashboardLayout/dashboardLayout';
 import EditorWrapper from '../../../../../../../../components/Editor/EditorWrapper';
 
-const Index = ({ auth, dispatch, query }) => {
+const Index = ({ query }) => {
     
     return (
         <Layout selectedCategory={"None"}>

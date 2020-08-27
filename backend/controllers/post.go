@@ -585,7 +585,7 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
 		return
 	}
-	post, err := pc.PostRepository.FindByID(postID)
+	post, err := pc.PostRepository.FindByIDAdmin(postID)
 	if err != nil {
 		// post was not found
 		NewAPIError(&APIError{false, "Could not find post", http.StatusNotFound}, w)
@@ -611,7 +611,7 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	slug := util.GenerateSlug(title)
+	slug := post.Slug[:9] + util.GenerateSlug(title)
 	if len(slug) == 0 {
 		NewAPIError(&APIError{false, "Title is invalid", http.StatusBadRequest}, w)
 		return
