@@ -393,8 +393,8 @@ export const MetaForm = ({ postData }) => {
                     </Button>
                     <Button color="primary"
                         onClick={() => {
-                            setShowDialog(false);
                             doDelete();
+                            setShowDialog(false);
                         }} 
                     >
                         Delete

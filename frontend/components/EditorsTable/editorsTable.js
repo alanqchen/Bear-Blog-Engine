@@ -85,7 +85,6 @@ function EditorsTable({ auth, dispatch }) {
     }, [refresh]);
 
     const editUser = async(name, username, password, admin) => {
-        console.log(admin)
         const params = {
             name: name,
             username: username,
@@ -101,7 +100,7 @@ function EditorsTable({ auth, dispatch }) {
             body: JSON.stringify(params)
         })
         .then(res => res.json())
-        .then(async(json) => {
+        .then(json => {
             if(json.success) {
                 setIsError(false);
                 setMessage("Created editor!");
@@ -120,6 +119,32 @@ function EditorsTable({ auth, dispatch }) {
             setSnackbarOpen(true);
         });
     };
+
+    const deleteUser = async(id) => {
+        await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/users/' + id, {
+            headers: { 
+                'Authorization': 'Bearer ' + localStorage.getItem("bearpost.JWT"),
+            },
+            method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(json => {
+            if(json.success) {
+                setIsError(false);
+                setMessage("Deleted editor!");
+                setSnackbarOpen(true);
+            } else {
+                setIsError(true);
+                setMessage(json.message);
+                setSnackbarOpen(true);
+            }
+        })
+        .catch(() => {
+            setIsError(true);
+            setMessage("Failed to delete editor!");
+            setSnackbarOpen(true);
+        })
+    }
 
     return (
         <>
@@ -154,7 +179,10 @@ function EditorsTable({ auth, dispatch }) {
                             <EditorsTableRow hover={auth.userData.admin} key={i}
                                 pointer={auth.userData.admin ? "1" : undefined}
                                 onClick={() => {
-                                    setUserEdit(user);
+                                    if(auth.userData.admin) {
+                                        setUserEdit(user);
+                                        setShowDialog(true);
+                                    }
                                 }}
                             >
                                 <TableCell>{user.name}</TableCell>
@@ -179,14 +207,14 @@ function EditorsTable({ auth, dispatch }) {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="form-dialog-title">Create New Editor</DialogTitle>
+                <DialogTitle id="form-dialog-title">{userEdit ? "Edit Editor" : "Create New Editor"}</DialogTitle>
                 <Formik
                     initialValues={{
-                        name: '',
+                        name: userEdit ? userEdit.name : '',
                         username: '',
                         password: '',
                         passwordConfirm: '',
-                        admin: false
+                        admin: userEdit ? userEdit.admin : false
                     }}
                     validationSchema={Yup.object().shape({
                         name: Yup.string()
@@ -212,9 +240,11 @@ function EditorsTable({ auth, dispatch }) {
                 {({ values, submitForm, isSubmitting }) => (
                     <Form>
                         <DialogContent>
+                            {!userEdit &&
                             <DialogContentText id="alert-dialog-description">
                                 The username cannot be changed once created.
                             </DialogContentText>
+                            }
                             <Field
                                 component={TextField}
                                 name="name"
@@ -222,6 +252,7 @@ function EditorsTable({ auth, dispatch }) {
                                 label="Name"
                                 fullWidth
                             />
+                            {!userEdit &&
                             <Field
                                 component={TextField}
                                 name="username"
@@ -229,18 +260,19 @@ function EditorsTable({ auth, dispatch }) {
                                 label="Username"
                                 fullWidth
                             />
+                            }
                             <Field
                                 component={TextField}
                                 name="password"
                                 type="password"
-                                label="Password"
+                                label={userEdit ? "New Password" : "Password"}
                                 fullWidth
                             />
                             <Field
                                 component={TextField}
                                 name="passwordConfirm"
                                 type="password"
-                                label="Confirm Password"
+                                label={userEdit ? "Confirm New Password" : "Confirm Password"}
                                 fullWidth
                             />
                             <Field
@@ -257,7 +289,7 @@ function EditorsTable({ auth, dispatch }) {
                             </Button>
                             <Button color="primary" disabled={isSubmitting}
                                 onClick={() => {
-                                    setShowDialog(false);
+                                    setShowConfirm(true);
                                 }} 
                             >
                                 Delete
@@ -274,7 +306,34 @@ function EditorsTable({ auth, dispatch }) {
                 )}
                 </Formik>
             </Dialog>
-            
+            {userEdit &&
+            <Dialog
+                open={showConfirm}
+                onClose={()=>{setShowConfirm(false)}}
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                        Are you sure you want to delete the user "{userEdit.username}"? This cannot be undone!
+                </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => {setShowConfirm(false)}} color="primary" autoFocus>
+                        Cancel
+                    </Button>
+                    <Button color="primary"
+                        onClick={async() => {
+                            await deleteUser(userEdit.id);
+                            setShowConfirm(false);
+                            setShowDialog(false);
+                            setRefresh(!refresh);
+                        }} 
+                    >
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            }
         </>
     );
 }
