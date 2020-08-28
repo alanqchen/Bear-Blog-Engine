@@ -83,12 +83,12 @@ function NavBar({ className, selectedCategory, dispatch }) {
                     <ListItemIcon><ListIcon /></ListItemIcon>
                     <ListItemText primary={'Posts'} />
                 </ListItem>
-                <ListItem button onClick={()=>{pushLink("/auth/portal/dashboard")}} selected={selectedCategory === "Editors" ? true : false} >
+                <ListItem button onClick={()=>{pushLink("/auth/portal/dashboard/editors")}} selected={selectedCategory === "Editors" ? true : false} >
                     <ListItemIcon><EditorsIcon /></ListItemIcon>
                     <ListItemText primary={'Editors'} />
                 </ListItem>
                 <Divider />
-                <ListItem button selected={selectedCategory === "Editors" ? true : false} 
+                <ListItem button 
                     onClick={async() => {
                         await dispatch(logout());
                         pushLink("/auth/portal/login");

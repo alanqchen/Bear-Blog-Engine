@@ -136,11 +136,16 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	admin, err := j.GetBool("admin")
+	if err != nil {
+		admin = false
+	}
+
 	u := &models.User{
 		ID:        newID,
 		Name:      name,
 		Email:     email,
-		Admin:     false,
+		Admin:     admin,
 		CreatedAt: time.Now(),
 		Username:  username,
 	}
@@ -375,6 +380,11 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	tempTime := time.Now()
 	user.UpdatedAt = &tempTime
 
+	admin, err := j.GetBool("admin")
+	if err == nil {
+		user.Admin = admin
+	}
+
 	err = uc.UserRepository.Update(user)
 	if err != nil {
 		NewAPIError(&APIError{false, "Could not update user", http.StatusBadRequest}, w)
@@ -383,7 +393,7 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 
 	authUser := &models.AuthUser{
 		User:  user,
-		Admin: user.Admin,
+		Admin: admin,
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: authUser}, w, http.StatusOK)

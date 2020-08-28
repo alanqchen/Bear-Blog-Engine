@@ -37,7 +37,7 @@ func (a *App) Run(r *mux.Router) {
 	headersOk := handlers.AllowedHeaders([]string{"Authorization", "Content-Type", "X-Requested-With"})
 	originsOk := handlers.AllowedOrigins(a.Config.AllowedOrigins)
 	log.Println("Allowed origins:", a.Config.AllowedOrigins)
-	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"})
 	port := a.Config.Port
 	addr := fmt.Sprintf(":%v", port)
 

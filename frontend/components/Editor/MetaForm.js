@@ -6,7 +6,11 @@ import {
     IconButton,
     LinearProgress,
     Button,
-    Snackbar
+    Snackbar,
+    Dialog,
+    DialogContent,
+    DialogContentText,
+    DialogActions
 } from '@material-ui/core';
 import { TextField } from 'formik-material-ui';
 import { Alert } from '@material-ui/lab';
@@ -93,6 +97,7 @@ export const MetaForm = ({ postData }) => {
     const [message, setMessage] = useState("");
     const [isError, setIsError] = useState(false);
     const [isDraft, setIsDraft] = useState(true);
+    const [showDialog, setShowDialog] = useState(false);
 
     const formRef = useRef();
 
@@ -127,11 +132,10 @@ export const MetaForm = ({ postData }) => {
                     setSnackbarOpen(true);
                 }
             })
-            .catch(error => {
+            .catch(() => {
                 setIsError(true);
                 setMessage("Failed to save! Couldn't upload feature image");
                 setSnackbarOpen(true);
-                console.log(error);
             });
         } else if(!rmOrigFeatureImage && !uploadedNew) {
             featureImageURL = postData.featureImgUrl;
@@ -168,7 +172,11 @@ export const MetaForm = ({ postData }) => {
             if(json.success) {
                 setIsError(false);
                 if(postData) {
-                    setMessage("Saved successfully!");
+                    if(isDraft) {
+                        setMessage("Saved successfully!");
+                    } else {
+                        setMessage("Published successfully!");
+                    }
                     setSnackbarOpen(true);
                 } else {
                     setMessage("Created successfully! Redirecting in 2 seconds...");
@@ -193,6 +201,34 @@ export const MetaForm = ({ postData }) => {
             console.log(error);
         });
     };
+
+    const doDelete = async() => {
+        await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/posts/delete/' + postData.id, {
+            headers: { 
+                'Authorization': 'Bearer ' + localStorage.getItem("bearpost.JWT"),
+            },
+            method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(async(json) => {
+            if(json.success) {
+                setIsError(false);
+                setMessage("Deleted successfully! Redirecting to dashboard...");
+                setSnackbarOpen(true);
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                Router.push("/auth/portal/dashboard");
+            } else {
+                setIsError(true);
+                setMessage(json.message);
+                setSnackbarOpen(true);
+            }
+        })
+        .catch(() => {
+            setIsError(true);
+            setMessage("Failed to delete post!");
+            setSnackbarOpen(true);
+        });
+    }
 
     return (
         <>
@@ -219,14 +255,17 @@ export const MetaForm = ({ postData }) => {
             {({ values, submitForm, isSubmitting, setFieldValue, errors }) => (
                 <StyledForm>
                     <EditorButtonGroupWrapper>
+                        {postData &&
                         <EditorButtonOutlined
                             variant="outlined"
                             color="secondary"
                             startIcon={<DeleteIcon />}
                             type="danger"
+                            onClick={() => {setShowDialog(true)}}
                         >
                             Delete
                         </EditorButtonOutlined>
+                        }
                         <EditorButton
                             variant="contained"
                             color="secondary"
@@ -286,7 +325,7 @@ export const MetaForm = ({ postData }) => {
                                         setRmOrigFeatureImage(true);
                                     }
                                 }}
-                                accept="image/*"
+                                accept="image/png,image/jpg,image/gif"
                                 id="contained-button-file"
                                 multiple
                                 type="file"
@@ -331,11 +370,38 @@ export const MetaForm = ({ postData }) => {
                 </StyledForm>
             )}
             </Formik>
+            
             <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleClose}>
                 <Alert elevation={6} variant="filled" onClose={handleClose} severity={isError ? "error" : "success"}>
                     {message}
                 </Alert>
             </Snackbar>
+            {postData &&
+            <Dialog
+                open={showDialog}
+                onClose={()=>{setShowDialog(false)}}
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                        Are you sure you want to delete the post "{postData.title}"? This cannot be undone!
+                </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => {setShowDialog(false)}} color="primary" autoFocus>
+                        Cancel
+                    </Button>
+                    <Button color="primary"
+                        onClick={() => {
+                            setShowDialog(false);
+                            doDelete();
+                        }} 
+                    >
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            }
         </>
     );
 }

@@ -34,31 +34,29 @@ function PostsList({ fetchDashboardPosts, auth, dispatch }) {
     }, [fetchDashboardPosts.error])
 
     return (
-        <>
-            <PostsTableContainer component={Paper}>
-                <Table aria-label="posts table">
-                    <PostsTableHead>
-                        <TableRow>
-                            <TableCell>Title</TableCell>
-                            <TableCell>Status</TableCell>
-                            <TableCell>Last Updated</TableCell>
-                            <TableCell>Author</TableCell>
-                        </TableRow>
-                    </PostsTableHead>
-                    <TableBody>
-                        {fetchDashboardPosts.posts.map((post, i) => (
-                            <PostsTableRow hover onClick={()=>{Router.push("/auth/portal/dashboard/post/" + post.slug)}} key={i}>
-                                <TableCell>{post.title}</TableCell>
-                                <TableCell>{post.hidden ? <StatusChip label="Draft" /> : <StatusChip label="Published" published /> }</TableCell>
-                                <TableCell>{post.updatedAt ? timestamp2date(post.updatedAt) : timestamp2date(post.createdAt)}</TableCell>
-                                <TableCell>{post.authorid}</TableCell>
-                            </PostsTableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-                {loaded && !auth.loading && fetchDashboardPosts.hasMore && <Waypoint onEnter={() => {dispatch(fetchPosts())}} />}
-            </PostsTableContainer>
-        </>
+        <PostsTableContainer component={Paper}>
+            <Table aria-label="posts table">
+                <PostsTableHead>
+                    <TableRow>
+                        <TableCell>Title</TableCell>
+                        <TableCell>Status</TableCell>
+                        <TableCell>Last Updated</TableCell>
+                        <TableCell>Author</TableCell>
+                    </TableRow>
+                </PostsTableHead>
+                <TableBody>
+                    {fetchDashboardPosts.posts.map((post, i) => (
+                        <PostsTableRow hover onClick={()=>{Router.push("/auth/portal/dashboard/post/" + post.slug)}} key={i}>
+                            <TableCell>{post.title}</TableCell>
+                            <TableCell>{post.hidden ? <StatusChip label="Draft" /> : <StatusChip label="Published" published /> }</TableCell>
+                            <TableCell>{post.updatedAt ? timestamp2date(post.updatedAt) : timestamp2date(post.createdAt)}</TableCell>
+                            <TableCell>{post.authorid}</TableCell>
+                        </PostsTableRow>
+                    ))}
+                </TableBody>
+            </Table>
+            {loaded && !auth.loading && fetchDashboardPosts.hasMore && <Waypoint onEnter={() => {dispatch(fetchPosts())}} />}
+        </PostsTableContainer>
     );
 }
 

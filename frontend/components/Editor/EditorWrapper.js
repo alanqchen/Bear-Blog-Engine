@@ -1,7 +1,7 @@
 import Router from 'next/router';
 import { useEffect, useState } from 'react';
 import { WidthWrapper } from '../DashboardLayout/dashboardLayoutStyled';
-import { Divider, Button, Snackbar } from '@material-ui/core';
+import { Divider, Button, Snackbar, LinearProgress } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { Visibility as VisibilityIcon } from '@material-ui/icons';
 import Editor from './Editor';
@@ -75,10 +75,11 @@ const EditorWrapper = ({ query }) => {
 
     return (
         <>
+            {!loaded && <LinearProgress />}
             {loaded &&
             <>
-                <StyledFab aria-label="preview">
-                    <VisibilityIcon color="action" onClick={() => {setIsPreview(!isPreview)}} />
+                <StyledFab aria-label="preview" onClick={() => {setIsPreview(!isPreview)}}>
+                    <VisibilityIcon color="action" />
                 </StyledFab>
                 <MetaForm postData={postData} />
                 <WidthWrapper>

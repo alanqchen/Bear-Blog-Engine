@@ -4,7 +4,7 @@ import PostsList from '../../../../components/PostsTable/postsTable';
 import { EditorButtonGroupWrapper, EditorButton } from '../../../../components/Editor/EditorStyled';
 import { Add as AddIcon } from '@material-ui/icons';
 
-const Index = ({ auth, dispatch }) => {
+const Index = () => {
     return (
         <Layout selectedCategory={"Posts"}>
             <EditorButtonGroupWrapper>
@@ -19,7 +19,7 @@ const Index = ({ auth, dispatch }) => {
                 >
                     New Post
                 </EditorButton>
-                </EditorButtonGroupWrapper>
+            </EditorButtonGroupWrapper>
             <PostsList />
         </Layout>
     );

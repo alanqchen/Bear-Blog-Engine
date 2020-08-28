@@ -39,8 +39,8 @@ const Index = () => {
     
     return (
         <Layout>
-            <StyledFab aria-label="preview">
-                <VisibilityIcon color="action" onClick={() => {setIsPreview(!isPreview)}} />
+            <StyledFab aria-label="preview" onClick={() => {setIsPreview(!isPreview)}} >
+                <VisibilityIcon color="action" />
             </StyledFab>
             <MetaForm />
             <WidthWrapper>

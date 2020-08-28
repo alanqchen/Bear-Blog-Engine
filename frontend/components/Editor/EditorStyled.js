@@ -51,7 +51,7 @@ export const EditorButtonGroupWrapper = styled.div`
     justify-content: flex-end;
     margin: auto;
     margin-top: 20px;
-    margin-bottom: 20px;
+    margin-bottom: ${({ noBottomMargin }) => noBottomMargin ? "0px" : "20px"} !important;
 `;
 
 export const EditorButton = styled(Button).withConfig({
