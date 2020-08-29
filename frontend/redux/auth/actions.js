@@ -16,19 +16,6 @@ export const loginFailure = (error) => ({
     payload: { error }
 });
 
-export const logoutBegin = () => ({
-    type: types.LOGOUT_BEGIN
-});
-
-export const logoutSuccess = () => ({
-    type: types.LOGOUT_SUCCESS
-});
-
-export const logoutFailure = (error) => ({
-    type: types.LOGOUT_FAILURE,
-    payload: { error }
-});
-
 export const refreshBegin = () => ({
     type: types.REFRESH_BEGIN
 });
@@ -76,28 +63,6 @@ export function login(username, password) {
             localStorage.removeItem("bearpost.REFRESH");
             dispatch(loginFailure(error));
         });
-    }
-}
-
-export function logout() {
-    return (dispatch, getState) => {
-        dispatch(logoutBegin());
-        return fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/auth/logout', {
-            credentials: 'include',
-            headers: {
-                'Authorization': 'Bearer ' + getState().auth.accessToken
-            }
-        })
-        .then(handleErrors)
-        .then(res => res.json())
-        .then(json => {
-            if(json.success) {
-                localStorage.removeItem("bearpost.JWT");
-                localStorage.removeItem("bearpost.REFRESH");
-                dispatch(logoutSuccess());
-            }
-        })
-        .catch(error => dispatch(logoutFailure(error)));
     }
 }
 

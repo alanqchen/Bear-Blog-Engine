@@ -37,30 +37,6 @@ export default function authReducer( state = initalAuthState, action) {
                 error: action.payload.error
             };
 
-        case authTypes.LOGOUT_BEGIN:
-            return {
-                ...state,
-                loading: false,
-                error: null
-            };
-
-        case authTypes.LOGOUT_SUCCESS:
-            return {
-                ...state,
-                loading: false,
-                accessToken: "",
-                refreshToken: "",
-                userData: null,
-                error: null
-            };
-
-        case authTypes.LOGOUT_FAILURE:
-            return {
-                ...state,
-                loading: false,
-                error: action.payload.error
-            };
-
         case authTypes.REFRESH_BEGIN:
             return {
                 ...state,
