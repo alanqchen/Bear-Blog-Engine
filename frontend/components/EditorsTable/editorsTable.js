@@ -290,6 +290,7 @@ function EditorsTable({ auth, dispatch }) {
                             <Button onClick={() => {setShowDialog(false)}} color="primary" disabled={isSubmitting} autoFocus>
                                 Cancel
                             </Button>
+                            {userEdit &&
                             <Button color="primary" disabled={isSubmitting}
                                 onClick={() => {
                                     setShowConfirm(true);
@@ -297,12 +298,13 @@ function EditorsTable({ auth, dispatch }) {
                             >
                                 Delete
                             </Button>
+                            }
                             <Button color="primary" type="submit" disabled={isSubmitting}
                                 onClick={() => {
                                     submitForm();
                                 }} 
                             >
-                                Create
+                                {userEdit ? "Update" : "Create"}
                             </Button>
                         </DialogActions>
                         </Form>

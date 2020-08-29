@@ -22,10 +22,9 @@ const Index = props => {
     }
     return (
         <Layout>
-            <Typography align="center" fontWeight="fontWeightLight" variant="h4" color="textPrimary" component="h4">
+            <Typography align="left" variant="h4" color="textPrimary" component="h1">
                 This page is only to test getting data and is not final
             </Typography>
-            <Link href="/"><a>Goto Index</a></Link>
             <img src={process.env.NEXT_PUBLIC_API_URL + props.post.data.featureImgUrl}></img>
             <p>{props.post.data.createdAt}</p>
             <p>{props.dateF}</p>

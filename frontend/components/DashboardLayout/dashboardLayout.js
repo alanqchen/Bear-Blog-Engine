@@ -23,10 +23,6 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
             localStorage.removeItem("bearpost.REFRESH");
         }
 
-        if(auth.loading) {
-            return;
-        } 
-
         if(auth.error) {
             clearTokens();
             Router.push("/auth/portal/login");
