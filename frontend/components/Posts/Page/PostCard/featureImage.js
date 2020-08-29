@@ -5,10 +5,8 @@ import {
     StyledPicture,
     StyledImageWrapper,
     FeatureImageWrapper,
-    StyledLinearProgressWrapper,
     TagsWrapper,
-    StyledChip,
-    ImageSkeleton
+    StyledChip
 } from './postCardStyled';
 import { Skeleton } from '@material-ui/lab';
 

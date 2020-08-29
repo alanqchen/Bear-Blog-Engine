@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Editor from 'rich-markdown-editor';
-import { Fab, Button, StepLabel } from '@material-ui/core';
+import { Fab, Button } from '@material-ui/core';
 import GlobalStyle from '../Theme/theme';
 import { Form } from 'formik';
 

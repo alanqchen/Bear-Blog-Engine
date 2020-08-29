@@ -1,9 +1,10 @@
 import Layout from '../../../../components/PostLayout/postLayout';
 import { useRouter } from 'next/router';
 import fetch from 'isomorphic-unfetch';
-import Error from 'next/error';
+import Error from '../../../404';
 import ReadOnlyEditor from '../../../../components/Editor/ReadOnlyEditor';
-import { Typography, CircularProgress, Box, Divider } from '@material-ui/core';
+import { Typography, Box, Divider } from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
 import FeatureImage from '../../../../components/Posts/Page/PostCard/featureImage';
 import {timestamp2date} from '../../../../components/utils/helpers'
 
@@ -13,19 +14,25 @@ const Index = props => {
     if (router.isFallback) {
         return (
             <Layout>
-                <CircularProgress />
+                <Typography align="left" color="textPrimary" variant="h1" component="h1">
+                    <Skeleton variant="text" width="80%"/> 
+                </Typography>
+                <Typography align="left" variant="subtitle1" color="textPrimary" component="h2" gutterBottom>
+                    <Skeleton variant="text" width="40%"/> 
+                </Typography>
+                <Skeleton variant="rect" width="100%" height={"600px"} />
             </Layout>
         );
     }
 
     if (props.errorCode) {
-        return <Error statusCode={props.errorCode} />
+        return <Error />
     }
 
     return (
         <Layout>
             <Typography align="left" color="textPrimary" variant="h1" component="h1">
-                <Box fontWeight={600} fontSize={"2.5rem"}>
+                <Box fontWeight={500} fontSize={"2.5rem"}>
                     {props.post.data.title}
                 </Box>
             </Typography>

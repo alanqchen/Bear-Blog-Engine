@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { setTokens } from '../../redux/auth/actions';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { 
     AppBar,
     Toolbar,

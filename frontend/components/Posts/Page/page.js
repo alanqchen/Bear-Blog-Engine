@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { PostCard } from './PostCard/postCard';
-import { PostCardLink, LoadingProgress } from './pageStyled';
+import { PostCardLink } from './pageStyled';
 
 function Pagination({posts}) {
 

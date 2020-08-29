@@ -1,13 +1,9 @@
 import {connect} from 'react-redux';
 import { useEffect, useState } from 'react';
 import {
-    Typography,
-    CircularProgress,
     Table,
     TableBody,
     TableCell,
-    TableContainer,
-    TableHead,
     TableRow,
     Paper
 } from '@material-ui/core';

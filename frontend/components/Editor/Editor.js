@@ -4,9 +4,8 @@ import { useState } from 'react';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { debounce, throttle } from 'lodash';
-import { StyledEditor, StyledYoutubeEmbed, StyledYoutubeEmbedWrapper } from './EditorStyled';
+import { StyledEditor } from './EditorStyled';
 import EditorTheme from '../Theme/editorTheme';
-import { WaveButton } from '../Theme/StyledComponents';
 import { EmbedsArray } from './Embeds';
 
 function Editor({ dispatch, defaultValue, isPreview, isNew }) {
