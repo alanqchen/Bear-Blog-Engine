@@ -48,21 +48,26 @@ function FeatureImage({featureImgUrl, tags, skeleton }) {
                         ? <source type="image/webp" srcSet={process.env.NEXT_PUBLIC_API_URL + featureImgUrl.substring(0, featureImgUrl.length - 5) + ".webp"} />
                         : <source type="image/webp" srcSet={process.env.NEXT_PUBLIC_API_URL + featureImgUrl.substring(0, featureImgUrl.length - 4) + ".webp"} />
                     }
-                    <StyledImage ref={(input) => {
-                        // onLoad replacement for SSR
-                        if (!input) { return; }
-                        const img = input;
+                    <StyledImage 
+                        ref={(input) => {
+                            // onLoad replacement for SSR
+                            if (!input) { return; }
+                            const img = input;
 
-                        const updateFunc = () => {
-                            this.setState({ loaded: true });
-                        };
-                        img.onload = updateFunc;
-                        if (img.complete) {
-                            handleLoad();
-                        }
-                        img.onload = null
-                        }} src={process.env.NEXT_PUBLIC_API_URL + featureImgUrl} alt="Feature Image" onLoad={() => handleLoad()} />
-                    </StyledPicture>
+                            const updateFunc = () => {
+                                this.setState({ loaded: true });
+                            };
+                            img.onload = updateFunc;
+                            if (img.complete) {
+                                handleLoad();
+                            }
+                            img.onload = null
+                        }} 
+                        src={process.env.NEXT_PUBLIC_API_URL + featureImgUrl}
+                        alt="Feature Image" onLoad={() => handleLoad()} 
+                        loading="lazy"
+                    />
+                </StyledPicture>
                 } 
             </StyledImageWrapper>
         </FeatureImageWrapper>
