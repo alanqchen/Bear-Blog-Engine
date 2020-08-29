@@ -30,9 +30,11 @@ function Editor({ dispatch, defaultValue, isPreview, isNew }) {
     }, 30000);
 
     const handleChange = debounce(value => {
+        const text = value();
         if(isNew) {
-            const text = value();
             localStorage.setItem("bearpost.saved", text);
+        } else {
+            localStorage.setItem("bearpost.savedUpdate", text);
         }
         handleAuthRefresh();
     }, 400);

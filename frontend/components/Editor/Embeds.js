@@ -1,4 +1,8 @@
-import { StyledYoutubeEmbed, StyledYoutubeEmbedWrapper } from './EditorStyled';
+import {
+    StyledYoutubeEmbed,
+    StyledYoutubeEmbedWrapper,
+    StyledEmbedWrapper
+} from './EditorStyled';
 
 export const EmbedsArray = [
     {
@@ -13,6 +17,19 @@ export const EmbedsArray = [
             );
         },
         component: YoutubeEmbed,
+    },
+    {
+        title: "Image URL",
+        keywords: "image photo url picture",
+        icon: () => (
+            <img src="/photo-embed.svg" width={24} height={24} />
+        ),
+        matcher: url => {
+            return url.match(
+                /(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg|gif|png|svg))/i
+            );
+        },
+        component: ImageEmbed,
     }
 ];
 
@@ -23,5 +40,15 @@ function YoutubeEmbed(props) {
                 src={`https://www.youtube.com/embed/${props.attrs.matches[1]}?modestbranding=1`}
             />
         </StyledYoutubeEmbedWrapper>
+    );
+}
+
+function ImageEmbed(props) {
+    return (
+        <StyledEmbedWrapper>
+            <img
+                src={`${props.attrs.matches[0]}`}
+            />
+        </StyledEmbedWrapper>
     );
 }

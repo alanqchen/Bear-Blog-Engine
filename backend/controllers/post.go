@@ -508,7 +508,7 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 
 	//body = util.CleanZalgoText(body)
 
-	if len(body) < 10 {
+	if len(body) < 1 {
 		NewAPIError(&APIError{false, "Body is too short", http.StatusBadRequest}, w)
 		return
 	}
@@ -625,7 +625,7 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 
 	//body = util.CleanZalgoText(body)
 
-	if len(body) < 10 {
+	if len(body) < 1 {
 		NewAPIError(&APIError{false, "Body is too short", http.StatusBadRequest}, w)
 		return
 	}

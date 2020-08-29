@@ -142,17 +142,21 @@ export const MetaForm = ({ postData }) => {
         }
 
         // tags formatting
-        console.log(formRef.current.values.tags)
+        
         let tags = split(formRef.current.values.tags, '\\\\');
-        console.log(tags);
+        
         if(tags[0] === '') {
             tags = [];
         }
 
+        const body = postData ? localStorage.getItem("bearpost.savedUpdate") : localStorage.getItem("bearpost.saved");
+
+        console.log(body);
+
         const params = {
             title: formRef.current.values.title,
             subtitle: formRef.current.values.subtitle,
-            body: localStorage.getItem("bearpost.saved"),
+            body: body,
             tags: tags,
             hidden: isDraft,
             featureImgUrl: featureImageURL

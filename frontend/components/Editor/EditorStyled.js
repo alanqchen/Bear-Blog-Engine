@@ -38,6 +38,12 @@ export const StyledYoutubeEmbedWrapper = styled.div`
     overflow: hidden;
 `;
 
+export const StyledEmbedWrapper = styled.div`
+    width: 100%;
+    border-radius: 3px;
+    overflow: hidden;
+`
+
 export const StyledFab = styled(Fab)`
     position: fixed !important;
     bottom: 30px;
