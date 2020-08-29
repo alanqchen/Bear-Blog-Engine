@@ -24,8 +24,8 @@ const Index = props => {
 
     return (
         <Layout>
-            <Typography align="left" color="textPrimary" variant="h2" component="h1">
-                <Box fontWeight={550} fontSize={32}>
+            <Typography align="left" color="textPrimary" variant="h1" component="h1">
+                <Box fontWeight={600} fontSize={"2.5rem"}>
                     {props.post.data.title}
                 </Box>
             </Typography>

@@ -12,6 +12,7 @@ export default class Document extends NextDocument {
         <Head>
           {/* PWA primary color */}
           <meta name="theme-color" content={theme.palette.primary.main} />
+          <link href="https://fonts.googleapis.com/css2?family=Roboto:300,400,500,600&display=swap" rel="stylesheet" />
           <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
         </Head>
         <body content={theme.palette.background}>
