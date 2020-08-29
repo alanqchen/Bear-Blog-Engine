@@ -50,8 +50,7 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
             setGetNewRefreshToken();
         } else if(auth.accessToken !== "") {
             const getNewRefreshToken = async() => {
-                let res = await dispatch(refresh());
-                console.log(res)
+                await dispatch(refresh());
                 if(auth.error) {
                     clearTokens();
                 }
@@ -62,6 +61,7 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
             Router.push("/auth/portal/login");
         }
         setIsInitialLoad(false);
+
     }, [auth.error, isInitialLoad]);
 
     return (
@@ -70,7 +70,7 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
                 <NavBar selectedCategory={selectedCategory} />
                 <div style={dashboardLayoutStyle}>
                     <StyledCenteredContainer>
-                        {initAuth &&
+                        {initAuth && !auth.loading &&
                             <>
                                 {children}
                             </>

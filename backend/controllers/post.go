@@ -611,7 +611,7 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	slug := post.Slug[:9] + util.GenerateSlug(title)
+	slug := post.Slug[:8] + util.GenerateSlug(title)
 	if len(slug) == 0 {
 		NewAPIError(&APIError{false, "Title is invalid", http.StatusBadRequest}, w)
 		return

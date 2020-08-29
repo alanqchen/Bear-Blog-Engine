@@ -14,10 +14,10 @@
 </p>
 
 # Bear Blog Engine / Bear Post
-A Modern Blog Engine. Server-side, not JAMStack.
+A Modern Blog Engine. Backend server required, not JAMStack.
 
-Uses Go for the backend and React (Next) for the frontend.
-Databases used are PostgreSQL and Redis.
+Uses Go (mux) for the backend and React (Next) for the frontend.
+Databases used are PostgreSQL and Redis (auth & caching).
 
 All you need to use Bear-Post is a server to host the backend API. The frontend CDN and SSL certs can be handled by Vercel with your own domain for free!
 
@@ -30,8 +30,8 @@ Current lighthouse stats(PWA hopefully soon):
 ## Features
 
 * SEO and performance optimized
-* WYSIWYG online mardown-based editor 
-* Support for one admin user and multiple editor users
+* WYSIWYG online markdown-based editor that also supports embeds
+* Support for multiple admin and editor users
 * Support for hidden/draft posts
 
 # Using Bear-Post

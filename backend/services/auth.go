@@ -441,7 +441,7 @@ func getPublicKey(jwtConfig *config.JWTConfig) *rsa.PublicKey {
 	publicKeyImported, err := x509.ParsePKIXPublicKey(data.Bytes)
 
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	log.Println("Public key imported successfully")
 

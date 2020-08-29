@@ -1,3 +1,4 @@
+import Router from 'next/router';
 import * as types from './types';
 import { getDisplayName } from 'next/dist/next-server/lib/utils';
 
@@ -87,16 +88,16 @@ export function logout() {
                 'Authorization': 'Bearer ' + getState().auth.accessToken
             }
         })
-            .then(handleErrors)
-            .then(res => res.json())
-            .then(json => {
-                if(json.success) {
-                    localStorage.removeItem("bearpost.JWT");
-                    localStorage.removeItem("bearpost.REFRESH");
-                    dispatch(logoutSuccess());
-                }
-            })
-            .catch(error => dispatch(logoutFailure(error)));
+        .then(handleErrors)
+        .then(res => res.json())
+        .then(json => {
+            if(json.success) {
+                localStorage.removeItem("bearpost.JWT");
+                localStorage.removeItem("bearpost.REFRESH");
+                dispatch(logoutSuccess());
+            }
+        })
+        .catch(error => dispatch(logoutFailure(error)));
     }
 }
 
@@ -109,20 +110,20 @@ export function refresh() {
                 'Authorization': 'Bearer ' + getState().auth.refreshToken
             }
         })
-            .then(handleErrors)
-            .then(res => res.json())
-            .then(json => {
-                if(json.success) {
-                    localStorage.setItem("bearpost.JWT", json.data.tokens.accessToken);
-                    localStorage.setItem("bearpost.REFRESH", json.data.tokens.refreshToken);
-                    dispatch(refreshSuccess(json));
-                }
-            })
-            .catch(error => {
-                localStorage.removeItem("bearpost.JWT");
-                localStorage.removeItem("bearpost.REFRESH");
-                dispatch(refreshFailure(error));
-            });
+        .then(handleErrors)
+        .then(res => res.json())
+        .then(json => {
+            if(json.success) {
+                localStorage.setItem("bearpost.JWT", json.data.tokens.accessToken);
+                localStorage.setItem("bearpost.REFRESH", json.data.tokens.refreshToken);
+                dispatch(refreshSuccess(json));
+            }
+        })
+        .catch(error => {
+            localStorage.removeItem("bearpost.JWT");
+            localStorage.removeItem("bearpost.REFRESH");
+            dispatch(refreshFailure(error));
+        });
     }
 }
 

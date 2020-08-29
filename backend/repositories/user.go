@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 	"log"
-	"time"
 
 	"github.com/alanqchen/Bear-Post/backend/database"
 	"github.com/alanqchen/Bear-Post/backend/models"
@@ -75,6 +74,7 @@ func (ur *userRepository) CreateFirstAdmin(u *models.User) (bool, error) {
 	numUsers := len(users)
 	if numUsers != 0 {
 		log.Println("[WARN] Invalid request to create first admin")
+		log.Println(err)
 		return false, err
 	}
 	// There are no users yet, create admin
@@ -126,7 +126,7 @@ func (ur *userRepository) Update(u *models.User) error {
 
 func (ur *userRepository) GetAll() ([]*models.User, error) {
 	var users []*models.User
-	log.Println(time.Now())
+
 	rows, err := ur.Pool.Query(context.Background(), "SELECT id, name, admin, created_at, updated_at FROM user_schema.\"user\"")
 	if err != nil {
 		log.Println(err)
@@ -137,8 +137,9 @@ func (ur *userRepository) GetAll() ([]*models.User, error) {
 	for rows.Next() {
 		u := new(models.User)
 		err := rows.Scan(&u.ID, &u.Name, &u.Admin, &u.CreatedAt, &u.UpdatedAt)
-		log.Println(err)
+
 		if err != nil {
+			log.Println(err)
 			return nil, err
 		}
 		u.Email = ""
@@ -155,7 +156,7 @@ func (ur *userRepository) GetAll() ([]*models.User, error) {
 
 func (ur *userRepository) GetAllDetailed() ([]*models.AuthUser, error) {
 	var users []*models.AuthUser
-	log.Println(time.Now())
+
 	rows, err := ur.Pool.Query(context.Background(), "SELECT id, name, email, admin, created_at, updated_at, username FROM user_schema.\"user\"")
 	if err != nil {
 		log.Println(err)

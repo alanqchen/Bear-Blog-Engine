@@ -262,6 +262,7 @@ export const MetaForm = ({ postData }) => {
                             startIcon={<DeleteIcon />}
                             type="danger"
                             onClick={() => {setShowDialog(true)}}
+                            disabled={isSubmitting}
                         >
                             Delete
                         </EditorButtonOutlined>
@@ -274,8 +275,8 @@ export const MetaForm = ({ postData }) => {
                                 setIsDraft(true);
                                 submitForm();
                             }}
-                            disabled={isSubmitting}
                             type="submit"
+                            disabled={isSubmitting}
                         >
                             Save
                         </EditorButton>
@@ -288,6 +289,7 @@ export const MetaForm = ({ postData }) => {
                                 submitForm();
                             }}
                             type="publish"
+                            disabled={isSubmitting}
                         >
                             Publish
                         </EditorButton>

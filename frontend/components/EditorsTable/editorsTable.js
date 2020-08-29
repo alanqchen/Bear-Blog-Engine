@@ -53,6 +53,8 @@ function EditorsTable({ auth, dispatch }) {
     const [refresh, setRefresh] = useState(false);
 
     useEffect(()=> {
+        // "Cancel" promise if component is not mounted
+        let isSubscribed = true;
 
         const getUsers = async() => {
             await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/users/detailed', {
@@ -62,19 +64,21 @@ function EditorsTable({ auth, dispatch }) {
             })
             .then(res => res.json())
             .then(json => {
-                if(json.success) {
+                if(json.success && isSubscribed) {
                     setEditors(json.data);
                     setLoaded(true);
-                } else {
+                } else if(isSubscribed) {
                     setIsError(true);
                     setMessage(json.message);
                     setSnackbarOpen(true);
                 }
             })
             .catch(() => {
-                setIsError(true);
-                setMessage("Failed to get editors!");
-                setSnackbarOpen(true);
+                if(isSubscribed) {
+                    setIsError(true);
+                    setMessage("Failed to get editors!");
+                    setSnackbarOpen(true);
+                }
             })
         }
 
@@ -82,6 +86,7 @@ function EditorsTable({ auth, dispatch }) {
 
         getUsers();
 
+        return () => (isSubscribed = false);
     }, [refresh]);
 
     const editUser = async(name, username, password, admin) => {
@@ -96,7 +101,7 @@ function EditorsTable({ auth, dispatch }) {
             headers: { 
                 'Authorization': 'Bearer ' + localStorage.getItem("bearpost.JWT"),
             },
-            method: 'POST',
+            method: userEdit ? 'PUT' : 'POST',
             body: JSON.stringify(params)
         })
         .then(res => res.json())

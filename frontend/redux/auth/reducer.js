@@ -40,7 +40,7 @@ export default function authReducer( state = initalAuthState, action) {
         case authTypes.LOGOUT_BEGIN:
             return {
                 ...state,
-                loading: true,
+                loading: false,
                 error: null
             };
 
