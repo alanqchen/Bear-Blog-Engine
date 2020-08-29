@@ -1,4 +1,3 @@
-import Layout from '../../../components/PublicLayout/publicLayout';
 import Error from '../../404';
 
 const Index = props => (

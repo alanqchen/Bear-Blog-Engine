@@ -22,10 +22,9 @@ const Index = props => {
     }
     return (
         <Layout>
-            <Typography align="center" fontWeight="fontWeightLight" variant="h4" color="textPrimary" component="h4">
+            <Typography align="left" variant="h4" color="textPrimary" component="h1">
                 This page is only to test getting data and is not final
             </Typography>
-            <Link href="/"><a>Goto Index</a></Link>
             <img src={process.env.NEXT_PUBLIC_API_URL + props.post.data.featureImgUrl}></img>
             <p>{props.post.data.createdAt}</p>
             <p>{props.dateF}</p>
@@ -88,14 +87,7 @@ export async function getStaticProps(context) {
     let dateStr = post.data.createdAt;
     dateStr = timestamp2date(dateStr)
 
-    let resAuthor = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/${post.data.authorid}`);
-    const author = await resAuthor.json();
-    let authorName;
-    if(!author.success) {
-        authorName = "Unknown User";
-    } else {
-        authorName = author.data.name;
-    }
+    const authorName = post.data.authorid;
 
     return {
         props: {

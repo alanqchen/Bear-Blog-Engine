@@ -1,66 +1,54 @@
-import { StyledEditor } from '../../../../../components/Editor/EditorStyled';
 import { useEffect, useState } from 'react';
-import { TextField } from '@material-ui/core';
-import { Typography, Divider, Snackbar } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+import Router from 'next/router';
+import { Fab, Typography, Divider, Button, Icon } from '@material-ui/core';
+import { Visibility as VisibilityIcon } from '@material-ui/icons';
 import Layout from '../../../../../components/DashboardLayout/dashboardLayout';
 import {
     WidthWrapper,
     InputsWrapper
 } from '../../../../../components/DashboardLayout/dashboardLayoutStyled';
+import fetch from 'isomorphic-unfetch';
+import Editor from '../../../../../components/Editor/Editor';
+import { StyledFab } from '../../../../../components/Editor/EditorStyled';
+import MetaForm from '../../../../../components/Editor/MetaForm';
 import { WaveButton } from '../../../../../components/Theme/StyledComponents';
-import EditorTheme from '../../../../../components/Theme/editorTheme';
-
-function CustAlert(props) {
-    return <Alert elevation={6} variant="filled" {...props} />;
-}
 
 const Index = () => {
 
     const [isPreview, setIsPreview] = useState(false);
-    const [open, setOpen] = useState(false);
-    const [errorMsg, setErrorMsg] = useState("");
+    const [editorValue, setEditorValue] = useState("");
+    const [initialLoad, setInitialLoad] = useState(true);
+    const [loaded, setLoaded] = useState(false);
+    const [showError, setShowError] = useState(false);
+    const [errMsg, setErrMsg] = useState("");
 
-    const handleClick = () => {
-        setOpen(true);
-    };
-
-    const handleClose = (event, reason) => {
-        if (reason === 'clickaway') {
-        return;
+    useEffect(() => {
+        const savedPath = localStorage.getItem("bearpost.savePath");
+        if (savedPath && savedPath === "/") {
+            const savedText = localStorage.getItem("bearpost.saved");
+            console.log(savedText);
+            if(savedText) {
+                setEditorValue(savedText);
+            }
+            console.log("setting");
         }
-
-        setOpen(false);
-    };
-
-    useEffect(() => {}, [isPreview]);
-
+        localStorage.setItem("bearpost.savePath", "/");
+        setInitialLoad(false);
+        setLoaded(true);
+    }, []);
+    
     return (
         <Layout>
+            <StyledFab aria-label="preview" onClick={() => {setIsPreview(!isPreview)}} >
+                <VisibilityIcon color="action" />
+            </StyledFab>
+            <MetaForm />
             <WidthWrapper>
-                <InputsWrapper>
-                    <TextField name="title" label="Title" />
-                    <TextField name="subtitle" label="Subtitle" />
-                </InputsWrapper>
-                <Divider />
-                <StyledEditor 
-                    theme={EditorTheme}
-                    onClickHashtag={tag => {
-                        history.push(`/category/${tag}`);
-                    }}
-                    onShowToast={(message, id) => {
-                        setErrorMsg(message + "(" + id + ")");
-                        setOpen(true);
-                    }}
-                    readOnly={isPreview}
-                />
-                <WaveButton onClick={() => {setIsPreview(!isPreview)}}>Toggle Preview</WaveButton>
-                <WaveButton onClick={() => {setOpen(true)}}>Test Snackbar</WaveButton>
-                <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                    <CustAlert onClose={handleClose} severity="error">
-                        {errorMsg}
-                    </CustAlert>
-                </Snackbar>
+                <Divider style={{marginTop: "10px", marginBottom: "10px"}} />
+                {console.log(loaded)}
+                {loaded && <Editor defaultValue={editorValue} isPreview={isPreview} isNew />
+                }
+                <Divider style={{marginTop: "10px", marginBottom: "10px"}} />
             </WidthWrapper>
         </Layout>
     );

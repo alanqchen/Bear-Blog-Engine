@@ -1,8 +1,8 @@
 import { connect } from 'react-redux';
-import Router from "next/router";
+import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { StyledCenteredContainer, DashBoardWrapper } from './dashboardLayoutStyled';
-import { NavBar } from '../DashboardNavbar/NavBar';
+import NavBar from '../DashboardNavbar/NavBar';
 import { refresh, setTokens } from '../../redux/auth/actions';
 
 const dashboardLayoutStyle = {
@@ -11,12 +11,11 @@ const dashboardLayoutStyle = {
     flexGrow: 1,
 };
 
-function DashboardLayout({ auth, dispatch, children}) {
+function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
     const [initAuth, setInitAuth] = useState(false);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     useEffect(() => {
-        const accessToken = localStorage.getItem("bearpost.JWT");
-        const refreshToken = localStorage.getItem("bearpost.REFRESH");
 
         const clearTokens = async() => {
             await dispatch(setTokens("", ""));
@@ -24,36 +23,54 @@ function DashboardLayout({ auth, dispatch, children}) {
             localStorage.removeItem("bearpost.REFRESH");
         }
 
+        if(auth.error) {
+            clearTokens();
+            Router.push("/auth/portal/login");
+            return;
+        } else if(!auth.loading && !isInitialLoad) {
+            setInitAuth(true);
+            return;
+        }
+
+        const accessToken = localStorage.getItem("bearpost.JWT");
+        const refreshToken = localStorage.getItem("bearpost.REFRESH");
+
         if(accessToken) {
             const setGetNewRefreshToken = async() => {
                 await dispatch(setTokens(accessToken, refreshToken));
                 await dispatch(refresh());
+                if(auth.error) {
+                    clearTokens();
+                }
             }
             setGetNewRefreshToken();
-            if(auth.error) {
-                clearTokens();
-            }
-        } else if(auth.accessToken != "") {
+        } else if(auth.accessToken !== "") {
             const getNewRefreshToken = async() => {
                 await dispatch(refresh());
+                if(auth.error) {
+                    clearTokens();
+                }
             }
             getNewRefreshToken();
-            if(auth.error) {
-                clearTokens();
-            }
         } else {
+            clearTokens();
             Router.push("/auth/portal/login");
         }
-        setInitAuth(true);
-    }, []);
+        setIsInitialLoad(false);
+
+    }, [auth.error, isInitialLoad]);
 
     return (
         <>
             <DashBoardWrapper>
-                <NavBar />
+                <NavBar selectedCategory={selectedCategory} />
                 <div style={dashboardLayoutStyle}>
                     <StyledCenteredContainer>
-                        {children}
+                        {initAuth &&
+                            <>
+                                {children}
+                            </>
+                        }
                     </StyledCenteredContainer>
                 </div>
             </DashBoardWrapper>
@@ -64,9 +81,6 @@ function DashboardLayout({ auth, dispatch, children}) {
 const mapStateToProps = (state, ownProps) => {
     return {
         auth: {
-            accessToken: state.auth.accessToken,
-            refreshToken: state.auth.refreshToken,
-            userData: state.auth.userData,
             loading: state.auth.loading,
             error: state.auth.error
         },

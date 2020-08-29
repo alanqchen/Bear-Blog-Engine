@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Waypoint } from 'react-waypoint';
 import { StyledNavBar } from '../PublicNavBar/NavBarStyled';
-import { StyledCenteredContainer } from './postLayoutSyled';
+import { StyledCenteredContainer, WidthWrapper } from './postLayoutSyled';
 
 const postLayoutStyle = {
     marginTop: 20,
@@ -40,7 +40,9 @@ function postLayout({children}) {
             <StyledNavBar atTop={atTop} />
             <Waypoint onEnter={waypointEnter} onLeave={waypointLeave} />
             <StyledCenteredContainer>
-                {children}
+                <WidthWrapper>
+                    {children}
+                </WidthWrapper>
             </StyledCenteredContainer>
         </div>
     );

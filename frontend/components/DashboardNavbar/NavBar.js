@@ -1,3 +1,5 @@
+import { connect } from 'react-redux';
+import { setTokens } from '../../redux/auth/actions';
 import { useEffect, useState } from 'react';
 import { 
     AppBar,
@@ -8,11 +10,22 @@ import {
     IconButton,
     List,
     ListItem,
-    ListItemText
+    ListItemText,
+    ListItemIcon,
+    Divider,
+    Snackbar
 } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
-import CloseIcon from '@material-ui/icons/Close';
+import { Alert } from '@material-ui/lab';
+import {
+    Menu as MenuIcon,
+    Close as CloseIcon,
+    List as ListIcon,
+    HomeOutlined as HomeIcon,
+    GroupOutlined as EditorsIcon,
+    ExitToApp as ExitIcon
+} from '@material-ui/icons';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import Router from 'next/router';
 import Link from 'next/link';
 import {
     HeaderLink
@@ -46,25 +59,87 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export function NavBar({ className }) {
+function NavBar({ className, selectedCategory, auth, dispatch }) {
 
-    const categories = ['Cat 1', 'Cat 2', 'Cat 3', 'Cat 4', 'Cat 5']
     const classes = useStyles();
     const theme = useTheme();
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [alertOpen, setAlertOpen] = useState(false);
+    const [isError, setIsError] = useState(false);
+    const [alertMsg, setAlertMsg] = useState("");
+
+    // SNACKBAR
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setAlertOpen(false);
+    };
+
+    const pushLink = (link) => {
+        Router.push(link);
+    }
 
     function handleDrawerToggle() {
         setMobileOpen(!mobileOpen)
     }
 
+    const doLogout = async() => {
+        await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/auth/logout', {
+            credentials: 'include',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem("bearpost.JWT")
+            }
+        })
+        .then(res => res.json())
+        .then(async(json) => {
+            if(json.success) {
+                localStorage.removeItem("bearpost.JWT");
+                localStorage.removeItem("bearpost.REFRESH");
+                await dispatch(setTokens("", ""));
+                setIsError(false);
+                setAlertMsg("Logged out! Redirecting...");
+                setAlertOpen(true);
+                await new Promise(r => setTimeout(r, 2000));
+                Router.push("/auth/portal/login");
+            } else {
+                setIsError(true);
+                setAlertMsg(json.message);
+                setAlertOpen(true);
+            }
+        })
+        .catch(() => {
+            setIsError(true);
+            setAlertMsg("Failed to logout!")
+            setAlertOpen(true);
+        });
+    }
+    
     const drawer = (
         <div>
             <List>
-                {categories.map((text, index) => (
-                    <ListItem button key={text}>
-                    <ListItemText primary={text} />
-                    </ListItem>
-                ))}
+                <ListItem button onClick={()=>{pushLink("/")}} >
+                    <ListItemIcon><HomeIcon /></ListItemIcon>
+                    <ListItemText primary={'View site'} />
+                </ListItem>
+                <Divider />
+                <ListItem button onClick={()=>{pushLink("/auth/portal/dashboard")}} selected={selectedCategory === "Posts" ? true : false} >
+                    <ListItemIcon><ListIcon /></ListItemIcon>
+                    <ListItemText primary={'Posts'} />
+                </ListItem>
+                <ListItem button onClick={()=>{pushLink("/auth/portal/dashboard/editors")}} selected={selectedCategory === "Editors" ? true : false} >
+                    <ListItemIcon><EditorsIcon /></ListItemIcon>
+                    <ListItemText primary={'Editors'} />
+                </ListItem>
+                <Divider />
+                <ListItem button 
+                    onClick={async() => {
+                        await doLogout();
+                    }} 
+                >
+                    <ListItemIcon><ExitIcon /></ListItemIcon>
+                    <ListItemText primary={'Log Out'} />
+                </ListItem>
             </List>
         </div>
     );
@@ -124,8 +199,14 @@ export function NavBar({ className }) {
                     </Drawer>  
                 </Hidden>
             </nav>
+            
+            <Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleClose}>
+                <Alert elevation={6} variant="filled" onClose={handleClose} severity={isError ? "error" : "success"}>
+                    {alertMsg}
+                </Alert>
+            </Snackbar>
         </>
     );
 }
 
-export default NavBar;
+export default connect()(NavBar);

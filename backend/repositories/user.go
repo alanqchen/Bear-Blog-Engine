@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 	"log"
-	"time"
 
 	"github.com/alanqchen/Bear-Post/backend/database"
 	"github.com/alanqchen/Bear-Post/backend/models"
@@ -21,7 +20,7 @@ type UserRepository interface {
 	Create(u *models.User) error
 	CreateFirstAdmin(u *models.User) (bool, error)
 	GetAll() ([]*models.User, error)
-	GetAllDetailed() ([]*models.User, error)
+	GetAllDetailed() ([]*models.AuthUser, error)
 	FindByID(id string) (*models.User, error)
 	FindByIDDetailed(id string) (*models.User, error)
 	FindByEmail(email string) (*models.User, error)
@@ -55,11 +54,11 @@ func (ur *userRepository) Create(u *models.User) error {
 	//defer ur.Conn.Close(context.Background())
 	_, err := ur.Pool.Exec(context.Background(),
 		"INSERT INTO user_schema.\"user\"(id, name, email, password, created_at, admin, username) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-		u.ID, u.Name, u.Email, u.Password, (u.CreatedAt.UTC()), false, u.Username,
+		u.ID, u.Name, u.Email, u.Password, (u.CreatedAt.UTC()), u.Admin, u.Username,
 	)
 
-	log.Println(err)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 
@@ -75,6 +74,7 @@ func (ur *userRepository) CreateFirstAdmin(u *models.User) (bool, error) {
 	numUsers := len(users)
 	if numUsers != 0 {
 		log.Println("[WARN] Invalid request to create first admin")
+		log.Println(err)
 		return false, err
 	}
 	// There are no users yet, create admin
@@ -90,8 +90,8 @@ func (ur *userRepository) CreateFirstAdmin(u *models.User) (bool, error) {
 		"INSERT INTO user_schema.\"user\"(id, name, email, password, created_at, admin, username) VALUES ($1, $2, $3, $4, $5, $6, $7)",
 		u.ID, u.Name, u.Email, u.Password, (u.CreatedAt.UTC()), u.Admin, u.Username,
 	)
-	log.Println(err)
 	if err != nil {
+		log.Println(err)
 		return false, err
 	}
 
@@ -115,10 +115,6 @@ func (ur *userRepository) Update(u *models.User) error {
 		u.Name, u.Email, u.Password, u.UpdatedAt, u.Username, u.ID,
 	)
 	if err != nil {
-		log.Println(u.Name)
-		log.Println(u.Email)
-		log.Println(u.Password)
-		log.Println(u.UpdatedAt)
 		log.Println(u.Username)
 		log.Println(u.ID)
 		log.Println(err)
@@ -130,7 +126,7 @@ func (ur *userRepository) Update(u *models.User) error {
 
 func (ur *userRepository) GetAll() ([]*models.User, error) {
 	var users []*models.User
-	log.Println(time.Now())
+
 	rows, err := ur.Pool.Query(context.Background(), "SELECT id, name, admin, created_at, updated_at FROM user_schema.\"user\"")
 	if err != nil {
 		log.Println(err)
@@ -141,8 +137,9 @@ func (ur *userRepository) GetAll() ([]*models.User, error) {
 	for rows.Next() {
 		u := new(models.User)
 		err := rows.Scan(&u.ID, &u.Name, &u.Admin, &u.CreatedAt, &u.UpdatedAt)
-		log.Println(err)
+
 		if err != nil {
+			log.Println(err)
 			return nil, err
 		}
 		u.Email = ""
@@ -150,16 +147,16 @@ func (ur *userRepository) GetAll() ([]*models.User, error) {
 	}
 
 	if err := rows.Err(); err != nil {
+		log.Println(err)
 		return nil, err
 	}
-	log.Println(err)
 
 	return users, nil
 }
 
-func (ur *userRepository) GetAllDetailed() ([]*models.User, error) {
-	var users []*models.User
-	log.Println(time.Now())
+func (ur *userRepository) GetAllDetailed() ([]*models.AuthUser, error) {
+	var users []*models.AuthUser
+
 	rows, err := ur.Pool.Query(context.Background(), "SELECT id, name, email, admin, created_at, updated_at, username FROM user_schema.\"user\"")
 	if err != nil {
 		log.Println(err)
@@ -169,18 +166,24 @@ func (ur *userRepository) GetAllDetailed() ([]*models.User, error) {
 
 	for rows.Next() {
 		u := new(models.User)
-		err := rows.Scan(&u.ID, &u.Name, &u.Email, &u.Admin, &u.CreatedAt, &u.UpdatedAt, &u.Username)
-		log.Println(err)
+		authUser := new(models.AuthUser)
+		authUser.User = u
+
+		err := rows.Scan(
+			&authUser.User.ID, &authUser.User.Name, &authUser.User.Email, &authUser.Admin, &authUser.User.CreatedAt, &authUser.User.UpdatedAt, &authUser.User.Username,
+		)
+
 		if err != nil {
+			log.Println(err)
 			return nil, err
 		}
-		users = append(users, u)
+		users = append(users, authUser)
 	}
 
 	if err := rows.Err(); err != nil {
+		log.Println(err)
 		return nil, err
 	}
-	log.Println(err)
 
 	return users, nil
 }
@@ -221,8 +224,8 @@ func (ur *userRepository) FindByID(id string) (*models.User, error) {
 		"SELECT id, name, admin, created_at, updated_at FROM user_schema.\"user\" WHERE id = $1", id,
 	).Scan(&user.ID, &user.Name, &user.Admin, &user.CreatedAt, &user.UpdatedAt)
 
-	log.Println(err)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	user.Email = ""
@@ -237,8 +240,8 @@ func (ur *userRepository) FindByIDDetailed(id string) (*models.User, error) {
 		"SELECT id, name, email, admin, created_at, updated_at, username FROM user_schema.\"user\" WHERE id = $1", id,
 	).Scan(&user.ID, &user.Name, &user.Email, &user.Admin, &user.CreatedAt, &user.UpdatedAt, &user.Username)
 
-	log.Println(err)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 

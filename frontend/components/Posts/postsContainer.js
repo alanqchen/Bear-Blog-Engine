@@ -1,12 +1,9 @@
 import {connect} from 'react-redux';
-import Router from "next/router";
 import React, { useEffect, useState } from 'react';
 import { fetchPosts as fetchPostsAction, fetchPostsSetMinID } from '../../redux/fetchPosts/actions';
 import { fetchCategory as fetchCategoryAction, fetchCategorySetMinID } from '../../redux/fetchCategory/actions';
-import { fetchCategoryNew } from '../../redux/fetchCategory/actions';
 import Page from '../Posts/Page/page';
 import { Waypoint } from 'react-waypoint';
-import styled from 'styled-components'
 import PostCard from './Page/PostCard/postCard';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import { Typography } from '@material-ui/core';

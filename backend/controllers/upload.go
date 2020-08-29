@@ -84,6 +84,12 @@ func (uc *UploadController) UploadImage(w http.ResponseWriter, r *http.Request) 
 	now := time.Now()
 	fileName := now.Format("2006-01-02_15-04-05") + "_" + util.GetMD5Hash(now.String())
 
+	if strings.ContainsAny(fileName, `\ | /`) {
+		log.Println("[WARN] Upload generated bad file name:", fileName)
+		NewAPIError(&APIError{false, "Generated bad file name", http.StatusInternalServerError}, w)
+		return
+	}
+
 	// .webp will only be saved in the /webp directory
 	if ext == ".webp" {
 		err = ioutil.WriteFile("./public/images/webp/"+fileName+ext, Buf.Bytes(), 0644)
@@ -193,6 +199,12 @@ func (uc *UploadController) UploadVideo(w http.ResponseWriter, r *http.Request) 
 
 	now := time.Now()
 	fileName := now.Format("2006-01-02_15-04-05") + "_" + util.GetMD5Hash(now.String())
+
+	if strings.ContainsAny(fileName, `\ | /`) {
+		log.Println("[WARN] Upload generated bad file name:", fileName)
+		NewAPIError(&APIError{false, "Generated bad file name", http.StatusInternalServerError}, w)
+		return
+	}
 
 	err = ioutil.WriteFile("./public/videos/"+fileName+ext, Buf.Bytes(), 0644)
 	if err != nil {

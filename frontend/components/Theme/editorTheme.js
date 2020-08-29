@@ -114,8 +114,9 @@ export const customDark = {
     ...dark,
     background: GlobalTheme.background,
     text: GlobalTheme.textPrimary,
-
-    tableDivider: GlobalTheme.backgroundAlt2
+    zIndex: 100000,
+    tableDivider: GlobalTheme.backgroundAlt2,
+    fontSize: "1.5em"
 }
 
 export default customDark;

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import Router from "next/router";
+import Router from 'next/router';
 import { useEffect, useState, useRef } from 'react';
 import ReCAPTCHA from "react-google-recaptcha";
 import { Typography, InputAdornment, LinearProgress } from '@material-ui/core';
@@ -27,7 +27,7 @@ export const LoginForm = ({ auth, dispatch }) => {
     };
 
     useEffect(() => {
-        if(passedCaptcha && auth.accessToken != "" && !auth.error) {
+        if(passedCaptcha && !auth.loading && auth.accessToken !== "" && !auth.error) {
             Router.push("/auth/portal/dashboard");
         }
     })
@@ -46,12 +46,11 @@ export const LoginForm = ({ auth, dispatch }) => {
                     .required("Required")
                 })}
                 onSubmit={async(values, { setSubmitting }) => {
-                        if(passedCaptcha) {
-                            await doLogin(values.username, values.password);
-                        } else {
-                            await recaptchaRef.current.executeAsync();
-                        }
-                        setSubmitting(false);
+                    if(passedCaptcha) {
+                        await doLogin(values.username, values.password);
+                    } else {
+                        await recaptchaRef.current.executeAsync();
+                    }
                 }}
             >
             {({ values, submitForm, isSubmitting }) => (
@@ -65,9 +64,9 @@ export const LoginForm = ({ auth, dispatch }) => {
                     />
                     <Field
                         component={StyledTextField}
+                        name="password"
                         type="password"
                         label="Password"
-                        name="password"
                         variant="outlined" 
                     />
                     {isSubmitting && <LinearProgress />}
