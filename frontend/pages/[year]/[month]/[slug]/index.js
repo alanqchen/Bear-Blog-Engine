@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import fetch from 'isomorphic-unfetch';
 import Error from '../../../404';
 import ReadOnlyEditor from '../../../../components/Editor/ReadOnlyEditor';
-import { Typography, Box, Divider } from '@material-ui/core';
+import { Typography, Box, Divider, Link } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import FeatureImage from '../../../../components/Posts/Page/PostCard/featureImage';
 import {timestamp2date} from '../../../../components/utils/helpers'
@@ -57,7 +57,11 @@ const Index = props => {
             <Divider />
             <Box m={1} />
             <ReadOnlyEditor defaultValue={props.post.data.body} />
-            
+            <Box m={4} />
+            <Typography align="center" color="textSecondary" gutterBottom>
+                Powered by <Link href="https://github.com/alanqchen/Bear-Blog-Engine" color="textSecondary">Bear Blog Engine</Link>
+            </Typography>
+            <Box m={3} />
 
         </Layout>
     );
