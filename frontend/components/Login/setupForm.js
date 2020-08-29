@@ -1,10 +1,9 @@
 import { connect } from 'react-redux';
 import Router from 'next/router';
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import ReCAPTCHA from "react-google-recaptcha";
 import { Typography, Snackbar, LinearProgress } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { Person, Lock, Toys, DonutLargeOutlined } from '@material-ui/icons';
 import { WaveButton } from '../Theme/StyledComponents';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from "yup";
@@ -13,7 +12,6 @@ import {
     StyledTextField,
     FormWrapper
 } from './loginStyled';
-import SelectInput from '@material-ui/core/Select/SelectInput';
 
 function CustAlert(props) {
     return <Alert elevation={6} variant="filled" {...props} />;

@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { fetchPosts as fetchPostsAction, fetchPostsSetMinID } from '../../redux/fetchPosts/actions';
 import { fetchCategory as fetchCategoryAction, fetchCategorySetMinID } from '../../redux/fetchCategory/actions';
 import Page from '../Posts/Page/page';
@@ -8,15 +8,6 @@ import PostCard from './Page/PostCard/postCard';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import { Typography } from '@material-ui/core';
 import { WaveButton } from '../Theme/StyledComponents'
-
-const PostContainer = ({className, children}) => {
-    return (
-      <div className={className}>
-        {children}
-      </div>
-    );
-    
-  }
 
 function PostsContainer({ initialData, fetchPosts, fetchCategory, dispatch, category }) {
 

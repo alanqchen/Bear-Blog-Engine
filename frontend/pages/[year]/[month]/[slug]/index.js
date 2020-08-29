@@ -1,9 +1,11 @@
-import Link from 'next/link';
-import Layout from '../../../../components/PostLayout/postLayout'
-import { useRouter } from 'next/router'
-import fetch from 'isomorphic-unfetch'
-import Error from 'next/error'
-import { Typography, CircularProgress } from '@material-ui/core';
+import Layout from '../../../../components/PostLayout/postLayout';
+import { useRouter } from 'next/router';
+import fetch from 'isomorphic-unfetch';
+import Error from '../../../404';
+import ReadOnlyEditor from '../../../../components/Editor/ReadOnlyEditor';
+import { Typography, Box, Divider, Link } from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
+import FeatureImage from '../../../../components/Posts/Page/PostCard/featureImage';
 import {timestamp2date} from '../../../../components/utils/helpers'
 
 const Index = props => {
@@ -12,35 +14,55 @@ const Index = props => {
     if (router.isFallback) {
         return (
             <Layout>
-                <CircularProgress />
+                <Typography align="left" color="textPrimary" variant="h1" component="h1">
+                    <Skeleton variant="text" width="80%"/> 
+                </Typography>
+                <Typography align="left" variant="subtitle1" color="textPrimary" component="h2" gutterBottom>
+                    <Skeleton variant="text" width="40%"/> 
+                </Typography>
+                <Skeleton variant="rect" width="100%" height={"600px"} />
             </Layout>
         );
     }
 
     if (props.errorCode) {
-        return <Error statusCode={props.errorCode} />
+        return <Error />
     }
+
     return (
         <Layout>
-            <Typography align="left" variant="h4" color="textPrimary" component="h1">
-                This page is only to test getting data and is not final
+            <Typography align="left" color="textPrimary" variant="h1" component="h1">
+                <Box fontWeight={500} fontSize={"2.5rem"}>
+                    {props.post.data.title}
+                </Box>
             </Typography>
-            <img src={process.env.NEXT_PUBLIC_API_URL + props.post.data.featureImgUrl}></img>
-            <p>{props.post.data.createdAt}</p>
-            <p>{props.dateF}</p>
-            <p>Author: {props.author}</p>
-            
-            <h1>{props.post.data.title}</h1>
-            <h3>{props.post.data.subtitle}</h3>
-            <h4>Tags:</h4>
-            <div>
-            {props.post.data.tags.map(tag => (
-            <p key={tag}>{tag}</p>
-            ))}
-            </div>
-            <h4>Body</h4>
-            <p>{props.post.data.body}</p>
-            <p>Views: {props.post.data.views}</p>
+            <Box m={1} />
+            <Typography align="left" variant="subtitle1" color="textPrimary" component="h2" gutterBottom>
+                <Box fontSize={18}>
+                    {props.post.data.subtitle}
+                </Box>
+            </Typography>
+            <Typography align="left" variant="subtitle2" color="textSecondary" gutterBottom>
+                {props.dateF}
+                {props.updateF && " (updated " + props.updateF + ")"}
+            </Typography>
+            <FeatureImage 
+                featureImgUrl={props.post.data.featureImgUrl}
+                tags={props.post.data.tags}
+                skeleton={false}
+                moreHeight
+                noMargin
+            />
+            <Box m={2} />
+            <Divider />
+            <Box m={1} />
+            <ReadOnlyEditor defaultValue={props.post.data.body} />
+            <Box m={4} />
+            <Typography align="center" color="textSecondary" gutterBottom>
+                Powered by <Link href="https://github.com/alanqchen/Bear-Blog-Engine" color="textSecondary">Bear Blog Engine</Link>
+            </Typography>
+            <Box m={3} />
+
         </Layout>
     );
 };
@@ -84,8 +106,12 @@ export async function getStaticProps(context) {
         };
     }
 
-    let dateStr = post.data.createdAt;
-    dateStr = timestamp2date(dateStr)
+    const dateStr = timestamp2date(post.data.createdAt)
+
+    let updateStr = post.data.updatedAt;
+    if(updateStr) {
+        updateStr = timestamp2date(updateStr);
+    }
 
     const authorName = post.data.authorid;
 
@@ -94,6 +120,7 @@ export async function getStaticProps(context) {
             errorCode: errorCode,
             post: post,
             dateF: dateStr,
+            updateF: updateStr,
             author: authorName
         }
     };

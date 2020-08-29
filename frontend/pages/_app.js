@@ -1,10 +1,6 @@
-import { Provider as ReduxProvider } from 'react-redux';
-import NextApp from 'next/app'
-import Router from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { wrapper } from '../redux/store';
 import Head from 'next/head';
-import '../assets/css/fonts.css';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { ThemeProvider as MUIThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';

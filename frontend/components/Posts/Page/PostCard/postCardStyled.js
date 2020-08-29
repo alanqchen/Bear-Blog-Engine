@@ -31,7 +31,7 @@ export const StyledImageWrapper = styled.div`
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    max-height: 300px;
+    max-height: ${({ moreHeight }) => moreHeight ? "600px" : "300px" };
 `;
 
 export const StyledPicture = styled.picture`
@@ -48,10 +48,12 @@ export const StyledImage = styled.img`
 
 export const FeatureImageWrapper = styled.div`
     position: relative;
-    margin-left: -16px;
-    margin-right: -16px;
-    margin-top: -16px;
-    margin-bottom: 16px;
+    ${({ noMargin }) => !noMargin && `
+        margin-left: -16px;
+        margin-right: -16px;
+        margin-top: -16px;
+        margin-bottom: 16px;
+    `}
 `;
 
 export const StyledLinearProgressWrapper = styled.div`

@@ -1,13 +1,13 @@
 import styled from "styled-components";
 import Editor from 'rich-markdown-editor';
-import { Fab, Button, StepLabel } from '@material-ui/core';
+import { Fab, Button } from '@material-ui/core';
 import GlobalStyle from '../Theme/theme';
 import { Form } from 'formik';
 
 export const StyledEditor = styled(Editor)`
     width: 100%;
     & p {
-        font-size: 1rem;
+        font-size: 1.125rem;
         line-height: 1.7rem;
     }
     & h1 {

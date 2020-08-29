@@ -1,7 +1,7 @@
 import Router from 'next/router';
 import { useEffect, useState } from 'react';
 import { WidthWrapper } from '../DashboardLayout/dashboardLayoutStyled';
-import { Divider, Button, Snackbar, LinearProgress } from '@material-ui/core';
+import { Divider, Snackbar, LinearProgress } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { Visibility as VisibilityIcon } from '@material-ui/icons';
 import Editor from './Editor';

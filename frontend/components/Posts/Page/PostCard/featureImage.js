@@ -5,14 +5,12 @@ import {
     StyledPicture,
     StyledImageWrapper,
     FeatureImageWrapper,
-    StyledLinearProgressWrapper,
     TagsWrapper,
-    StyledChip,
-    ImageSkeleton
+    StyledChip
 } from './postCardStyled';
 import { Skeleton } from '@material-ui/lab';
 
-function FeatureImage({featureImgUrl, tags, skeleton }) {
+function FeatureImage({ featureImgUrl, tags, skeleton, moreHeight, noMargin }) {
 
     const [loading, setLoading] = useState(true);
 
@@ -23,10 +21,10 @@ function FeatureImage({featureImgUrl, tags, skeleton }) {
     useEffect(() => { }, [loading]);
     
     return (
-        <FeatureImageWrapper>
+        <FeatureImageWrapper noMargin={noMargin ? "1" : undefined}>
             {!skeleton && loading 
                 &&  <>
-                        <Skeleton variant="rect" width="100%" height="300px" />
+                        <Skeleton variant="rect" width="100%" height={moreHeight ? "600px" : "300px"} />
                     </>
             }
             <TagsWrapper>
@@ -40,29 +38,34 @@ function FeatureImage({featureImgUrl, tags, skeleton }) {
                 );
             })}
             </TagsWrapper>
-            <StyledImageWrapper>
-                {skeleton ? <Skeleton variant="rect" width="100%" height="300px"/>
+            <StyledImageWrapper moreHeight={moreHeight ? "1" : undefined}>
+                {skeleton ? <Skeleton variant="rect" width="100%" height={moreHeight ? "600px" : "300px"} />
                 :
                 <StyledPicture>
                     {featureImgUrl.substring(featureImgUrl.length - 5, featureImgUrl.length) == ".jpeg" 
                         ? <source type="image/webp" srcSet={process.env.NEXT_PUBLIC_API_URL + featureImgUrl.substring(0, featureImgUrl.length - 5) + ".webp"} />
                         : <source type="image/webp" srcSet={process.env.NEXT_PUBLIC_API_URL + featureImgUrl.substring(0, featureImgUrl.length - 4) + ".webp"} />
                     }
-                    <StyledImage ref={(input) => {
-                        // onLoad replacement for SSR
-                        if (!input) { return; }
-                        const img = input;
+                    <StyledImage 
+                        ref={(input) => {
+                            // onLoad replacement for SSR
+                            if (!input) { return; }
+                            const img = input;
 
-                        const updateFunc = () => {
-                            this.setState({ loaded: true });
-                        };
-                        img.onload = updateFunc;
-                        if (img.complete) {
-                            handleLoad();
-                        }
-                        img.onload = null
-                        }} src={process.env.NEXT_PUBLIC_API_URL + featureImgUrl} alt="Feature Image" onLoad={() => handleLoad()} />
-                    </StyledPicture>
+                            const updateFunc = () => {
+                                this.setState({ loaded: true });
+                            };
+                            img.onload = updateFunc;
+                            if (img.complete) {
+                                handleLoad();
+                            }
+                            img.onload = null
+                        }} 
+                        src={process.env.NEXT_PUBLIC_API_URL + featureImgUrl}
+                        alt="Feature Image" onLoad={() => handleLoad()} 
+                        loading="lazy"
+                    />
+                </StyledPicture>
                 } 
             </StyledImageWrapper>
         </FeatureImageWrapper>

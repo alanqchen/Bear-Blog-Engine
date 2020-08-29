@@ -1,8 +1,6 @@
 import Router from 'next/router';
 import { useEffect, useState, useRef } from 'react';
-import ReCAPTCHA from "react-google-recaptcha";
 import { 
-    Typography,
     IconButton,
     LinearProgress,
     Button,
@@ -20,8 +18,7 @@ import {
     CloudUpload as CloudUploadIcon,
 } from '@material-ui/icons';
 import fetch from 'isomorphic-unfetch';
-import { WaveButton } from '../Theme/StyledComponents';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Field } from 'formik';
 import * as Yup from "yup";
 import { 
     EditorButtonGroupWrapper,
@@ -34,7 +31,6 @@ import {
     StyledImage,
     ImageInputWrapper
 } from './EditorStyled';
-import { login } from '../../redux/auth/actions';
 import FeatureImage from '../Posts/Page/PostCard/featureImage';
 import { WidthWrapper } from '../DashboardLayout/dashboardLayoutStyled';
 import SelectInput from '@material-ui/core/Select/SelectInput';
