@@ -82,8 +82,6 @@ function EditorsTable({ auth, dispatch }) {
             })
         }
 
-        console.log("In effect")
-
         getUsers();
 
         return () => (isSubscribed = false);

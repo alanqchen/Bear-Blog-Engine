@@ -70,7 +70,7 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
                 <NavBar selectedCategory={selectedCategory} />
                 <div style={dashboardLayoutStyle}>
                     <StyledCenteredContainer>
-                        {initAuth && !auth.loading &&
+                        {initAuth &&
                             <>
                                 {children}
                             </>

@@ -32,7 +32,6 @@ const EditorWrapper = ({ query }) => {
         let isSubscribed = true;
 
         async function fetchPost() {
-            console.log("In use")
             await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts/admin/${query.year}/${query.month}/${query.slug}`, {
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem("bearpost.JWT")
@@ -78,7 +77,7 @@ const EditorWrapper = ({ query }) => {
             {!loaded && <LinearProgress />}
             {loaded &&
             <>
-                <StyledFab aria-label="preview" onClick={() => {setIsPreview(!isPreview)}}>
+                <StyledFab aria-label="preview" onClick={() => {setIsPreview(!isPreview)}} style={{zIndex: "999999"}}>
                     <VisibilityIcon color="action" />
                 </StyledFab>
                 <MetaForm postData={postData} />
