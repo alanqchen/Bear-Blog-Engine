@@ -22,7 +22,7 @@ export const EmbedsArray = [
         title: "Image URL",
         keywords: "image photo url picture",
         icon: () => (
-            <img src="/photo-embed.svg" width={24} height={24} />
+            <img alt="embed image" src="/photo-embed.svg" width={24} height={24} />
         ),
         matcher: url => {
             return url.match(

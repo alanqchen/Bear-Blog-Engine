@@ -12,7 +12,7 @@ import {
 } from './postCardStyled';
 import { Skeleton } from '@material-ui/lab';
 
-function FeatureImage({featureImgUrl, tags, skeleton }) {
+function FeatureImage({ featureImgUrl, tags, skeleton, moreHeight, noMargin }) {
 
     const [loading, setLoading] = useState(true);
 
@@ -23,10 +23,10 @@ function FeatureImage({featureImgUrl, tags, skeleton }) {
     useEffect(() => { }, [loading]);
     
     return (
-        <FeatureImageWrapper>
+        <FeatureImageWrapper noMargin={noMargin ? "1" : undefined}>
             {!skeleton && loading 
                 &&  <>
-                        <Skeleton variant="rect" width="100%" height="300px" />
+                        <Skeleton variant="rect" width="100%" height={moreHeight ? "600px" : "300px"} />
                     </>
             }
             <TagsWrapper>
@@ -40,8 +40,8 @@ function FeatureImage({featureImgUrl, tags, skeleton }) {
                 );
             })}
             </TagsWrapper>
-            <StyledImageWrapper>
-                {skeleton ? <Skeleton variant="rect" width="100%" height="300px"/>
+            <StyledImageWrapper moreHeight={moreHeight ? "1" : undefined}>
+                {skeleton ? <Skeleton variant="rect" width="100%" height={moreHeight ? "600px" : "300px"} />
                 :
                 <StyledPicture>
                     {featureImgUrl.substring(featureImgUrl.length - 5, featureImgUrl.length) == ".jpeg" 

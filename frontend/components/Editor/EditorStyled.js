@@ -7,7 +7,7 @@ import { Form } from 'formik';
 export const StyledEditor = styled(Editor)`
     width: 100%;
     & p {
-        font-size: 1rem;
+        font-size: 1.125rem;
         line-height: 1.7rem;
     }
     & h1 {
