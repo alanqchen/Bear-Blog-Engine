@@ -23,19 +23,25 @@ const (
 	MB = 1 << 20
 )
 
+// UploadController is empty (nothing needed)
 type UploadController struct{}
+
+// UploadImageResponse is the response struct for an image upload
 type UploadImageResponse struct {
 	ImageURL string `json:"imageUrl"`
 }
+
+// UploadVideoResponse is the response struct for an video upload
 type UploadVideoResponse struct {
 	VideoURL string `json:"videoUrl"`
 }
 
+// NewUploadController returns a new UploadController
 func NewUploadController() *UploadController {
 	return &UploadController{}
 }
 
-// UploadImage uploads a image to the server
+// UploadImage uploads an image to the server
 func (uc *UploadController) UploadImage(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Content-type")
 	if !strings.Contains(contentType, "multipart/form-data") {

@@ -10,7 +10,7 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/services"
 )
 
-// AuthController holds what's neccesary for authentication
+// AuthController holds what's necessary for authentication
 type AuthController struct {
 	App *app.App
 	repositories.UserRepository

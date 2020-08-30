@@ -224,7 +224,7 @@ func (pr *postRepository) Update(p *models.Post) error {
 	return nil
 }
 
-// updatePost is seperated since it's used in multiple conditions in Update
+// updatePost is separated since it's used in multiple conditions in Update
 func (pr *postRepository) updatePost(p *models.Post) error {
 	_, err := pr.Pool.Exec(context.Background(), "UPDATE post_schema.post SET title=$1, slug=$2, body=$3, updated_at=$4, tags=$5, hidden=$6, feature_image_url=$7, subtitle=$8 WHERE id=$9", p.Title, p.Slug, p.Body, p.UpdatedAt, p.Tags, p.Hidden, p.FeatureImgURL, p.Subtitle, p.ID)
 	if err != nil {
@@ -476,7 +476,7 @@ func (pr *postRepository) SearchQuery(title string, tags []string) ([]*models.Po
 	var rows pgx.Rows
 	var err error
 
-	// For some reason it needs a seperate query for tags to return rows
+	// For some reason it needs a separate query for tags to return rows
 	if len(tags) == 0 {
 		rows, err = pr.Pool.Query(context.Background(),
 			"SELECT * FROM post_schema.post WHERE NOT hidden AND LOWER(title) LIKE LOWER('%' || $1 || '%') ORDER BY views DESC LIMIT 5",

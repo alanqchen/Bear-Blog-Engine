@@ -8,10 +8,12 @@ import (
 	"github.com/go-redis/redis"
 )
 
+// Redis stores the connection to Redis
 type Redis struct {
 	*redis.Client
 }
 
+// NewRedis creates a connection to Redis using the given connection config
 func NewRedis(dbConfig config.RedisConfig) (*Redis, error) {
 	port := dbConfig.Port
 	client := redis.NewClient(&redis.Options{

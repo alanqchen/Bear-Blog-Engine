@@ -249,6 +249,9 @@ func ExtractRefreshTokenHash(cfg *config.Config, tokenStr string) (string, error
 
 	buffer := bufio.NewReader(publicKeyFile)
 	_, err = buffer.Read(pembytes)
+	if err != nil {
+		return "", err
+	}
 
 	data, _ := pem.Decode([]byte(pembytes))
 
@@ -257,12 +260,12 @@ func ExtractRefreshTokenHash(cfg *config.Config, tokenStr string) (string, error
 	publicKeyImported, err := x509.ParsePKIXPublicKey(data.Bytes)
 
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	rsaPub, ok := publicKeyImported.(*rsa.PublicKey)
 	if !ok {
-		panic(err)
+		return "", fmt.Errorf("Failed to import public key")
 	}
 
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
@@ -318,6 +321,9 @@ func GetRefreshTokenFromRequest(cfg *config.Config, r *http.Request) (string, er
 
 	buffer := bufio.NewReader(publicKeyFile)
 	_, err = buffer.Read(pembytes)
+	if err != nil {
+		return "", err
+	}
 
 	data, _ := pem.Decode([]byte(pembytes))
 
@@ -326,13 +332,13 @@ func GetRefreshTokenFromRequest(cfg *config.Config, r *http.Request) (string, er
 	publicKeyImported, err := x509.ParsePKIXPublicKey(data.Bytes)
 
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	rsaPub, ok := publicKeyImported.(*rsa.PublicKey)
 
 	if !ok {
-		panic(err)
+		return "", fmt.Errorf("Failed to import public key")
 	}
 	token, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
 		func(token *jwt.Token) (interface{}, error) {
@@ -387,8 +393,7 @@ func UserFromContext(ctx context.Context) (*models.User, error) {
 func getPrivateKey(jwtConfig *config.JWTConfig) *rsa.PrivateKey {
 	privateKeyFile, err := os.Open(jwtConfig.PrivateKey)
 	if err != nil {
-		log.Println(jwtConfig.PrivateKey)
-		log.Fatal(err)
+		log.Fatal("Failed to open private key:", err)
 	}
 
 	pemfileinfo, _ := privateKeyFile.Stat()
@@ -397,6 +402,9 @@ func getPrivateKey(jwtConfig *config.JWTConfig) *rsa.PrivateKey {
 	// Read file
 	buffer := bufio.NewReader(privateKeyFile)
 	_, err = buffer.Read(pembytes)
+	if err != nil {
+		log.Fatal("Failed to read private key file:", err)
+	}
 	// Decode
 	data, _ := pem.Decode([]byte(pembytes))
 	// Close file
@@ -419,8 +427,7 @@ func getPrivateKey(jwtConfig *config.JWTConfig) *rsa.PrivateKey {
 func getPublicKey(jwtConfig *config.JWTConfig) *rsa.PublicKey {
 	publicKeyFile, err := os.Open(jwtConfig.PublicKey)
 	if err != nil {
-		log.Println(jwtConfig.PublicKey)
-		log.Fatal(err)
+		log.Fatal("Failed to open public key:", err)
 	}
 
 	pemfileinfo, _ := publicKeyFile.Stat()
@@ -429,6 +436,9 @@ func getPublicKey(jwtConfig *config.JWTConfig) *rsa.PublicKey {
 
 	buffer := bufio.NewReader(publicKeyFile)
 	_, err = buffer.Read(pembytes)
+	if err != nil {
+		log.Fatal("Failed to read public key file:", err)
+	}
 
 	data, _ := pem.Decode([]byte(pembytes))
 

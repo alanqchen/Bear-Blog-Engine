@@ -11,10 +11,12 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
+// Postgres stores the connection to the connection pool
 type Postgres struct {
 	*pgxpool.Pool
 }
 
+// NewPostgres creates new Postgres connection using connection config
 func NewPostgres(dbConfig config.PostgreSQLConfig) (*Postgres, error) {
 	databaseDSN := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s", dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.Database)
 	connConfig, err := pgxpool.ParseConfig(databaseDSN)

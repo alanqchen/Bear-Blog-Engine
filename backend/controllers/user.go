@@ -35,7 +35,7 @@ func NewUserController(a *app.App, ur repositories.UserRepository, pr repositori
 	return &UserController{a, ur, pr}
 }
 
-// HelloWorld is the reponse used on pings
+// HelloWorld is the response used on pings
 func (uc *UserController) HelloWorld(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.Context().Value("userId"))
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
