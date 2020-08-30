@@ -19,6 +19,8 @@ Also by default, this template assumes you are using [docker-letsencrypt-nginx-p
 9. Your first deployment on Vercel may fail, this is expected. Add the following environment variables in the Vercel deployment and redeploy:
    - <strong>NEXT_PUBLIC_CAPTCHA_KEY</strong>: this should have the value of a ReCaptcha v2 key
    - <strong>NEXT_PUBLIC_API_URL</strong>: this should have the value of your API url (including https://)
+10. Once your vercel deployment is up, goto `WEBSITE_URL/auth/portal/login` which show give you a setup page for your first admin:
+<img src="https://i.imgur.com/OQil44L.png" width="50%" />
 
 ### External Databases
 Follow the same steps as *Internal Databases*, but for step 4, make sure to edit the databases host, port, username, password, etc. to the correct values.
