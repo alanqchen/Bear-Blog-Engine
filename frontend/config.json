@@ -27,20 +27,20 @@
         },
         {
             "name": "category4",
-            "link": "/",
+            "link": "/first",
             "external": false,
             "isCategory": false,
             "primary": false
         },
         {
-            "name": "github",
-            "link": "https://github.com",
+            "name": "Github",
+            "link": "https://github.com/alanqchen/Bear-Blog-Engine",
             "external": true,
             "isCategory": false,
             "primary": false
         },
         {
-            "name": "about",
+            "name": "About Me",
             "link": "https://aqchen.com",
             "external": true,
             "isCategory": false,
