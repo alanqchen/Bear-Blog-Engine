@@ -18,6 +18,7 @@ import (
 	Delete(w http.ResponseWriter, r *http.Request)
 }*/
 
+// APIResponse is the struct to use when sending an API response
 type APIResponse struct {
 	Success    bool           `json:"success"`
 	Message    string         `json:"message,omitempty"`
@@ -25,16 +26,19 @@ type APIResponse struct {
 	Pagination *APIPagination `json:"pagination,omitempty"`
 }
 
+// APIError is the struct the struct to use when sending an API error
 type APIError struct {
 	Success bool   `json:"success"`
 	Message string `json:"message"`
 	Status  int    `json:"status"`
 }
 
-type JsonData struct {
+// JSONData stores a representation of JSON data
+type JSONData struct {
 	data map[string]interface{}
 }
 
+// APIPagination stores the extra data to return in a pagination response
 type APIPagination struct {
 	Total   int      `json:"total"`
 	PerPage int      `json:"perPage"`
@@ -42,6 +46,7 @@ type APIPagination struct {
 	Tags    []string `json:"tags"`
 }
 
+// MarshalJSON marshals a APIPagination struct
 func (p *APIPagination) MarshalJSON() ([]byte, error) {
 
 	return json.Marshal(struct {
@@ -51,14 +56,9 @@ func (p *APIPagination) MarshalJSON() ([]byte, error) {
 	}{p.Total, p.PerPage, p.MinID})
 }
 
-//var NotImplemented = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-//	w.Write([]byte("Not Implemented"))
-//})
-
-// Inspiration taken from https://github.com/antonholmquist/jason/
-// TODO: Move into a util package maybe? or again into some interface the basecontroller is using
-func GetJSON(reader io.Reader) (*JsonData, error) {
-	j := new(JsonData)
+// GetJSON returns the JSON data from a given io reader
+func GetJSON(reader io.Reader) (*JSONData, error) {
+	j := new(JSONData)
 	d := json.NewDecoder(reader)
 	d.UseNumber()
 	err := d.Decode(&j.data)
@@ -70,7 +70,8 @@ func GetJSON(reader io.Reader) (*JsonData, error) {
 	return j, err
 }
 
-func (d *JsonData) GetString(key string) (string, error) {
+// GetString gets the string value of a key in the given JSON data
+func (d *JSONData) GetString(key string) (string, error) {
 	keys := d.data
 	err := errors.New("Could not find key: " + key)
 	if v, ok := keys[key].(string); ok {
@@ -80,7 +81,8 @@ func (d *JsonData) GetString(key string) (string, error) {
 	return "", err
 }
 
-func (d *JsonData) GetInt(key string) (int, error) {
+// GetInt gets the int value of a key in the given JSON data
+func (d *JSONData) GetInt(key string) (int, error) {
 	keys := d.data
 	err := errors.New("Could not find key: " + key)
 	if v, ok := keys[key].(int); ok {
@@ -90,7 +92,8 @@ func (d *JsonData) GetInt(key string) (int, error) {
 	return -1, err
 }
 
-func (d *JsonData) GetBool(key string) (bool, error) {
+// GetBool gets the bool value of a key in the given JSON data
+func (d *JSONData) GetBool(key string) (bool, error) {
 	keys := d.data
 	err := errors.New("Could not find key: " + key)
 	if v, ok := keys[key].(bool); ok {
@@ -100,7 +103,8 @@ func (d *JsonData) GetBool(key string) (bool, error) {
 	return false, err
 }
 
-func (d *JsonData) GetStringArray(key string) ([]string, error) {
+// GetStringArray gets the string array value of a key in the given JSON data
+func (d *JSONData) GetStringArray(key string) ([]string, error) {
 	keys := d.data
 	err := errors.New("Could not find key: " + key)
 	if v, ok := keys[key].([]interface{}); ok {
@@ -116,27 +120,20 @@ func (d *JsonData) GetStringArray(key string) ([]string, error) {
 	return []string{}, err
 }
 
+// NewAPIError creates and sends a error response
 func NewAPIError(e *APIError, w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(e.Status)
 
 	err := json.NewEncoder(w).Encode(e)
 	if err != nil {
-		log.Println("[API ERROR]: The website encountered an unexpected error.")
+		log.Println("[API ERROR]: The server encountered an unexpected error.")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
-/*func NewAPIResponse(success bool, msg string, data interface{}) *APIResponse {
-	return &APIResponse{
-		Success: success,
-		Message: msg,
-		Data: data,
-	}
-}*/
-
-// TODO: Use this for both the APIResponse and APIError type
+// NewAPIResponse creates and sends a normal API response
 func NewAPIResponse(res *APIResponse, w http.ResponseWriter, code int) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(code)

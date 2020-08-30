@@ -40,6 +40,7 @@ func NewPostRepository(db *database.Postgres) PostRepository {
 	return &postRepository{db}
 }
 
+// Create creates a new post in the database
 func (pr *postRepository) Create(p *models.Post) error {
 	exists := pr.Exists(p.Slug)
 	if exists {
@@ -76,15 +77,8 @@ func (pr *postRepository) Create(p *models.Post) error {
 	return nil
 }
 
+// Delete deletes the post with the given ID in the database
 func (pr *postRepository) Delete(id int) error {
-	/*
-		_, err := pr.Conn.Prepare(context.Background(), "delete-query", "DELETE FROM post_schema.post WHERE id=$1")
-		if err != nil {
-			log.Println(err)
-			return err
-		}
-	*/
-
 	row, err := pr.Pool.Query(context.Background(), "DELETE FROM post_schema.post WHERE id=$1", id)
 	defer row.Close()
 	if err != nil {
@@ -94,7 +88,7 @@ func (pr *postRepository) Delete(id int) error {
 	return nil
 }
 
-// Check if a slug already exists
+// Exists checks if a post with the slug already exists in the database
 func (pr *postRepository) Exists(slug string) bool {
 	var exists bool
 	err := pr.Pool.QueryRow(context.Background(), "SELECT EXISTS (SELECT id FROM post_schema.post WHERE slug=$1)", slug).Scan(&exists)
@@ -106,7 +100,7 @@ func (pr *postRepository) Exists(slug string) bool {
 	return exists
 }
 
-// This is a 'private' function to be used in cases where a slug already exists
+// This is a private function to be used in cases where a slug already exists
 func (pr *postRepository) createWithSlugCount(p *models.Post) error {
 
 	var count int
@@ -142,6 +136,7 @@ func (pr *postRepository) createWithSlugCount(p *models.Post) error {
 	return nil
 }
 
+// FindByID returns the post with the given ID. Returns nil if the post doesn't exist or it's hidden in the database
 func (pr *postRepository) FindByID(id int) (*models.Post, error) {
 	post := models.Post{}
 
@@ -165,6 +160,7 @@ func (pr *postRepository) FindByID(id int) (*models.Post, error) {
 	return &post, nil
 }
 
+// FindByIDAdmin returns the post with the given ID (including hidden). Returns nil if the post doesn't exist
 func (pr *postRepository) FindByIDAdmin(id int) (*models.Post, error) {
 	post := models.Post{}
 
@@ -180,6 +176,7 @@ func (pr *postRepository) FindByIDAdmin(id int) (*models.Post, error) {
 	return &post, nil
 }
 
+// Update updates the post with the given ID in the database
 func (pr *postRepository) Update(p *models.Post) error {
 	exists := pr.Exists(p.Slug)
 	// Check if this is a new slug
@@ -227,15 +224,8 @@ func (pr *postRepository) Update(p *models.Post) error {
 	return nil
 }
 
+// updatePost is seperated since it's used in multiple conditions in Update
 func (pr *postRepository) updatePost(p *models.Post) error {
-	/*
-		_, err := pr.Conn.Prepare(context.Background(), "update-post-query", "UPDATE post_schema.post SET title=$1, slug=$2, body=$3, updated_at=$4, tags=$5, hidden=$6, feature_image_url=$7, subtitle=$8 WHERE id=$9")
-		if err != nil {
-			log.Println(err)
-			return err
-		}
-	*/
-
 	_, err := pr.Pool.Exec(context.Background(), "UPDATE post_schema.post SET title=$1, slug=$2, body=$3, updated_at=$4, tags=$5, hidden=$6, feature_image_url=$7, subtitle=$8 WHERE id=$9", p.Title, p.Slug, p.Body, p.UpdatedAt, p.Tags, p.Hidden, p.FeatureImgURL, p.Subtitle, p.ID)
 	if err != nil {
 		log.Println(err)
@@ -245,6 +235,7 @@ func (pr *postRepository) updatePost(p *models.Post) error {
 	return nil
 }
 
+// GetTotalPostCount returns the number of posts (including hidden) in the database
 func (pr *postRepository) GetTotalPostCount() (int, error) {
 	var count int
 	err := pr.Pool.QueryRow(context.Background(), "SELECT COUNT(*) FROM post_schema.post").Scan(&count)
@@ -256,6 +247,7 @@ func (pr *postRepository) GetTotalPostCount() (int, error) {
 	return count, nil
 }
 
+// GetPublicPostCount returns the number of non-hidden posts in the database
 func (pr *postRepository) GetPublicPostCount() (int, error) {
 	var count int
 	err := pr.Pool.QueryRow(context.Background(), "SELECT COUNT(*) FROM post_schema.post WHERE NOT hidden").Scan(&count)
@@ -267,6 +259,7 @@ func (pr *postRepository) GetPublicPostCount() (int, error) {
 	return count, nil
 }
 
+// FindBySlug returns the post with the given slug in
 func (pr *postRepository) FindBySlug(slug string) (*models.Post, error) {
 	post := models.Post{}
 
@@ -310,6 +303,7 @@ func (pr *postRepository) FindBySlugAdmin(slug string) (*models.Post, error) {
 	return &post, nil
 }
 
+// GetAll returns all posts (including hidden)
 func (pr *postRepository) GetAll() ([]*models.Post, error) {
 	var posts []*models.Post
 
@@ -337,6 +331,7 @@ func (pr *postRepository) GetAll() ([]*models.Post, error) {
 	return posts, nil
 }
 
+// Paginate returns the keyset page of posts in the database
 func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*models.Post, int, error) {
 	var posts []*models.Post
 
@@ -390,6 +385,7 @@ func (pr *postRepository) Paginate(maxID int, perPage int, tags []string) ([]*mo
 	return posts, minID, nil
 }
 
+// Paginate returns the keyset page of posts (including hidden) in the database
 func (pr *postRepository) PaginateAdmin(maxID int, perPage int, tags []string) ([]*models.Post, int, error) {
 	var posts []*models.Post
 
@@ -437,6 +433,7 @@ func (pr *postRepository) PaginateAdmin(maxID int, perPage int, tags []string) (
 	return posts, minID, nil
 }
 
+// ResetSeq resets the post id sequence in the database
 func (pr *postRepository) ResetSeq() error {
 	row, err := pr.Pool.Query(context.Background(), "SELECT setval(pg_get_serial_sequence('post_schema.post', 'id'), coalesce(max(id),0)+ 1, false) FROM post_schema.post")
 
@@ -448,6 +445,7 @@ func (pr *postRepository) ResetSeq() error {
 	return nil
 }
 
+// GetLastID gets the last (highest) ID non-hidden post in the database
 func (pr *postRepository) GetLastID() (int, error) {
 	var lastID int
 	err := pr.Pool.QueryRow(context.Background(), "SELECT id FROM post_schema.post WHERE NOT hidden ORDER BY created_at DESC LIMIT 1").Scan(&lastID)
@@ -459,6 +457,7 @@ func (pr *postRepository) GetLastID() (int, error) {
 	return lastID, nil
 }
 
+// GetLastIDAdmin gets the last (highest) ID post (including hidden) in the database
 func (pr *postRepository) GetLastIDAdmin() (int, error) {
 	var lastID int
 	err := pr.Pool.QueryRow(context.Background(), "SELECT id FROM post_schema.post ORDER BY created_at DESC LIMIT 1").Scan(&lastID)
@@ -470,7 +469,7 @@ func (pr *postRepository) GetLastIDAdmin() (int, error) {
 	return lastID, nil
 }
 
-// Searches using title and tags. Returns results ordered by view count in descending order.
+// SearchQuery searches using title and tags. Returns results ordered by view count in descending order.
 func (pr *postRepository) SearchQuery(title string, tags []string) ([]*models.Post, error) {
 	var posts []*models.Post
 

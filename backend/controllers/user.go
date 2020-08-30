@@ -15,6 +15,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// UserController stores the App config and repositories
 type UserController struct {
 	*app.App
 	repositories.UserRepository
@@ -29,18 +30,21 @@ type PasswordResetController struct { // Same as Auth
 }
 */
 
+// NewUserController creates a new user controller
 func NewUserController(a *app.App, ur repositories.UserRepository, pr repositories.PostRepository) *UserController {
 	return &UserController{a, ur, pr}
 }
 
+// HelloWorld is the reponse used on pings
 func (uc *UserController) HelloWorld(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.Context().Value("userId"))
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	fmt.Fprint(w, "Hey! You're not supposed to be here! (The API is online though)")
 }
 
+// Profile will return the current user's UID for the given bearer token
 func (uc *UserController) Profile(w http.ResponseWriter, r *http.Request) {
-	uid, err := services.UserIdFromContext(r.Context())
+	uid, err := services.UserIDFromContext(r.Context())
 	if err != nil {
 		NewAPIError(&APIError{false, "Something went wrong", http.StatusInternalServerError}, w)
 		return
@@ -49,6 +53,7 @@ func (uc *UserController) Profile(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: uid}, w, http.StatusOK)
 }
 
+// Create will create a new user
 func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 	// Validate the length of the body since some users could send a big payload
 	/*required := []string{"name", "email", "password"}
@@ -161,6 +166,7 @@ func (uc *UserController) Create(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Message: "User created"}, w, http.StatusOK)
 }
 
+// CreateFirstAdmin will only create the first admin, requires no auth
 func (uc *UserController) CreateFirstAdmin(w http.ResponseWriter, r *http.Request) {
 
 	j, err := GetJSON(r.Body)
@@ -254,6 +260,7 @@ func (uc *UserController) CreateFirstAdmin(w http.ResponseWriter, r *http.Reques
 	NewAPIResponse(&APIResponse{Success: true, Message: "Admin user created"}, w, http.StatusOK)
 }
 
+// GetAll returns the list of all users (no usernames)
 func (uc *UserController) GetAll(w http.ResponseWriter, r *http.Request) {
 	users, err := uc.UserRepository.GetAll()
 	if err != nil {
@@ -265,6 +272,7 @@ func (uc *UserController) GetAll(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: users}, w, http.StatusOK)
 }
 
+// GetAllDetailed returns the list of all users with all details
 func (uc *UserController) GetAllDetailed(w http.ResponseWriter, r *http.Request) {
 	users, err := uc.UserRepository.GetAllDetailed()
 	if err != nil {
@@ -276,7 +284,8 @@ func (uc *UserController) GetAllDetailed(w http.ResponseWriter, r *http.Request)
 	NewAPIResponse(&APIResponse{Success: true, Data: users}, w, http.StatusOK)
 }
 
-func (uc *UserController) GetById(w http.ResponseWriter, r *http.Request) {
+// GetByID returns the basic user info for the given uid
+func (uc *UserController) GetByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 	if id == "" {
@@ -294,7 +303,8 @@ func (uc *UserController) GetById(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: user}, w, http.StatusOK)
 }
 
-func (uc *UserController) GetByIdDetailed(w http.ResponseWriter, r *http.Request) {
+// GetByIDDetailed returns all user info for the given uid
+func (uc *UserController) GetByIDDetailed(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 	if id == "" {
@@ -312,8 +322,9 @@ func (uc *UserController) GetByIdDetailed(w http.ResponseWriter, r *http.Request
 	NewAPIResponse(&APIResponse{Success: true, Data: user}, w, http.StatusOK)
 }
 
+// Update updates the given uid user's info
 func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
-	uid, err := services.UserIdFromContext(r.Context())
+	uid, err := services.UserIDFromContext(r.Context())
 	if err != nil {
 		NewAPIError(&APIError{false, "Something went wrong", http.StatusInternalServerError}, w)
 		return
@@ -399,6 +410,7 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: authUser}, w, http.StatusOK)
 }
 
+// Delete deletes the given uid user
 func (uc *UserController) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]

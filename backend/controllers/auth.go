@@ -10,17 +10,19 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/services"
 )
 
-// TODO repository, services
+// AuthController holds what's neccesary for authentication
 type AuthController struct {
 	App *app.App
 	repositories.UserRepository
 	jwtService services.JWTAuthService
 }
 
+// NewAuthController returns an AuthController struct given the App, user repository, and JWT service
 func NewAuthController(a *app.App, us repositories.UserRepository, jwtService services.JWTAuthService) *AuthController {
 	return &AuthController{a, us, jwtService}
 }
 
+// Authenticate will log in a user
 func (ac *AuthController) Authenticate(w http.ResponseWriter, r *http.Request) {
 	j, err := GetJSON(r.Body)
 	if err != nil {
@@ -81,6 +83,7 @@ func (ac *AuthController) Authenticate(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Message: "Login successful", Data: data}, w, http.StatusOK)
 }
 
+// Logout will log out a user
 func (ac *AuthController) Logout(w http.ResponseWriter, r *http.Request) {
 	tokenString, err := services.GetTokenFromRequest(&ac.App.Config, r)
 	if err != nil {
@@ -114,8 +117,9 @@ func (ac *AuthController) Logout(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// LogoutAll logs out of all users
 func (ac *AuthController) LogoutAll(w http.ResponseWriter, r *http.Request) {
-	uid, err := services.UserIdFromContext(r.Context())
+	uid, err := services.UserIDFromContext(r.Context())
 	if err != nil {
 		NewAPIError(&APIError{false, "Something went wrong", http.StatusInternalServerError}, w)
 		return
@@ -132,13 +136,14 @@ func (ac *AuthController) LogoutAll(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Message: "Logout successful"}, w, http.StatusOK)
 }
 
+// RefreshTokens will refresh JWT tokens if the given refresh token is valid
 func (ac *AuthController) RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	tokenString, err := services.GetRefreshTokenFromRequest(&ac.App.Config, r)
 	if err != nil {
 		NewAPIError(&APIError{false, "Something went wrong", http.StatusInternalServerError}, w)
 		return
 	}
-	uid, err := services.UserIdFromContext(r.Context())
+	uid, err := services.UserIDFromContext(r.Context())
 	if err != nil {
 		NewAPIError(&APIError{false, "Something went wrong", http.StatusInternalServerError}, w)
 		return

@@ -10,12 +10,7 @@ import (
 	"github.com/jackc/pgx/v4"
 )
 
-/* TODO: FIX FindById, FindByEmail, Delete, Update
- *
- * FIXED: Create, GetAll, Exists
- *
- */
-
+// UserRepository interface defines all functions that interact with the database
 type UserRepository interface {
 	Create(u *models.User) error
 	CreateFirstAdmin(u *models.User) (bool, error)
@@ -35,10 +30,12 @@ type userRepository struct {
 	*database.Postgres
 }
 
+// NewUserRespository returns a new user repository
 func NewUserRespository(db *database.Postgres) UserRepository {
 	return &userRepository{db}
 }
 
+// Create creates a new user in the database for the given user model
 func (ur *userRepository) Create(u *models.User) error {
 
 	// Check if an user already exists with the email
@@ -99,6 +96,7 @@ func (ur *userRepository) CreateFirstAdmin(u *models.User) (bool, error) {
 
 }
 
+// Update updates a user in the database
 func (ur *userRepository) Update(u *models.User) error {
 	// Check if an user already exists with the email
 	// Prepare statement for inserting data
@@ -124,6 +122,7 @@ func (ur *userRepository) Update(u *models.User) error {
 	return nil
 }
 
+// GetAll returns all users' basic information from the database
 func (ur *userRepository) GetAll() ([]*models.User, error) {
 	var users []*models.User
 
@@ -154,6 +153,7 @@ func (ur *userRepository) GetAll() ([]*models.User, error) {
 	return users, nil
 }
 
+// GetAllDetailed returns all users' information from the database
 func (ur *userRepository) GetAllDetailed() ([]*models.AuthUser, error) {
 	var users []*models.AuthUser
 
@@ -188,7 +188,7 @@ func (ur *userRepository) GetAllDetailed() ([]*models.AuthUser, error) {
 	return users, nil
 }
 
-// Not used anymore in latest version
+// FindByEmail is not used anymore in latest version. Kept for compatibility
 func (ur *userRepository) FindByEmail(email string) (*models.User, error) {
 	user := models.User{}
 
@@ -203,6 +203,7 @@ func (ur *userRepository) FindByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
+// FindByUsername returns the user's information with the given username from the database
 func (ur *userRepository) FindByUsername(username string) (*models.User, error) {
 	user := models.User{}
 
@@ -217,6 +218,7 @@ func (ur *userRepository) FindByUsername(username string) (*models.User, error) 
 	return &user, nil
 }
 
+// FindByID returns the user's basic information with the given ID from the database
 func (ur *userRepository) FindByID(id string) (*models.User, error) {
 	user := models.User{}
 
@@ -233,6 +235,7 @@ func (ur *userRepository) FindByID(id string) (*models.User, error) {
 	return &user, nil
 }
 
+// FindByIDDetailed returns the user's information with the given ID from the database
 func (ur *userRepository) FindByIDDetailed(id string) (*models.User, error) {
 	user := models.User{}
 
@@ -248,18 +251,8 @@ func (ur *userRepository) FindByIDDetailed(id string) (*models.User, error) {
 	return &user, nil
 }
 
-// Not used anymore in latest version
+// Exists is not used anymore in latest version. Kept for compatibility
 func (ur *userRepository) Exists(email string) bool {
-
-	// Check if an user already exists with the email
-	/*
-		_, err := ur.Conn.Prepare(context.Background(), "email-exists-query", "SELECT EXISTS(SELECT user_schema.\"user\".email FROM user_schema.\"user\" WHERE email = $1)")
-		if err != nil {
-			log.Println(err)
-			return true
-		}
-	*/
-
 	var exists pgtype.Bool
 	err := ur.Pool.QueryRow(context.Background(), "SELECT EXISTS(SELECT user_schema.\"user\".email FROM user_schema.\"user\" WHERE email = $1)", email).Scan(&exists)
 	if err != nil && err != pgx.ErrNoRows {
@@ -269,17 +262,8 @@ func (ur *userRepository) Exists(email string) bool {
 	return exists.Bool
 }
 
+// ExistsUsername checks if a user with the given username exists in the database
 func (ur *userRepository) ExistsUsername(username string) bool {
-
-	// Check if an user already exists with the email
-	/*
-		_, err := ur.Conn.Prepare(context.Background(), "email-exists-query", "SELECT EXISTS(SELECT user_schema.\"user\".email FROM user_schema.\"user\" WHERE email = $1)")
-		if err != nil {
-			log.Println(err)
-			return true
-		}
-	*/
-
 	var exists pgtype.Bool
 	err := ur.Pool.QueryRow(context.Background(), "SELECT EXISTS(SELECT user_schema.\"user\".username FROM user_schema.\"user\" WHERE username = $1)", username).Scan(&exists)
 	if err != nil && err != pgx.ErrNoRows {
@@ -289,15 +273,8 @@ func (ur *userRepository) ExistsUsername(username string) bool {
 	return exists.Bool
 }
 
+// Delete deletes the user with the given ID from the database
 func (ur *userRepository) Delete(id string) error {
-	/*
-		_, err := ur.Conn.Prepare(context.Background(), "delete-user-query", "DELETE FROM user_schema.\"user\" WHERE id = $1")
-		if err != nil {
-			log.Println(err)
-			return err
-		}
-	*/
-
 	_, err := ur.Pool.Exec(context.Background(), "DELETE FROM user_schema.\"user\" WHERE id = $1", id)
 	if err != nil {
 		log.Println(err)

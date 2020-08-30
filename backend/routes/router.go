@@ -12,10 +12,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const (
-	AssetFolder = "/public/"
-)
-
+// NewRouter creates the routes for the API
+// See the API documentation on the GitHub repo wiki for a user-friendly list
 func NewRouter(a *app.App) *mux.Router {
 	r := mux.NewRouter()
 	log.Println("Loaded router")
@@ -52,8 +50,8 @@ func NewRouter(a *app.App) *mux.Router {
 	api.HandleFunc("/users/detailed", middleware.Logger(middleware.RequireAuthentication(a, uc.GetAllDetailed, false))).Methods(http.MethodGet)
 	api.HandleFunc("/users", middleware.Logger(middleware.RequireAuthentication(a, uc.Create, true))).Methods(http.MethodPost)
 	api.HandleFunc("/users/setup", middleware.Logger(uc.CreateFirstAdmin)).Methods(http.MethodPost)
-	api.HandleFunc("/users/{id}", middleware.Logger(uc.GetById)).Methods(http.MethodGet)
-	api.HandleFunc("/users/{id}/detailed", middleware.Logger(middleware.RequireAuthentication(a, uc.GetByIdDetailed, true))).Methods(http.MethodGet)
+	api.HandleFunc("/users/{id}", middleware.Logger(uc.GetByID)).Methods(http.MethodGet)
+	api.HandleFunc("/users/{id}/detailed", middleware.Logger(middleware.RequireAuthentication(a, uc.GetByIDDetailed, true))).Methods(http.MethodGet)
 	api.HandleFunc("/users/{id}", middleware.Logger(middleware.RequireAuthentication(a, uc.Delete, true))).Methods(http.MethodDelete)
 	//api.HandleFunc("/users/{id}/posts", middleware.Logger(uc.FindPostsByUser)).Methods(http.MethodGet)
 	api.HandleFunc("/protected", middleware.Logger(middleware.RequireAuthentication(a, uc.Profile, false))).Methods(http.MethodGet)

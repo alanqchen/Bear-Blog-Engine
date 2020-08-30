@@ -6,7 +6,6 @@ import (
 
 	"github.com/alanqchen/Bear-Post/backend/app"
 	"github.com/alanqchen/Bear-Post/backend/config"
-	"github.com/alanqchen/Bear-Post/backend/database"
 	"github.com/alanqchen/Bear-Post/backend/routes"
 )
 
@@ -16,7 +15,12 @@ import (
  *
  * This handles calling the initialization steps and starting the API
  *
- * Big thanks to steffen for Backend File Structure from https://github.com/steffen25/golang.zone.
+ * Big thanks to sjoshi6 and steffen for Backend File Structure from
+ * https://github.com/sjoshi6/go-rest-api-boilerplate/ and
+ * https://github.com/steffen25/golang.zone.
+ *
+ * See the API documentation on the GitHub repo wiki for a list of the API
+ * routes.
  */
 
 func main() {
@@ -41,9 +45,8 @@ func main() {
 
 	log.Println("Creating api")
 
-	var db *database.Postgres
-	app, db := app.New(cfg)
-	defer db.Close()
+	app := app.New(cfg)
+	defer app.Database.Close()
 	log.Println("Creating routes")
 	router := routes.NewRouter(app)
 	log.Println("Running api...")

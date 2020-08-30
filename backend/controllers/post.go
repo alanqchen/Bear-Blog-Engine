@@ -19,16 +19,19 @@ import (
 	"github.com/jackc/pgx/v4"
 )
 
+// PostController stores the App config and repositories
 type PostController struct {
 	*app.App
 	repositories.PostRepository
 	repositories.UserRepository
 }
 
+// NewPostController creates a new post controller
 func NewPostController(a *app.App, pr repositories.PostRepository, ur repositories.UserRepository) *PostController {
 	return &PostController{a, pr, ur}
 }
 
+// GetPage returns a keyset pagaination page based on the given post maxID in the page
 func (pc *PostController) GetPage(w http.ResponseWriter, r *http.Request) {
 	total, _ := pc.PostRepository.GetPublicPostCount()
 
@@ -176,6 +179,8 @@ func (pc *PostController) GetPage(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
 }
 
+// GetPageAdmin returns a keyset pagaination page based on the given post maxID in the page
+// including hidden posts
 func (pc *PostController) GetPageAdmin(w http.ResponseWriter, r *http.Request) {
 	//httpScheme := "https://"
 	total, _ := pc.PostRepository.GetPublicPostCount()
@@ -298,6 +303,7 @@ func (pc *PostController) GetPageAdmin(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
 }
 
+// GetByID returns the post with the given ID
 func (pc *PostController) GetByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -314,6 +320,7 @@ func (pc *PostController) GetByID(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
 }
 
+// GetByIDAdmin returns the post with the given ID including hidden posts
 func (pc *PostController) GetByIDAdmin(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -330,6 +337,7 @@ func (pc *PostController) GetByIDAdmin(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
 }
 
+// GetBySlug returns the post with the given slug
 func (pc *PostController) GetBySlug(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	slug := vars["slug"]
@@ -393,6 +401,7 @@ func (pc *PostController) GetBySlug(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
 }
 
+// GetBySlugAdmin returns the post with the given slug including hidden posts
 func (pc *PostController) GetBySlugAdmin(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	slug := vars["slug"]
@@ -454,8 +463,9 @@ func (pc *PostController) GetBySlugAdmin(w http.ResponseWriter, r *http.Request)
 	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
 }
 
+// Create creates a new post and returns its details
 func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
-	uid, err := services.UserIdFromContext(r.Context())
+	uid, err := services.UserIDFromContext(r.Context())
 	if err != nil {
 		NewAPIError(&APIError{false, "Something went wrong", http.StatusInternalServerError}, w)
 		return
@@ -573,8 +583,9 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Message: "Post created", Data: post}, w, http.StatusOK)
 }
 
+// Update updates the post with the given id and returns its new details
 func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
-	_, err := services.UserIdFromContext(r.Context())
+	_, err := services.UserIDFromContext(r.Context())
 	if err != nil {
 		NewAPIError(&APIError{false, "Something went wrong", http.StatusInternalServerError}, w)
 		return
@@ -677,6 +688,7 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 	NewAPIResponse(&APIResponse{Success: true, Message: "Post updated", Data: post}, w, http.StatusOK)
 }
 
+// Delete deletes the post with the given id
 func (pc *PostController) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -754,6 +766,7 @@ func (pc *PostController) checkCache(key string) (bool, []byte) {
 	return true, []byte(val.Val())
 }
 
+// Returns if given slug is in slug cache
 func (pc *PostController) checkSlugCache(slug string) (bool, []byte) {
 
 	val, err := pc.App.Redis.Get(slug).Result()
@@ -770,6 +783,7 @@ func (pc *PostController) checkSlugCache(slug string) (bool, []byte) {
 	return true, []byte(val)
 }
 
+// Returns if given category is in category cache
 func (pc *PostController) checkCategoryCache(category string, key string) (bool, []byte) {
 
 	val := pc.App.Redis.HGet(category, key)
@@ -783,8 +797,8 @@ func (pc *PostController) checkCategoryCache(category string, key string) (bool,
 	return true, []byte(val.Val())
 }
 
-// False -> pagination not in cache
-// True -> pagination in cache
+// False -> pagination not in admin cache
+// True -> pagination in admin cache
 func (pc *PostController) checkAdminCache(key string) (bool, []byte) {
 
 	val := pc.App.Redis.HGet("admin-page-hash", key)
@@ -798,6 +812,7 @@ func (pc *PostController) checkAdminCache(key string) (bool, []byte) {
 	return true, []byte(val.Val())
 }
 
+// Returns if given slug is in admin slug cache
 func (pc *PostController) checkAdminSlugCache(slug string) (bool, []byte) {
 
 	val := pc.App.Redis.HGet("admin-slug-hash", slug)
@@ -811,6 +826,7 @@ func (pc *PostController) checkAdminSlugCache(slug string) (bool, []byte) {
 	return true, []byte(val.Val())
 }
 
+// Flushes pagination cache
 func (pc *PostController) flushCache() {
 	err := pc.App.Redis.Del("page-hash")
 	if err.Err() != nil {
@@ -820,6 +836,7 @@ func (pc *PostController) flushCache() {
 	return
 }
 
+// Flushes slug cache
 func (pc *PostController) flushSlugCache(slug string) {
 	err := pc.App.Redis.Del(slug)
 	if err.Err() != nil {
@@ -831,6 +848,7 @@ func (pc *PostController) flushSlugCache(slug string) {
 	return
 }
 
+// Flushes tags (category) cache
 func (pc *PostController) flushTagsCache(tags []string) {
 	for _, tag := range tags {
 		err := pc.App.Redis.Del(tag)
@@ -842,6 +860,7 @@ func (pc *PostController) flushTagsCache(tags []string) {
 	return
 }
 
+// Flushes admin pagination cache
 func (pc *PostController) flushAdminCache() {
 	err := pc.App.Redis.Del("admin-page-hash")
 	if err.Err() != nil {
@@ -851,6 +870,7 @@ func (pc *PostController) flushAdminCache() {
 	return
 }
 
+// Flushes admin slug cache
 func (pc *PostController) flushAdminSlugCache(slug string) {
 	err := pc.App.Redis.Del("admin-slug-hash", slug)
 	if err.Err() != nil {
@@ -860,6 +880,7 @@ func (pc *PostController) flushAdminSlugCache(slug string) {
 	return
 }
 
+// Removes any duplicate tags
 func rmDuplicateTags(tags []string) []string {
 	// Remove any duplicate tags by using them as a key in a map
 	tagsMap := make(map[string]bool, len(tags))

@@ -2,11 +2,11 @@ package middleware
 
 import (
 	"bufio"
-	"log"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -17,6 +17,7 @@ import (
 	"github.com/dgrijalva/jwt-go/request"
 )
 
+// RequireAuthentication is the middleware function for routes that require a bearer token
 func RequireAuthentication(a *app.App, next http.HandlerFunc, admin bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -87,7 +88,7 @@ func RequireAuthentication(a *app.App, next http.HandlerFunc, admin bool) http.H
 				return
 			}
 			ctx := services.ContextWithUser(r.Context(), user)*/
-			ctx := services.ContextWithUserId(r.Context(), uid)
+			ctx := services.ContextWithUserID(r.Context(), uid)
 			if !admin {
 				next(w, r.WithContext(ctx))
 				return
@@ -104,6 +105,7 @@ func RequireAuthentication(a *app.App, next http.HandlerFunc, admin bool) http.H
 	}
 }
 
+// RequireRefreshToken is the middleware function for routes that require a refresh token
 func RequireRefreshToken(a *app.App, next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -176,7 +178,7 @@ func RequireRefreshToken(a *app.App, next http.HandlerFunc) http.HandlerFunc {
 				controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Bad id type", Status: http.StatusBadRequest}, w)
 				return
 			}
-			ctx := services.ContextWithUserId(r.Context(), uid)
+			ctx := services.ContextWithUserID(r.Context(), uid)
 			next(w, r.WithContext(ctx))
 		}
 	}

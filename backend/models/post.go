@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgtype"
 )
 
+// Post stores the data of a post
 type Post struct {
 	ID            int                `json:"id"`
 	Title         string             `json:"title"`
@@ -16,14 +17,14 @@ type Post struct {
 	UpdatedAt     pgtype.Timestamptz `json:"updatedAt"`
 	Tags          []string           `json:"tags"`
 	Hidden        bool               `json:"hidden"`
-	AuthorID      string                `json:"authorid"`
+	AuthorID      string             `json:"authorid"`
 	FeatureImgURL string             `json:"featureImgUrl"`
 	Subtitle      string             `json:"subtitle"`
 	Views         int                `json:"views"`
 }
 
+// MarshalJSON marshals post data
 func (p *Post) MarshalJSON() ([]byte, error) {
-	// TODO: Find a better way to set updatedAt to nil
 	value, _ := p.UpdatedAt.Value()
 	if value == nil {
 		return json.Marshal(struct {
@@ -35,7 +36,7 @@ func (p *Post) MarshalJSON() ([]byte, error) {
 			UpdatedAt     *pgtype.Timestamptz `json:"updatedAt"`
 			Tags          []string            `json:"tags"`
 			Hidden        bool                `json:"hidden"`
-			AuthorID      string                 `json:"authorid"`
+			AuthorID      string              `json:"authorid"`
 			FeatureImgURL string              `json:"featureImgUrl"`
 			Subtitle      string              `json:"subtitle"`
 			Views         int                 `json:"views"`
@@ -51,7 +52,7 @@ func (p *Post) MarshalJSON() ([]byte, error) {
 		UpdatedAt     time.Time `json:"updatedAt"`
 		Tags          []string  `json:"tags"`
 		Hidden        bool      `json:"hidden"`
-		AuthorID      string       `json:"authorid"`
+		AuthorID      string    `json:"authorid"`
 		FeatureImgURL string    `json:"featureImgUrl"`
 		Subtitle      string    `json:"subtitle"`
 		Views         int       `json:"views"`

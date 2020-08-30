@@ -18,6 +18,7 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/util"
 )
 
+// Stores the MB representation
 const (
 	MB = 1 << 20
 )
@@ -34,6 +35,7 @@ func NewUploadController() *UploadController {
 	return &UploadController{}
 }
 
+// UploadImage uploads a image to the server
 func (uc *UploadController) UploadImage(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Content-type")
 	if !strings.Contains(contentType, "multipart/form-data") {
@@ -157,6 +159,7 @@ func (uc *UploadController) UploadImage(w http.ResponseWriter, r *http.Request) 
 	NewAPIResponse(&APIResponse{Success: true, Message: "Image uploaded successfully", Data: data}, w, http.StatusOK)
 }
 
+// UploadVideo uploads a video to the server
 func (uc *UploadController) UploadVideo(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Content-type")
 	if !strings.Contains(contentType, "multipart/form-data") {

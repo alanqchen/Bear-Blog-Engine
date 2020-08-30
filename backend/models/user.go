@@ -8,10 +8,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type UpdateTime struct {
-	Time time.Time
-}
-
 // User represents a user account for public visibility (used for public endpoints)
 // Its MarshalJSON function wont expose its role.
 type User struct {
@@ -32,7 +28,7 @@ type AuthUser struct {
 	Admin bool `json:"admin"`
 }
 
-// TODO: Maybe find a better solution to remove the password when marshalling to json
+// MarshalJSON marshals a given user's information
 func (u *User) MarshalJSON() ([]byte, error) {
 	value := u.UpdatedAt
 	if value == nil {
@@ -55,6 +51,7 @@ func (u *User) MarshalJSON() ([]byte, error) {
 	}{u.ID, u.Name, u.Email, u.CreatedAt, u.UpdatedAt, u.Username})
 }
 
+// MarshalJSON marshals a given user's information including role
 func (u *AuthUser) MarshalJSON() ([]byte, error) {
 	value := u.UpdatedAt
 	if value == nil {
@@ -80,6 +77,7 @@ func (u *AuthUser) MarshalJSON() ([]byte, error) {
 	}{u.ID, u.Name, u.Email, u.Admin, u.CreatedAt, u.UpdatedAt, u.Username})
 }
 
+// SetPassword hashes and salts the given password and then sets it to the user
 func (u *User) SetPassword(password string) {
 	pwhash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
@@ -88,6 +86,7 @@ func (u *User) SetPassword(password string) {
 	u.Password = string(pwhash)
 }
 
+// CheckPassword compares the given password with the user's password
 func (u *User) CheckPassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
 	if err != nil {
@@ -97,15 +96,7 @@ func (u *User) CheckPassword(password string) bool {
 	return true
 }
 
-/*
-func (u *User) GetHashedPassword() string {
-	return u.Password
-}
-
-func (u *User) GetCreationTime() time.Time {
-	return u.CreatedAt
-}
-*/
+// IsAdmin returns if the user is an admin
 func (u *User) IsAdmin() bool {
 	return u.Admin == true
 }
