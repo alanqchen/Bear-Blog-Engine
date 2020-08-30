@@ -41,6 +41,8 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
                 await dispatch(refresh());
                 if(auth.error) {
                     clearTokens();
+                } else {
+                    setIsInitialLoad(false);
                 }
             }
             setGetNewRefreshToken();
@@ -49,6 +51,8 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
                 await dispatch(refresh());
                 if(auth.error) {
                     clearTokens();
+                } else {
+                    setIsInitialLoad(false);
                 }
             }
             getNewRefreshToken();
@@ -56,7 +60,6 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
             clearTokens();
             Router.push("/auth/portal/login");
         }
-        setIsInitialLoad(false);
 
     }, [auth.error, isInitialLoad]);
 
