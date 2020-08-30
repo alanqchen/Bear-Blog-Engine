@@ -133,7 +133,7 @@ export const MetaForm = ({ postData }) => {
                 setMessage("Failed to save! Couldn't upload feature image");
                 setSnackbarOpen(true);
             });
-        } else if(!rmOrigFeatureImage && !uploadedNew) {
+        } else if(!rmOrigFeatureImage && !uploadedNew && postData) {
             featureImageURL = postData.featureImgUrl;
         }
 
