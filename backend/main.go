@@ -26,7 +26,9 @@ import (
 func main() {
 	log.Println("Starting up API...")
 	var cfg config.Config
+	var err error
 	log.Println("Looking for a config file")
+
 	if _, err := os.Stat("config/app-custom.json"); !os.IsNotExist(err) {
 		log.Println("Using config/app-custom.json")
 		cfg, err = config.New("config/app-custom.json")
@@ -41,6 +43,9 @@ func main() {
 		cfg, err = config.New("config/app-docker.json")
 	} else {
 		log.Fatal("[FATAL] Failed to find config/app-custom.json or config/app.json or config/app-docker or ../app.json")
+	}
+	if err != nil {
+		log.Fatal("Failed to create config:", err)
 	}
 
 	log.Println("Creating api")

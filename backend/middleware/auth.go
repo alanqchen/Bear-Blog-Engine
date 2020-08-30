@@ -111,7 +111,9 @@ func RequireRefreshToken(a *app.App, next http.HandlerFunc) http.HandlerFunc {
 
 		publicKeyFile, err := os.Open(a.Config.JWT.PublicKey)
 		if err != nil {
-			panic(err)
+			log.Println(err)
+			controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Failed to verify token", Status: http.StatusInternalServerError}, w)
+			return
 		}
 
 		pemfileinfo, _ := publicKeyFile.Stat()
@@ -120,6 +122,11 @@ func RequireRefreshToken(a *app.App, next http.HandlerFunc) http.HandlerFunc {
 
 		buffer := bufio.NewReader(publicKeyFile)
 		_, err = buffer.Read(pembytes)
+		if err != nil {
+			log.Println(err)
+			controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Failed to verify token", Status: http.StatusInternalServerError}, w)
+			return
+		}
 
 		data, _ := pem.Decode([]byte(pembytes))
 
@@ -128,13 +135,17 @@ func RequireRefreshToken(a *app.App, next http.HandlerFunc) http.HandlerFunc {
 		publicKeyImported, err := x509.ParsePKIXPublicKey(data.Bytes)
 
 		if err != nil {
-			panic(err)
+			log.Println(err)
+			controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Failed to verify token", Status: http.StatusInternalServerError}, w)
+			return
 		}
 
 		rsaPub, ok := publicKeyImported.(*rsa.PublicKey)
 
 		if !ok {
-			panic(err)
+			log.Println("Failed to import public key")
+			controllers.NewAPIError(&controllers.APIError{Success: false, Message: "Failed to verify token", Status: http.StatusInternalServerError}, w)
+			return
 		}
 
 		t, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
