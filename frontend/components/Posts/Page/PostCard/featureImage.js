@@ -63,7 +63,6 @@ function FeatureImage({ featureImgUrl, tags, skeleton, moreHeight, noMargin }) {
                         }} 
                         src={process.env.NEXT_PUBLIC_API_URL + featureImgUrl}
                         alt="Feature Image" onLoad={() => handleLoad()} 
-                        loading="lazy"
                     />
                 </StyledPicture>
                 } 
