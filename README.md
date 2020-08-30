@@ -37,6 +37,8 @@ Current lighthouse stats(PWA hopefully soon):
 * Support for hidden/draft posts
 * Progressive Web Application (service-worker, offline cache, etc.)
 
+<strong>For images of the admin dashboard, go to [this pull request](https://github.com/alanqchen/Bear-Blog-Engine/pull/140)</strong>
+
 # Using Bear-Post
 
 Find the start up information in the [`templates/backend-only` directory](templates/backend-only).
