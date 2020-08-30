@@ -707,27 +707,19 @@ func (pc *PostController) Delete(w http.ResponseWriter, r *http.Request) {
 
 // Search for posts using title and tags. Will not return nil data if search is successful.
 func (pc *PostController) Search(w http.ResponseWriter, r *http.Request) {
-	j, err := GetJSON(r.Body)
-	if err != nil {
-		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
-		return
-	}
 
-	title, err := j.GetString("title")
-	if err != nil {
-		NewAPIError(&APIError{false, "Title is required", http.StatusBadRequest}, w)
-		return
-	}
+	q := r.URL.Query()
+
+	title := q.Get("title")
 
 	if title == "" {
-		NewAPIError(&APIError{false, "Title cannot be empty", http.StatusBadRequest}, w)
+		NewAPIError(&APIError{false, "Title to search for is required", http.StatusBadRequest}, w)
 		return
 	}
 
-	tags, err := j.GetStringArray("tags")
-	if err != nil {
-		NewAPIError(&APIError{false, "Missing tags key", http.StatusBadRequest}, w)
-		return
+	tags := q["tags"]
+	if len(tags) == 0 {
+		log.Println("No tags slice")
 	}
 
 	results, err := pc.PostRepository.SearchQuery(title, tags)

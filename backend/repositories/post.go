@@ -474,10 +474,21 @@ func (pr *postRepository) GetLastIDAdmin() (int, error) {
 func (pr *postRepository) SearchQuery(title string, tags []string) ([]*models.Post, error) {
 	var posts []*models.Post
 
-	rows, err := pr.Pool.Query(context.Background(),
-		"SELECT * FROM post_schema.post WHERE NOT hidden AND LOWER(title) LIKE LOWER('%' || $1 || '%') AND tags @> $2 ORDER BY views DESC;",
-		title, tags,
-	)
+	var rows pgx.Rows
+	var err error
+
+	// For some reason it needs a seperate query for tags to return rows
+	if len(tags) == 0 {
+		rows, err = pr.Pool.Query(context.Background(),
+			"SELECT * FROM post_schema.post WHERE NOT hidden AND LOWER(title) LIKE LOWER('%' || $1 || '%') ORDER BY views DESC LIMIT 5",
+			title,
+		)
+	} else {
+		rows, err = pr.Pool.Query(context.Background(),
+			"SELECT * FROM post_schema.post WHERE NOT hidden AND LOWER(title) LIKE LOWER('%' || $1 || '%') AND tags @> $2 ORDER BY views DESC LIMIT 5",
+			title, tags,
+		)
+	}
 
 	if err != nil {
 		log.Println(err)
@@ -492,6 +503,15 @@ func (pr *postRepository) SearchQuery(title string, tags []string) ([]*models.Po
 			log.Println(err)
 			return nil, err
 		}
+
+		// Limit p.Body to 250 characters
+		limit := len(p.Body)
+		if len(p.Body) > 250 {
+			limit = 250
+		}
+
+		p.Body = p.Body[:limit]
+
 		posts = append(posts, p)
 	}
 
