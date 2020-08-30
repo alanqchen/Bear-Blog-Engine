@@ -8,6 +8,7 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/util"
 )
 
+// Logger is the middleware function for logging requests
 func Logger(next http.HandlerFunc) http.HandlerFunc {
 	return func(res http.ResponseWriter, req *http.Request) {
 		start := time.Now()

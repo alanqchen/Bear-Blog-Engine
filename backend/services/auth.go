@@ -22,12 +22,7 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-type TokenClaims struct {
-	jwt.StandardClaims
-	UID   int  `json:"id"`
-	Admin bool `json:"admin"`
-}
-
+// KAuthTokenClaims stores the claims associated with a token
 type KAuthTokenClaims struct {
 	jwt.StandardClaims
 	UID       string `json:"id"`
@@ -35,14 +30,17 @@ type KAuthTokenClaims struct {
 	TokenHash string `json:"tokenHash"`
 }
 
+// AccessToken stores the access token
 type AccessToken struct {
 	AccessToken string `json:"accessToken"`
 }
 
+// RefreshToken stores the refresh token
 type RefreshToken struct {
 	RefreshToken string `json:"refreshToken"`
 }
 
+// Tokens stores the access and refresh tokens, experation, and type
 type Tokens struct {
 	AccessToken  string  `json:"accessToken"`
 	RefreshToken string  `json:"refreshToken"`
@@ -52,18 +50,22 @@ type Tokens struct {
 
 type userCtxKeyType string
 
+// Various token constants
 const (
 	TokenDuration                       = time.Hour
 	RefreshTokenDuration                = time.Hour * 72
 	TokenType                           = "Bearer"
 	userCtxKey           userCtxKeyType = "user"
-	userIdCtxKey         userCtxKeyType = "userId"
+	userIDCtxKey         userCtxKeyType = "userId"
 )
 
+// JWTAuthService is the public interface for auth services
 type JWTAuthService interface {
 	GenerateTokens(u *models.User) (*Tokens, error)
 }
 
+// Stores the HMAC secret, RSA keys, and Redis connection
+// Note that HMAC is used for the access token, RSA for the refresh token
 type jwtAuthService struct {
 	secret     string
 	privateKey *rsa.PrivateKey
@@ -71,6 +73,7 @@ type jwtAuthService struct {
 	Redis      *database.Redis
 }
 
+// NewJWTAuthService returns a new JWT auth service
 func NewJWTAuthService(jwtCfg *config.JWTConfig, redis *database.Redis) JWTAuthService {
 	return &jwtAuthService{
 		jwtCfg.Secret,
@@ -80,6 +83,7 @@ func NewJWTAuthService(jwtCfg *config.JWTConfig, redis *database.Redis) JWTAuthS
 	}
 }
 
+// GenerateTokens returns new tokens for the given user
 func (jwtService *jwtAuthService) GenerateTokens(u *models.User) (*Tokens, error) {
 	uid := u.ID.String()
 	now := time.Now()
@@ -208,26 +212,9 @@ func (jwtService *jwtAuthService) GenerateResetToken(u *models.User) (*Tokens, e
 	return tokens, nil
 }
 */
-func ExtractJti(cfg *config.Config, tokenStr string) (string, error) {
-	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-		}
-		// check token signing method etc
-		return []byte(cfg.JWT.Secret), nil
-	})
 
-	if err != nil {
-		return "", err
-	}
-
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		return claims["jti"].(string), nil
-	}
-
-	return "", err
-}
-
+// ExtractTokenHash returns the access token hash from the given signed token string
+// Signing method is HMAC
 func ExtractTokenHash(cfg *config.Config, tokenStr string) (string, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -248,6 +235,8 @@ func ExtractTokenHash(cfg *config.Config, tokenStr string) (string, error) {
 	return "", err
 }
 
+// ExtractRefreshTokenHash returns the refresh token hash from the given signed token string
+// Signing method is RSA
 func ExtractRefreshTokenHash(cfg *config.Config, tokenStr string) (string, error) {
 	publicKeyFile, err := os.Open(cfg.JWT.PublicKey)
 	if err != nil {
@@ -295,6 +284,8 @@ func ExtractRefreshTokenHash(cfg *config.Config, tokenStr string) (string, error
 	return "", err
 }
 
+// GetTokenFromRequest returns the access token string from the request header
+// Signing method is HMAC
 func GetTokenFromRequest(cfg *config.Config, r *http.Request) (string, error) {
 	token, err := request.ParseFromRequest(r, request.AuthorizationHeaderExtractor,
 		func(token *jwt.Token) (interface{}, error) {
@@ -313,6 +304,8 @@ func GetTokenFromRequest(cfg *config.Config, r *http.Request) (string, error) {
 
 }
 
+// GetRefreshTokenFromRequest returns the refresh token string from the request header
+// Signing method is RSA
 func GetRefreshTokenFromRequest(cfg *config.Config, r *http.Request) (string, error) {
 	publicKeyFile, err := os.Open(cfg.JWT.PublicKey)
 	if err != nil {
@@ -358,13 +351,14 @@ func GetRefreshTokenFromRequest(cfg *config.Config, r *http.Request) (string, er
 
 }
 
-// TODO: https://www.calhoun.io/pitfalls-of-context-values-and-how-to-avoid-or-mitigate-them/
-func ContextWithUserId(ctx context.Context, uID string) context.Context {
-	return context.WithValue(ctx, userIdCtxKey, uID)
+// ContextWithUserID returns the copy of the given context with the id key value being the uid
+func ContextWithUserID(ctx context.Context, uID string) context.Context {
+	return context.WithValue(ctx, userIDCtxKey, uID)
 }
 
-func UserIdFromContext(ctx context.Context) (string, error) {
-	uID, ok := ctx.Value(userIdCtxKey).(string)
+// UserIDFromContext returns the uid from the context id key
+func UserIDFromContext(ctx context.Context) (string, error) {
+	uID, ok := ctx.Value(userIDCtxKey).(string)
 	if !ok {
 		log.Println("Context missing userID")
 		return "", errors.New("[SERVICE]: Context missing userID")
@@ -373,10 +367,12 @@ func UserIdFromContext(ctx context.Context) (string, error) {
 	return uID, nil
 }
 
+// ContextWithUser returns the copy of the given context with the user key value being the user
 func ContextWithUser(ctx context.Context, u *models.User) context.Context {
 	return context.WithValue(ctx, userCtxKey, u)
 }
 
+// UserFromContext returns the uid from the context user key
 func UserFromContext(ctx context.Context) (*models.User, error) {
 	u, ok := ctx.Value(userCtxKey).(*models.User)
 	if !ok {
@@ -387,6 +383,7 @@ func UserFromContext(ctx context.Context) (*models.User, error) {
 	return u, nil
 }
 
+// Parses the RSA private key
 func getPrivateKey(jwtConfig *config.JWTConfig) *rsa.PrivateKey {
 	privateKeyFile, err := os.Open(jwtConfig.PrivateKey)
 	if err != nil {
@@ -418,6 +415,7 @@ func getPrivateKey(jwtConfig *config.JWTConfig) *rsa.PrivateKey {
 	return privateKeyImported
 }
 
+// Parses the RSA public key
 func getPublicKey(jwtConfig *config.JWTConfig) *rsa.PublicKey {
 	publicKeyFile, err := os.Open(jwtConfig.PublicKey)
 	if err != nil {
@@ -452,5 +450,4 @@ func getPublicKey(jwtConfig *config.JWTConfig) *rsa.PublicKey {
 	}
 
 	return rsaPub
-	//return publicKeyImported
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/rainycape/unidecode"
 )
 
+// GenerateSlug returns the slug version of the title (no date prefix)
 func GenerateSlug(title string) string {
 	slug := unidecode.Unidecode(title)
 	slug = strings.ToLower(slug)
@@ -21,12 +22,14 @@ func GenerateSlug(title string) string {
 	return slug
 }
 
+// GetMD5Hash returns the hash of the given string
 func GetMD5Hash(text string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(text))
 	return hex.EncodeToString(hasher.Sum(nil))
 }
 
+// GetRequestScheme returns the request scheme (http:// or https://)
 func GetRequestScheme(r *http.Request) string {
 	isHTTPS := r.Header.Get("X-Forwarded-Proto") == "https"
 	if isHTTPS {
@@ -36,6 +39,7 @@ func GetRequestScheme(r *http.Request) string {
 	return "http://"
 }
 
+// IsEmail checks if the given string is a valid email address format
 func IsEmail(email string) bool {
 	const emailRegex = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
 	if m, _ := regexp.MatchString(emailRegex, email); !m {
@@ -93,12 +97,12 @@ func GetIP(r *http.Request) string {
 
 	if len(headers) > 0 {
 		checklist := []string{
-			"x-client-ip", // Standard headers used by Amazon EC2, Heroku, and others.
-			"x-forwarded-for", // Load-balancers (AWS ELB) or proxies.
-			"cf-connecting-ip", // @see https://support.cloudflare.com/hc/en-us/articles/200170986-How-does-Cloudflare-handle-HTTP-Request-headers-
-			"fastly-client-ip", // Fastly and Firebase hosting header (When forwared to cloud function)
-			"true-client-ip", // Akamai and Cloudflare: True-Client-IP.
-			"x-real-ip", // Default nginx proxy/fcgi; alternative to x-forwarded-for, used by some proxies.
+			"x-client-ip",         // Standard headers used by Amazon EC2, Heroku, and others.
+			"x-forwarded-for",     // Load-balancers (AWS ELB) or proxies.
+			"cf-connecting-ip",    // @see https://support.cloudflare.com/hc/en-us/articles/200170986-How-does-Cloudflare-handle-HTTP-Request-headers-
+			"fastly-client-ip",    // Fastly and Firebase hosting header (When forwared to cloud function)
+			"true-client-ip",      // Akamai and Cloudflare: True-Client-IP.
+			"x-real-ip",           // Default nginx proxy/fcgi; alternative to x-forwarded-for, used by some proxies.
 			"x-cluster-client-ip", // (Rackspace LB and Riverbed's Stingray) http://www.rackspace.com/knowledge_center/article/controlling-access-to-linux-cloud-sites-based-on-the-client-ip-address
 			"x-forwarded",
 			"forwarded-for",

@@ -1,4 +1,4 @@
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import React, { useState } from 'react';
 import { fetchPosts as fetchPostsAction, fetchPostsSetMinID } from '../../redux/fetchPosts/actions';
 import { fetchCategory as fetchCategoryAction, fetchCategorySetMinID } from '../../redux/fetchCategory/actions';
@@ -7,11 +7,11 @@ import { Waypoint } from 'react-waypoint';
 import PostCard from './Page/PostCard/postCard';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import { Typography } from '@material-ui/core';
-import { WaveButton } from '../Theme/StyledComponents'
+import { WaveButton } from '../Theme/StyledComponents';
 
 function PostsContainer({ initialData, fetchPosts, fetchCategory, dispatch, category }) {
 
-    let fetchType = category === "" ? fetchPosts : fetchCategory;
+    const fetchType = category === "" ? fetchPosts : fetchCategory;
     const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     const loadMorePosts = async() => {
