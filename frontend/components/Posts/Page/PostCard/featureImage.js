@@ -20,6 +20,11 @@ function FeatureImage({ featureImgUrl, tags, skeleton, moreHeight, noMargin }) {
 
     useEffect(() => { }, [loading]);
     
+    const wrapperLoadingStyle = {
+        position: "absolute",
+        top: "0"
+    }
+
     return (
         <FeatureImageWrapper noMargin={noMargin ? "1" : undefined}>
             {!skeleton && loading &&
@@ -38,7 +43,7 @@ function FeatureImage({ featureImgUrl, tags, skeleton, moreHeight, noMargin }) {
                 );
             })}
             </TagsWrapper>
-            <StyledImageWrapper moreHeight={moreHeight ? "1" : undefined} style={{positon: loading ? "absolute" : "block", top: 0}}>
+            <StyledImageWrapper moreHeight={moreHeight ? "1" : undefined} style={loading ? wrapperLoadingStyle : {}}>
                 {skeleton ? <Skeleton variant="rect" width="100%" height={moreHeight ? "600px" : "300px"} />
                 :
                 <StyledPicture>
@@ -63,6 +68,7 @@ function FeatureImage({ featureImgUrl, tags, skeleton, moreHeight, noMargin }) {
                         }} 
                         src={process.env.NEXT_PUBLIC_API_URL + featureImgUrl}
                         alt="Feature Image" onLoad={() => handleLoad()} 
+                        loading="lazy"
                     />
                 </StyledPicture>
                 } 
