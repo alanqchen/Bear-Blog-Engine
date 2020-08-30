@@ -33,6 +33,7 @@ Current lighthouse stats(PWA hopefully soon):
 * WYSIWYG online markdown-based editor that also supports embeds
 * Support for multiple admin and editor users
 * Support for hidden/draft posts
+* Progressive Web Application (service-worker, offline cache, etc.)
 
 # Using Bear-Post
 
