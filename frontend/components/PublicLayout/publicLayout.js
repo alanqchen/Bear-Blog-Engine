@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Waypoint } from 'react-waypoint';
-import { StyledCenteredContainer } from './publicLayoutStyled';
+import { StyledCenteredContainer, WidthWrapper } from './publicLayoutStyled';
 import { StyledNavBar } from '../PublicNavBar/NavBarStyled';
+import { Collapse } from '@material-ui/core';
+import SearchBar from './searchBar';
 
 const publicLayoutStyle = {
     marginTop: 20,
@@ -16,6 +18,7 @@ function publicLayout({children}) {
     const [atTop, setAtTop] = useState(true);
     const [everEnter, setEverEnter] = useState(false);
     const [isInitialLoad, setIsInitialLoad] = useState(true);
+    const [showSearch, setShowSearch] = useState(false);
 
     const waypointEnter = () => {
         setEverEnter(true);
@@ -38,9 +41,14 @@ function publicLayout({children}) {
     return (
 
         <div style={publicLayoutStyle}>
-            <StyledNavBar atTop={atTop} />
+            <StyledNavBar atTop={atTop} toggleSearch={() => setShowSearch(!showSearch)}/>
             <Waypoint onEnter={waypointEnter} onLeave={waypointLeave} />
             <StyledCenteredContainer>
+                <WidthWrapper>
+                    <Collapse in={showSearch}>
+                        <SearchBar />
+                    </Collapse>
+                </WidthWrapper>
                 {children}
             </StyledCenteredContainer>
         </div>

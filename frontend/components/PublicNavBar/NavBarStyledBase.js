@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components';
-import { Typography, Link } from '@material-ui/core'
+import { Typography, Link } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import GlobalStyle from '../Theme/theme'
+import GlobalStyle from '../Theme/theme';
 import config from '../../config.json';
 
 export const CategoriesWrapper = styled.div`
@@ -36,10 +36,6 @@ export const MUILink = styled(Link)`
 export const SearchIconStyled = styled(SearchIcon)`
     font-size: 26px;
     color: ${GlobalStyle.textPrimary};
-
-    &:hover {
-        cursor: pointer;
-    }
 `;
 
 const fadeIn = keyframes`
@@ -212,6 +208,19 @@ export const NavLinks = styled.ul`
 
 export const NavLink = styled.li`
     display: inline-block;
+    &:hover {
+        cursor: pointer;
+    }
+`;
+
+export const SearchIconWrapper = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 48px;
+    width: 48px;
+    margin-right: 8px;
+
     &:hover {
         cursor: pointer;
     }

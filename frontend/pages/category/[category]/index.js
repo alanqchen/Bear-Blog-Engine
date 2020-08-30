@@ -5,7 +5,6 @@ import { Typography } from '@material-ui/core';
 import Layout from '../../../components/PublicLayout/publicLayout';
 import { HeaderWrapper } from '../../../components/PublicLayout/publicLayoutStyled';
 import PostsContainer from '../../../components/Posts/postsContainer';
-import PostCard from '../../../components/Posts/Page/PostCard/postCard';
 import config from '../../../config.json';
 
 const Index = ({initialData}) => {

@@ -14,7 +14,8 @@ import {
     SideMenuWrapper,
     SideMenuNavigation,
     SideMenuNavLinks,
-    SideMenuNavLinkItem
+    SideMenuNavLinkItem,
+    SearchIconWrapper
 } from './NavBarStyledBase';
 import { useMediaQuery } from 'react-responsive';
 import config from '../../config.json';
@@ -30,7 +31,7 @@ function HideOnScroll(props) {
     );
 }
 
-function NavBar({props, atTop, className}) {
+function NavBar({props, atTop, className, toggleSearch}) {
 
     const [isActive, setIsActive] = useState(false);
     const trigger = useScrollTrigger();
@@ -72,7 +73,9 @@ function NavBar({props, atTop, className}) {
                             ))}
                             </NavLinks>
                         </CategoriesWrapper>
-                        <SearchIconStyled fontSize="large" style={{ fontSize: 26, color: GlobalTheme.textPrimary }}/>
+                        <SearchIconWrapper onClick={() => toggleSearch()} >
+                            <SearchIconStyled fontSize="large" style={{ fontSize: 26, color: GlobalTheme.textPrimary }}/>
+                        </SearchIconWrapper>
                         <Hamburger label="sidebar" toggled={isActive} toggle={setIsActive} color={GlobalTheme.textPrimary} size={26} />
                     </Toolbar>
                 </AppBar>
