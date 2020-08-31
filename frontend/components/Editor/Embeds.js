@@ -3,13 +3,14 @@ import {
     StyledYoutubeEmbedWrapper,
     StyledEmbedWrapper
 } from './EditorStyled';
+import Gist from 'react-gist';
 
 export const EmbedsArray = [
     {
         title: "YouTube",
         keywords: "youtube video tube google",
         icon: () => (
-            <img src="/YouTube_white_squircle.svg" width={24} height={24} />
+            <img src="/embed-icons/YouTube_white_squircle.svg" width={24} height={24} />
         ),
         matcher: url => {
             return url.match(
@@ -22,7 +23,7 @@ export const EmbedsArray = [
         title: "Image URL",
         keywords: "image photo url picture",
         icon: () => (
-            <img alt="embed image" src="/photo-embed.svg" width={24} height={24} />
+            <img alt="embed image" src="/embed-icons/photo-embed.svg" width={24} height={24} />
         ),
         matcher: url => {
             return url.match(
@@ -30,7 +31,7 @@ export const EmbedsArray = [
             );
         },
         component: ImageEmbed,
-    }
+    },
 ];
 
 function YoutubeEmbed(props) {

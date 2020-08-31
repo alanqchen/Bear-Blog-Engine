@@ -38,9 +38,16 @@ function postLayout({children}) {
         }
     }, [atTop, isInitialLoad, everEnter]);
 
+    const toggleSearch = () => {
+        if(!showSearch) {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+        setShowSearch(!showSearch);
+    };
+
     return (
         <div style={postLayoutStyle}>
-            <StyledNavBar atTop={atTop} toggleSearch={() => setShowSearch(!showSearch)} />
+            <StyledNavBar atTop={atTop} toggleSearch={() => toggleSearch()} />
             <Waypoint onEnter={waypointEnter} onLeave={waypointLeave} />
             <StyledCenteredContainer>
                 <WidthWrapper>

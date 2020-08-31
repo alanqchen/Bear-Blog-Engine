@@ -38,10 +38,17 @@ function publicLayout({children}) {
         }
     }, [atTop, isInitialLoad, everEnter]);
 
+    const toggleSearch = () => {
+        if(!showSearch) {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+        setShowSearch(!showSearch);
+    };
+
     return (
 
         <div style={publicLayoutStyle}>
-            <StyledNavBar atTop={atTop} toggleSearch={() => setShowSearch(!showSearch)}/>
+            <StyledNavBar atTop={atTop} toggleSearch={() => toggleSearch()}/>
             <Waypoint onEnter={waypointEnter} onLeave={waypointLeave} />
             <StyledCenteredContainer>
                 <WidthWrapper>
