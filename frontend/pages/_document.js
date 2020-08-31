@@ -4,12 +4,36 @@ import { ServerStyleSheet as StyledComponentSheets } from 'styled-components';
 import { ServerStyleSheets as MaterialUiServerStyleSheets } from '@material-ui/styles';
 import theme from '../assets/theme/MUItheme';
 import config from '../config.json';
+import { GA_TRACKING_ID } from '../components/utils/gtag';
 
 export default class Document extends NextDocument {
   render() {
+
     return (
       <html lang="en">
         <Head>
+          {GA_TRACKING_ID &&  (
+            <>
+              <script
+                async
+                src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+              />
+              <script
+                dangerouslySetInnerHTML={{
+                  __html: `
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date());
+
+                    gtag('config', '${GA_TRACKING_ID}', {
+                      page_path: window.location.pathname,
+                    });
+                  `,
+                }}
+              />
+            </>
+          )}
+
           <meta name='application-name' content={config.blogName} />
           <meta name='apple-mobile-web-app-capable' content='yes' />
           <meta name='apple-mobile-web-app-status-bar-style' content='default' />
@@ -73,7 +97,7 @@ Document.getInitialProps = async ctx => {
           {materialUiSheets.getStyleElement()}
           {styledComponentSheet.getStyleElement()}
         </React.Fragment>,
-      ],
+      ]
     }
   } finally {
     styledComponentSheet.seal()

@@ -1,6 +1,7 @@
 import React from 'react';
 import { wrapper } from '../redux/store';
 import Head from 'next/head';
+import Router from 'next/router'
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import { ThemeProvider as MUIThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -8,12 +9,15 @@ import theme from '../assets/theme/MUItheme';
 import SCtheme from '../assets/theme/SCtheme';
 import useScrollRestoration from '../components/utils/useScrollRestoration';
 import { RouteIndicator } from '../components/Theme/routeIndicator';
+import * as gtag from '../components/utils/gtag';
 
 const GlobalStyle = createGlobalStyle`
   body {
     background-color: ${SCtheme.backgroundDark};
   }
 `
+
+Router.events.on('routeChangeComplete', (url) => gtag.pageview(url));
 
 const App = ({Component, pageProps, router}) => {
 
