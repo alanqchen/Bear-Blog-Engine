@@ -23,11 +23,15 @@ Databases used are PostgreSQL and Redis (auth & caching).
 
 All you need to use Bear-Post is a server to host the backend API. The frontend CDN and SSL certs can be handled by Vercel with your own domain for free!
 
-![image](https://user-images.githubusercontent.com/18543142/89113712-70958a80-d442-11ea-8e79-f373feb44990.png)
+<img src="https://user-images.githubusercontent.com/18543142/89113712-70958a80-d442-11ea-8e79-f373feb44990.png" width="50%" />
 
-Current lighthouse stats(PWA hopefully soon):
+Lighthouse stats of index page:
 
-![image](https://user-images.githubusercontent.com/18543142/87865583-293cd380-c945-11ea-9aaa-4e58bdafa203.png)
+<img src="https://i.imgur.com/v82b5fu.png" width="40%" />
+
+Lighthouse stats of a post page:
+
+<img src="https://i.imgur.com/hHMmZrj.png" width="40%" />
 
 ## Features
 
@@ -49,6 +53,10 @@ A: A dynamic blog gives me the opportunity to learn working with databases and R
 
 > What I cannot create, I do not understand - Richard Feynman
 
-*Later down the line*
-- Comment support
-- Search by month/year
+### Mockups
+
+<p align="center">
+    <img src="https://i.imgur.com/GD6TqiV.png" width="35%" />
+    <img src="https://i.imgur.com/GuoFXNO.png" width="60%" />
+</p>
+
