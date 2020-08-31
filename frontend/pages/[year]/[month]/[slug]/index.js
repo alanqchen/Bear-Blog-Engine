@@ -116,6 +116,7 @@ export async function getStaticProps(context) {
     const authorName = post.data.authorid;
 
     return {
+        revalidate: 10,
         props: {
             errorCode: errorCode,
             post: post,

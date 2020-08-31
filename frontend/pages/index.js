@@ -17,8 +17,6 @@ export async function getStaticProps({ params }) {
     const initialData = await res.json();
 
     return {
-      // Set the timeout for generating to 1 second
-      // This timeout could be longer depending on how often data changes
       revalidate: 10,
       props: {
         initialData: initialData
