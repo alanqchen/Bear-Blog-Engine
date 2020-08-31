@@ -1,0 +1,1152 @@
+{
+	"info": {
+		"_postman_id": "31bcf36b-1e5b-4768-a94c-ec880b8a49d3",
+		"name": "BearPost API Documentation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2a2d0a0f-34d8-4e0e-b694-bf1fe17b1e9e",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.environment.set(\"ACCESS_TOKEN\", jsonData.data.tokens.accessToken);\r",
+									"pm.environment.set(\"REFRESH_TOKEN\", jsonData.data.tokens.refreshToken);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{USER_USERNAME}}\",\r\n    \"password\": \"{{USER_PASSWORD}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/auth/login",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0b6c02ec-c54a-44cc-8111-9d0b02abbb8b",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);\r",
+									"pm.environment.set(\"ACCESS_TOKEN\", jsonData.data.accessToken);\r",
+									"pm.environment.set(\"REFRESH_TOKEN\", jsonData.data.refreshToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{REFRESH_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/auth/refresh",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a023bdd1-3eda-485f-a4e3-132f1e4a6c02",
+								"exec": [
+									"var inputData = JSON.parse(request.data);\r",
+									"pm.environment.set(\"USER_PASSWORD\", inputData.newpassword);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"ENTER NEW NAME\",\r\n    \"newpassword\": \"ENTER NEW PASSWORD\",\r\n    \"oldpassword\": \"{{USER_PASSWORD}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/auth/update",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"auth",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout current user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/auth/logout",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout all users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/auth/logout/all",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"auth",
+								"logout",
+								"all"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get all users",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/users",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all users (detailed)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/users/detailed",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"users",
+								"detailed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{USER_NAME}}\",\r\n    \"username\": \"{{USER_USERNAME}}\",\r\n    \"email\": \"{{USER_EMAIL}}\",\r\n    \"password\": \"{{USER_PASSWORD}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/users",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by UID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4ec25914-9cc2-4d34-857e-b75994306295",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "23602b50-a8eb-4b03-91a7-edb2f04a772d",
+								"exec": [
+									"pm.variables.set(\"SEARCH_UID\", 123)\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/users/{{SEARCH_UID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"users",
+								"{{SEARCH_UID}}"
+							]
+						},
+						"description": "Change the search UID in the \"Pre-request Script\" tab."
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by UID (detailed)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4ec25914-9cc2-4d34-857e-b75994306295",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "23602b50-a8eb-4b03-91a7-edb2f04a772d",
+								"exec": [
+									"pm.variables.set(\"SEARCH_UID\", \"11eac3da-aada-41ed-a90a-c78dd4078c91\")\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/users/{{SEARCH_UID}}/detailed",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"users",
+								"{{SEARCH_UID}}",
+								"detailed"
+							]
+						},
+						"description": "Change the search UID in the \"Pre-request Script\" tab."
+					},
+					"response": []
+				},
+				{
+					"name": "Get current user's UID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/protected",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"protected"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create first admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{USER_NAME}}\",\r\n    \"username\": \"{{USER_USERNAME}}\",\r\n    \"password\": \"{{USER_PASSWORD}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/users/setup",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"users",
+								"setup"
+							]
+						},
+						"description": "When there are no users, this is used to create the first admin user."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user by UID",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f66446df-150b-4bf3-a982-53bccb242186",
+								"exec": [
+									"pm.variables.set(\"USER_UID\", 123)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/users/{{USER_UID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"users",
+								"{{USER_UID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Paginate",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/posts/get?maxID=-1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"posts",
+								"get"
+							],
+							"query": [
+								{
+									"key": "maxID",
+									"value": "-1",
+									"description": "maxID of the page, -1 to start"
+								},
+								{
+									"key": "tags",
+									"value": "test",
+									"description": "tag to filter",
+									"disabled": true
+								},
+								{
+									"key": "tags",
+									"value": "twelv",
+									"description": "tag to filter",
+									"disabled": true
+								},
+								{
+									"key": "getAuthorID",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Paginate (w/ hidden)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/posts/admin/get?maxID=-1&tags=test&tags=twelve",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"posts",
+								"admin",
+								"get"
+							],
+							"query": [
+								{
+									"key": "maxID",
+									"value": "-1",
+									"description": "maxID of the page, -1 to start"
+								},
+								{
+									"key": "tags",
+									"value": "test"
+								},
+								{
+									"key": "tags",
+									"value": "twelve"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search for posts",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/posts/search?title=first",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"posts",
+								"search"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "first"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get post by ID",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "b733f8d0-4a34-4a93-9877-27c3a4f05da6",
+								"exec": [
+									"pm.variables.set(\"POST_ID\", 2)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/posts/{{POST_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"posts",
+								"{{POST_ID}}"
+							]
+						},
+						"description": "Set post ID to get in the \"Pre-request Script\" tab."
+					},
+					"response": []
+				},
+				{
+					"name": "Get post by ID (w/ hidden)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "98081703-8428-46c0-a414-8cb460f02e18",
+								"exec": [
+									"pm.variables.set(\"POST_ID\", 2)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/posts/admin/{{POST_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"posts",
+								"admin",
+								"{{POST_ID}}"
+							]
+						},
+						"description": "Set post ID to get in the \"Pre-request Script\" tab."
+					},
+					"response": []
+				},
+				{
+					"name": "Get post by slug",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "68188be0-3cd8-461f-ac66-0392b0e9d5ab",
+								"exec": [
+									"pm.variables.set(\"POST_SLUG\", \"YYYY/MM/SLUG\")"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/posts/{{POST_SLUG}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"posts",
+								"{{POST_SLUG}}"
+							]
+						},
+						"description": "Set post slug to get in the \"Pre-request Script\" tab."
+					},
+					"response": []
+				},
+				{
+					"name": "Get post by slug (w/ hidden)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "fd0fe57b-c4a7-4628-9985-a9cba648327f",
+								"exec": [
+									"pm.variables.set(\"POST_SLUG\", \"YYYY/MM/SLUG\")"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/posts/admin/{{POST_SLUG}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"posts",
+								"admin",
+								"{{POST_SLUG}}"
+							]
+						},
+						"description": "Set post slug to get in the \"Pre-request Script\" tab."
+					},
+					"response": []
+				},
+				{
+					"name": "Create post",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"title\": \"This a pass-over of the API (A little longer title)\",\r\n\t\"body\": \"This is a test post body. Blah Blah.\",\r\n\t\"tags\": [\"test\", \"post\", \"one\"],\r\n\t\"hidden\": false,\r\n\t\"subtitle\": \"This is a subtitle! Yay! (okay, a little longer this time)\",\r\n\t\"image-url\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/posts",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update post",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "3f92da6b-7e6b-4b2c-9bca-225282e1391c",
+								"exec": [
+									"pm.variables.set(\"POST_ID\", 13)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"title\": \"This a pass-over of the API (A little longer title)\",\r\n\t\"body\": \"This is a test post body. Blah Blah.\",\r\n\t\"tags\": [\"test\", \"post\", \"ten\"],\r\n\t\"hidden\": false,\r\n\t\"subtitle\": \"This is a subtitle! Yay! (okay, a little longer this time)\",\r\n\t\"image-url\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/posts/{{POST_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"posts",
+								"{{POST_ID}}"
+							]
+						},
+						"description": "Set post ID to update in the \"Pre-request Script\" tab."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete post by ID",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8fa8ef8c-124d-4e38-9080-a8c92043e26e",
+								"exec": [
+									"pm.variables.set(\"POST_ID\", 12)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/posts/delete/{{POST_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"posts",
+								"delete",
+								"{{POST_ID}}"
+							]
+						},
+						"description": "Set post ID to delete in the \"Pre-request Script\" tab."
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Media",
+			"item": [
+				{
+					"name": "Upload image",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/D:/Chrome Downloads/Rotating_earth_(large).gif"
+								}
+							],
+							"options": {
+								"formdata": {}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/images/upload",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"images",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload video",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "video",
+									"type": "file",
+									"src": "/D:/Chrome Downloads/Loop7f1ae9d2-1f1f-4b39-b647-d6bdb77e23b9.mp4"
+								}
+							],
+							"options": {
+								"formdata": {}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/{{API_PREFIX}}/videos/upload",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"{{API_PREFIX}}",
+								"videos",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get image",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "288e2905-0bf4-4d16-bfab-7939b710a523",
+								"exec": [
+									"pm.variables.set(\"IMAGE_FILE\", \"SOME_IMAGE_NAME_HERE.jpg\")"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/assets/images/{{IMAGE_FILE}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"assets",
+								"images",
+								"{{IMAGE_FILE}}"
+							]
+						},
+						"description": "Set image file to get in the \"Pre-request Script\" tab."
+					},
+					"response": []
+				},
+				{
+					"name": "Get video",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "d348770c-9513-4574-92c4-a80a0b44d971",
+								"exec": [
+									"pm.variables.set(\"VIDEO_FILE\", \"SOME_VIDEO_NAME_HERE.mp4\")"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [],
+							"options": {
+								"urlencoded": {}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/assets/videos/{{VIDEO_FILE}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"assets",
+								"videos",
+								"{{VIDEO_FILE}}"
+							]
+						},
+						"description": "Set video file to get in the \"Pre-request Script\" tab."
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{$ACCESS_TOKEN}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "f43ff992-05d4-4601-ad12-0af11df18020",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "bdfca747-4ccb-47a7-a4c4-e033d0f71448",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "070fc82d-ba28-4c9f-96f4-3e4eb87cecbb",
+			"key": "BASE_URL",
+			"value": "http://localhost:8080"
+		},
+		{
+			"id": "1f2b6f91-9ccb-49f1-8004-06441dca4168",
+			"key": "ACCESS_TOKEN",
+			"value": "FILL_ME"
+		},
+		{
+			"id": "b61b9373-6ae9-4415-90b6-c3587b31fc6e",
+			"key": "REFRESH_TOKEN",
+			"value": "FILL_ME"
+		},
+		{
+			"id": "89b79e2f-10b3-49ee-87c8-8d7d512cfa57",
+			"key": "API_PREFIX",
+			"value": "api/v1"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
