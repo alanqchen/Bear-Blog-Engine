@@ -3,7 +3,6 @@ import {
     StyledYoutubeEmbedWrapper,
     StyledEmbedWrapper
 } from './EditorStyled';
-import Gist from 'react-gist';
 
 export const EmbedsArray = [
     {
