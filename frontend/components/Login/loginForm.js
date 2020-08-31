@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import Router from 'next/router';
 import { useEffect, useState, useRef } from 'react';
 import ReCAPTCHA from "react-google-recaptcha";
+import fetch from 'isomorphic-unfetch'; 
 import { Typography, LinearProgress } from '@material-ui/core';
 import { WaveButton } from '../Theme/StyledComponents';
 import { Formik, Form, Field } from 'formik';
@@ -14,16 +15,43 @@ import { login } from '../../redux/auth/actions';
 
 export const LoginForm = ({ auth, dispatch }) => {
 
+    // We need both since both will be false until the first form submit
     const [passedCaptcha, setPassedCaptcha] = useState(false);
     const [failedCaptcha, setFailedCaptcha] = useState(false);
 
     const recaptchaRef = useRef();
 
     const doLogin = async(username, password) => {
-        setPassedCaptcha(true);
-        setFailedCaptcha(false);
         await dispatch(login(username, password)); 
     };
+
+    const verifyToken = async(token)  => {
+
+        const params = {
+            token: token
+        }
+
+        await fetch(process.env.NEXT_PUBLIC_API_URL + '/api/v1/auth/verify', {
+            method: 'POST',
+            body: JSON.stringify(params)
+        })
+        .then(res => res.json())
+        .then(async(json) => {
+            if(json.success) {
+                setPassedCaptcha(true);
+                setFailedCaptcha(false);
+                await doLogin();
+            } else {
+                setPassedCaptcha(false);
+                setFailedCaptcha(true);
+            }
+        })
+        .catch(() => {
+            console.log("Failed to call verify API");
+            setPassedCaptcha(false);
+            setFailedCaptcha(true);
+        })
+    }
 
     useEffect(() => {
         if(passedCaptcha && !auth.loading && auth.accessToken !== "" && !auth.error) {
@@ -44,11 +72,12 @@ export const LoginForm = ({ auth, dispatch }) => {
                     password: Yup.string()
                     .required("Required")
                 })}
-                onSubmit={async(values, { setSubmitting }) => {
+                onSubmit={async(values) => {
                     if(passedCaptcha) {
                         await doLogin(values.username, values.password);
                     } else {
-                        await recaptchaRef.current.executeAsync();
+                        const token = await recaptchaRef.current.executeAsync();
+                        await verifyToken(token);
                     }
                 }}
             >

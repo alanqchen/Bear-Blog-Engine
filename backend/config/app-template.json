@@ -21,5 +21,6 @@
     "port": 8080,
     "allowedOrigins":  [
         "ENTER WEBSITE URL"
-    ]
+    ],
+    "captchaSecret": "FILL ME"
 }

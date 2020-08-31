@@ -4,18 +4,22 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/alanqchen/Bear-Post/backend/config"
 	"github.com/alanqchen/Bear-Post/backend/database"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"gopkg.in/ezzarghili/recaptcha-go.v4"
 )
 
-// App holds the Config struct and database connections for Postgres and Redis
+// App holds the Config struct, database connections for Postgres and Redis
+// and the reCaptcha configuration
 type App struct {
-	Config   config.Config
-	Database *database.Postgres
-	Redis    *database.Redis
+	Config    config.Config
+	Database  *database.Postgres
+	Redis     *database.Redis
+	Recaptcha recaptcha.ReCAPTCHA
 }
 
 // New connects to the databases and stores the connection in the returned
@@ -32,8 +36,18 @@ func New(appConfig config.Config) *App {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	log.Println("Successfully connected to databases")
-	return &App{appConfig, db, redis}
+
+	log.Println("Setting up ReCaptcha...")
+	captcha, err := recaptcha.NewReCAPTCHA(appConfig.CaptchaSecret, recaptcha.V2, 10*time.Second)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Successfully set ReCaptcha secret")
+
+	return &App{appConfig, db, redis, captcha}
 }
 
 // Run sets up CORS policy and allows the API listen and serve

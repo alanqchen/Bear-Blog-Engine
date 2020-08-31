@@ -38,6 +38,7 @@ type Config struct {
 	RedisDB        RedisConfig      `json:"RedisDB"`
 	Port           string           `json:"port"`
 	AllowedOrigins []string         `json:"allowedOrigins"`
+	CaptchaSecret  string           `json:"captchaSecret"`
 }
 
 // New returns a Config struct based on a given JSON file

@@ -21,5 +21,6 @@
     "port": "8080",
     "allowedOrigins": [
         "http://localhost:3000"
-    ]
+    ],
+    "captchaSecret": "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
 }

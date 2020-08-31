@@ -75,6 +75,7 @@ func NewRouter(a *app.App) *mux.Router {
 	auth.HandleFunc("/update", middleware.Logger(middleware.RequireAuthentication(a, uc.Update, true))).Methods(http.MethodPut)
 	auth.HandleFunc("/logout", middleware.Logger(middleware.RequireAuthentication(a, ac.Logout, false))).Methods(http.MethodGet)
 	auth.HandleFunc("/logout/all", middleware.Logger(middleware.RequireAuthentication(a, ac.LogoutAll, true))).Methods(http.MethodGet)
+	auth.HandleFunc("/verify", middleware.Logger(ac.VerifyCaptcha)).Methods(http.MethodPost)
 	// No Match
 	r.NotFoundHandler = http.HandlerFunc(middleware.Logger(ec.NotFound))
 	log.Println("Created authentication routes")

@@ -21,5 +21,6 @@
     "port": "8080",
     "allowedOrigins": [
         "*"
-    ]
+    ],
+    "captchaSecret": "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
 }

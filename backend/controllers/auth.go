@@ -8,6 +8,8 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/models"
 	"github.com/alanqchen/Bear-Post/backend/repositories"
 	"github.com/alanqchen/Bear-Post/backend/services"
+	"github.com/alanqchen/Bear-Post/backend/util"
+	"gopkg.in/ezzarghili/recaptcha-go.v4"
 )
 
 // AuthController holds what's necessary for authentication
@@ -189,4 +191,33 @@ func (ac *AuthController) RefreshTokens(w http.ResponseWriter, r *http.Request) 
 
 	log.Println("[AUTH] Created new refresh token for user", u.Username)
 	NewAPIResponse(&APIResponse{Success: true, Message: "Refresh successful", Data: data}, w, http.StatusOK)
+}
+
+// VerifyCaptcha verifies a clients reCaptcha response token is valid
+func (ac *AuthController) VerifyCaptcha(w http.ResponseWriter, r *http.Request) {
+	j, err := GetJSON(r.Body)
+	if err != nil {
+		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
+		return
+	}
+
+	token, err := j.GetString("token")
+	if err != nil {
+		NewAPIError(&APIError{false, "token is required", http.StatusBadRequest}, w)
+		return
+	}
+
+	remoteIP := util.GetIP(r)
+	if remoteIP == "" {
+		err = ac.App.Recaptcha.Verify(token)
+	} else {
+		err = ac.App.Recaptcha.VerifyWithOptions(token, recaptcha.VerifyOption{RemoteIP: remoteIP})
+	}
+	if err != nil {
+		log.Println("[BAD AUTH] Failed recaptcha verification", err)
+		NewAPIError(&APIError{false, "Failed to verify token", http.StatusBadRequest}, w)
+		return
+	}
+	log.Println("[AUTH] Passed reCaptcha verification")
+	NewAPIResponse(&APIResponse{Success: true, Message: "reCaptcha verification successful"}, w, http.StatusOK)
 }
