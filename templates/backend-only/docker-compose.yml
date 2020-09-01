@@ -6,7 +6,7 @@ services:
     ################################################################################
     api:
         image: aqchen/bearpost-api
-        container_name: bearpost_api
+        container_name: blog_api
         restart: unless-stopped
         ports: 
             - 8080:8080
@@ -17,52 +17,57 @@ services:
         depends_on: 
             - postgres
             - redis
-        networks:
-            - bearpost_default
         volumes: 
             - ${UPLOADS_DIR}:/bearpost/backend/public
-            - ${PWD}/config/app-docker.json:/bearpost/backend/config/app-custom.json
-            
+            - ${PWD}/app-docker.json:/bearpost/backend/config/app-custom.json
+        networks:
+            - hostnet
+            - backend
+
     ################################################################################
     ##                               PostgreSQL
     ################################################################################
     postgres:
         image: postgres:latest
-        container_name: bearpost_postgres
+        container_name: blog_postgres
         restart: unless-stopped
         environment:
             POSTGRES_USER: bearpost # If you change any of these, change them
             POSTGRES_PASSWORD: bearpost # in the .json config file as well
             POSTGRES_DB: bearpost
-        ports:
-            - 5432:5432
+        expose:
+            - "5432"
         volumes: 
             - ./init.sql:/docker-entrypoint-initdb.d/init.sql
             - ${LOCAL_POSTGRES_DIR}:/var/lib/postgresql/data
-        networks: 
-            - bearpost_default
-    
+        networks:
+            - backend
+
     ################################################################################
     ##                                 Redis
     ################################################################################
     redis:
         image: redis:latest
-        container_name: bearpost_redis
+        container_name: blog_redis
         restart: unless-stopped
         command: redis-server --requirepass bearpost # Change this in the .json config as well
-        ports: 
-            - 6379
+        expose: 
+            - "6379"
         volumes: 
             - ${LOCAL_REDIS_DIR}:/data
-        networks: 
-            - bearpost_default
         sysctls:
             net.core.somaxconn: '511'
-    
+        networks:
+            - backend
+
 volumes:
     bearpost_api_data:
         driver: local
 
 networks:
-    bearpost_default:
-
+    backend:
+       external: false
+       driver: bridge
+    hostnet:
+       external:
+           name: ${NETWORK}
