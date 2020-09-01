@@ -99,7 +99,7 @@ export async function getStaticPaths() {
   );
   const posts = await res.json();
 
-  posts.data.map((post, i) => {
+  posts.data.map((post) => {
     linkPaths = [
       ...linkPaths,
       {

@@ -1,6 +1,4 @@
 import { useRouter } from "next/router";
-import { fetchCategoryNew } from "../../../redux/fetchCategory/actions";
-import { wrapper } from "../../../redux/store";
 import { Typography } from "@material-ui/core";
 import Layout from "../../../components/PublicLayout/publicLayout";
 import { HeaderWrapper } from "../../../components/PublicLayout/publicLayoutStyled";
@@ -31,7 +29,7 @@ const Index = ({ initialData }) => {
 
 export function getStaticPaths() {
   let linkPaths = [];
-  config.navlinks.map((category, i) => {
+  config.navlinks.map((category) => {
     if (category.isCategory) {
       linkPaths = [
         ...linkPaths,

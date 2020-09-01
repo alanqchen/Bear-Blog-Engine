@@ -1,6 +1,6 @@
 import Error from "../404";
 
-const Index = (props) => (
+const Index = () => (
   /*
     <Layout>
         <h1>Year Archive</h1>

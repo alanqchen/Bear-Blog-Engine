@@ -1,18 +1,12 @@
 import { connect } from "react-redux";
 import Router from "next/router";
-import { useState, useEffect } from "react";
-import { Typography, CircularProgress } from "@material-ui/core";
-import { Person, Lock } from "@material-ui/icons";
+import { useEffect } from "react";
 import Particles from "react-particles-js";
 import Layout from "../../../../components/PublicLayout/publicLayout";
-import { HeaderWrapper } from "../../../../components/PublicLayout/publicLayoutStyled";
 import {
   StyledLoginPaper,
   LoginPaperWrapper,
-  StyledTextField,
-  InnerWrapper,
 } from "../../../../components/Login/loginStyled";
-import { WaveButton } from "../../../../components/Theme/StyledComponents";
 import fetch from "isomorphic-unfetch";
 import LoginForm from "../../../../components/Login/loginForm";
 import SetupForm from "../../../../components/Login/setupForm";
@@ -74,7 +68,7 @@ export async function getServerSideProps() {
   };
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   return {
     auth: {
       accessToken: state.auth.accessToken,

@@ -1,6 +1,4 @@
-import Router from "next/router";
 import * as types from "./types";
-import { getDisplayName } from "next/dist/next-server/lib/utils";
 
 export const loginBegin = () => ({
   type: types.LOGIN_BEGIN,

@@ -1,5 +1,4 @@
 import * as types from "./types";
-import { refresh } from "../auth/actions";
 
 export const fetchPostsBegin = () => ({
   type: types.FETCH_DASHBOARD_POSTS_BEGIN,
@@ -50,12 +49,10 @@ export function fetchPosts() {
         } else {
           dispatch(fetchPostsSuccess(json));
         }
-        //dispatch(refresh());
         return json;
       })
       .catch((error) => {
         dispatch(fetchPostsFailure(error));
-        //dispatch(refresh());
       });
   };
 }

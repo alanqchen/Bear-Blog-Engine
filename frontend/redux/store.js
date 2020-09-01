@@ -1,9 +1,9 @@
 import { createStore, applyMiddleware } from "redux";
 import { createWrapper } from "next-redux-wrapper";
+// eslint-disable-next-line no-unused-vars
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunkMiddleware from "redux-thunk";
 import reducer from "./reducers";
-import { fromJS } from "immutable";
 
 const bindMiddleware = (middleware) => {
   if (process.env.NODE_ENV !== "production") {

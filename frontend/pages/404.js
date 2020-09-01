@@ -43,7 +43,9 @@ export default function Custom404() {
           display="block"
           gutterBottom
         >
+          {`
           You're lost in the cosmos!
+          `}
         </Typography>
         <WaveButton
           onClick={() => {

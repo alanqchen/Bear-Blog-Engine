@@ -1,8 +1,6 @@
 import Layout from "../components/PublicLayout/publicLayout";
 import PostsContainer from "../components/Posts/postsContainer";
 import fetch from "isomorphic-unfetch";
-import { wrapper, State } from "../redux/store";
-import { fetchPosts as fetchPostsAction } from "../redux/fetchPosts/actions";
 
 const Index = ({ initialData }) => {
   return (
@@ -12,7 +10,7 @@ const Index = ({ initialData }) => {
   );
 };
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps() {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts/get?maxID=-1`
   );
