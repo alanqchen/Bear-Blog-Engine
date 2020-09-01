@@ -48,6 +48,7 @@ function ImageEmbed(props) {
         <StyledEmbedWrapper>
             <img
                 src={`${props.attrs.matches[0]}`}
+                style={{display: "block"}}
             />
         </StyledEmbedWrapper>
     );
