@@ -68,7 +68,7 @@ function FeatureImage({ featureImgUrl, tags, skeleton, moreHeight, noMargin }) {
             {featureImgUrl.substring(
               featureImgUrl.length - 5,
               featureImgUrl.length
-            ) == ".jpeg" ? (
+            ) === ".jpeg" ? (
               <source
                 type="image/webp"
                 srcSet={

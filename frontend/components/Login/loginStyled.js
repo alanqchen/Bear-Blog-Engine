@@ -35,7 +35,7 @@ export const FormWrapper = styled.div`
 `;
 
 export const StyledTextField = styled(TextField).withConfig({
-  shouldForwardProp: (prop) => true,
+  shouldForwardProp: () => true,
 })`
   width: 100%;
   margin-top: 15px !important;

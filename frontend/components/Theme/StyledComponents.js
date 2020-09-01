@@ -3,7 +3,7 @@ import GlobalTheme from "../Theme/theme";
 import { Button } from "@material-ui/core";
 
 export const WaveButton = styled(Button).withConfig({
-  shouldForwardProp: (prop) => true,
+  shouldForwardProp: () => true,
 })`
   background-color: rgba(0, 0, 0, 0) !important;
   transform: translate3d(0px, 0px, 0px);

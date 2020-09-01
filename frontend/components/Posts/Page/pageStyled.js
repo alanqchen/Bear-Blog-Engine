@@ -1,6 +1,7 @@
 import styled, { keyframes } from "styled-components";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
+// eslint-disable-next-line react/display-name
 const PostCardLinkBase = React.forwardRef((props, ref) => (
   <a ref={ref} {...props}></a>
 ));

@@ -77,7 +77,7 @@ function PostsList({ fetchDashboardPosts, auth, dispatch }) {
   );
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   return {
     fetchDashboardPosts: {
       posts: state.fetchDashboardPosts.posts,

@@ -253,7 +253,7 @@ function EditorsTable({ auth }) {
             setSubmitting(false);
           }}
         >
-          {({ values, submitForm, isSubmitting }) => (
+          {({ submitForm, isSubmitting }) => (
             <Form>
               <DialogContent>
                 {!userEdit && (

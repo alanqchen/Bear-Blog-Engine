@@ -1,5 +1,5 @@
 import Router from "next/router";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { LoadingProgress } from "../Posts/Page/pageStyled";
 
 export const RouteIndicator = () => {

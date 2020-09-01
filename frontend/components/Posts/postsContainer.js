@@ -105,7 +105,7 @@ function PostsContainer({
   );
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   return {
     fetchPosts: {
       posts: state.fetchPosts.posts,

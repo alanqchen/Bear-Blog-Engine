@@ -129,7 +129,7 @@ export const LoginForm = ({ auth, dispatch }) => {
   );
 };
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   return {
     auth: {
       accessToken: state.auth.accessToken,

@@ -14,7 +14,7 @@ function CustAlert(props) {
   return <Alert elevation={6} variant="filled" {...props} />;
 }
 
-export const SetupForm = ({ auth, dispatch }) => {
+export const SetupForm = ({ auth }) => {
   const [passedCaptcha, setPassedCaptcha] = useState(false);
   const [failedCaptcha, setFailedCaptcha] = useState(false);
   const [open, setOpen] = useState(false);
@@ -167,7 +167,7 @@ export const SetupForm = ({ auth, dispatch }) => {
   );
 };
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   return {
     auth: {
       accessToken: state.auth.accessToken,
