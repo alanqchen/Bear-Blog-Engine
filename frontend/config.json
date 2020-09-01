@@ -1,51 +1,51 @@
 {
-    "blogName": "Bear Post Blog",
-    "blogDescription": "Personal Blog",
-    "blogURL": "https://example.aqchen.com",
-    "numPrimaryLinks": 3,
-    "navlinks": [
-        {
-            "name": "category1",
-            "link": "/category/test",
-            "external": false,
-            "isCategory": true,
-            "primary": true
-        },
-        {
-            "name": "category2",
-            "link": "/category/iSSG",
-            "external": false,
-            "isCategory": true,
-            "primary": true
-        },
-        {
-            "name": "external link",
-            "link": "https://google.com",
-            "external": true,
-            "isCategory": false,
-            "primary": true
-        },
-        {
-            "name": "category4",
-            "link": "/first",
-            "external": false,
-            "isCategory": false,
-            "primary": false
-        },
-        {
-            "name": "Github",
-            "link": "https://github.com/alanqchen/Bear-Blog-Engine",
-            "external": true,
-            "isCategory": false,
-            "primary": false
-        },
-        {
-            "name": "About Me",
-            "link": "https://aqchen.com",
-            "external": true,
-            "isCategory": false,
-            "primary": false
-        }
-    ],
-    "navMinWidth": "850px"
+  "blogName": "Bear Post Blog",
+  "blogDescription": "Personal Blog",
+  "blogURL": "https://example.aqchen.com",
+  "numPrimaryLinks": 3,
+  "navlinks": [
+    {
+      "name": "category1",
+      "link": "/category/test",
+      "external": false,
+      "isCategory": true,
+      "primary": true
+    },
+    {
+      "name": "category2",
+      "link": "/category/iSSG",
+      "external": false,
+      "isCategory": true,
+      "primary": true
+    },
+    {
+      "name": "external link",
+      "link": "https://google.com",
+      "external": true,
+      "isCategory": false,
+      "primary": true
+    },
+    {
+      "name": "category4",
+      "link": "/first",
+      "external": false,
+      "isCategory": false,
+      "primary": false
+    },
+    {
+      "name": "Github",
+      "link": "https://github.com/alanqchen/Bear-Blog-Engine",
+      "external": true,
+      "isCategory": false,
+      "primary": false
+    },
+    {
+      "name": "About Me",
+      "link": "https://aqchen.com",
+      "external": true,
+      "isCategory": false,
+      "primary": false
+    }
+  ],
+  "navMinWidth": "850px"
 }

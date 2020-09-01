@@ -1,0 +1,12 @@
+  
+# Ignore artifacts:
+build
+coverage
+
+.next
+.vscode
+
+node_modules
+
+package-lock.json
+
