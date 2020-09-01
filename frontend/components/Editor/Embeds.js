@@ -9,7 +9,7 @@ export const EmbedsArray = [
         title: "YouTube",
         keywords: "youtube video tube google",
         icon: () => (
-            <img src="/embed-icons/YouTube_white_squircle.svg" width={24} height={24} />
+            <img src="/embed-icons/youtube-embed.svg" width={24} height={24} />
         ),
         matcher: url => {
             return url.match(
