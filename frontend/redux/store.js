@@ -1,20 +1,20 @@
-import { createStore, applyMiddleware } from 'redux';
-import { createWrapper } from 'next-redux-wrapper'
-import { composeWithDevTools } from 'redux-devtools-extension';
-import thunkMiddleware from 'redux-thunk';
-import reducer from './reducers';
-import {fromJS} from 'immutable'
+import { createStore, applyMiddleware } from "redux";
+import { createWrapper } from "next-redux-wrapper";
+// eslint-disable-next-line no-unused-vars
+import { composeWithDevTools } from "redux-devtools-extension";
+import thunkMiddleware from "redux-thunk";
+import reducer from "./reducers";
 
 const bindMiddleware = (middleware) => {
-    if (process.env.NODE_ENV !== 'production') {
-        const { composeWithDevTools } = require('redux-devtools-extension');
-        return composeWithDevTools(applyMiddleware(...middleware));
-    }
-    return applyMiddleware(...middleware);
-}
+  if (process.env.NODE_ENV !== "production") {
+    const { composeWithDevTools } = require("redux-devtools-extension");
+    return composeWithDevTools(applyMiddleware(...middleware));
+  }
+  return applyMiddleware(...middleware);
+};
 
 const initStore = () => {
-    return createStore(reducer, bindMiddleware([thunkMiddleware]))
-}
+  return createStore(reducer, bindMiddleware([thunkMiddleware]));
+};
 
 export const wrapper = createWrapper(initStore);

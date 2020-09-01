@@ -1,76 +1,76 @@
-import * as authTypes from './types';
+import * as authTypes from "./types";
 
 const initalAuthState = {
-    accessToken: "",
-    refreshToken: "",
-    userData: null,
-    loading: false,
-    error: null
-}
+  accessToken: "",
+  refreshToken: "",
+  userData: null,
+  loading: false,
+  error: null,
+};
 
-export default function authReducer( state = initalAuthState, action) {
-    switch(action.type) {
-        case authTypes.LOGIN_BEGIN:
-            return {
-                ...state,
-                loading: true,
-                error: null
-            };
+export default function authReducer(state = initalAuthState, action) {
+  switch (action.type) {
+    case authTypes.LOGIN_BEGIN:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
 
-        case authTypes.LOGIN_SUCCESS:
-            return {
-                ...state,
-                loading: false,
-                accessToken: action.payload.response.data.tokens.accessToken,
-                refreshToken: action.payload.response.data.tokens.refreshToken,
-                userData: action.payload.response.data.user,
-                error: null
-            };
+    case authTypes.LOGIN_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        accessToken: action.payload.response.data.tokens.accessToken,
+        refreshToken: action.payload.response.data.tokens.refreshToken,
+        userData: action.payload.response.data.user,
+        error: null,
+      };
 
-        case authTypes.LOGIN_FAILURE:
-            return {
-                ...state,
-                loading: false,
-                accessToken: "",
-                refreshToken: "",
-                userData: null,
-                error: action.payload.error
-            };
+    case authTypes.LOGIN_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        accessToken: "",
+        refreshToken: "",
+        userData: null,
+        error: action.payload.error,
+      };
 
-        case authTypes.REFRESH_BEGIN:
-            return {
-                ...state,
-                loading: true,
-                error: null
-            };
+    case authTypes.REFRESH_BEGIN:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
 
-        case authTypes.REFRESH_SUCCESS:
-            return {
-                ...state,
-                loading: false,
-                accessToken: action.payload.response.data.tokens.accessToken,
-                refreshToken: action.payload.response.data.tokens.refreshToken,
-                userData: action.payload.response.data.user,
-                error: null
-            };
+    case authTypes.REFRESH_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        accessToken: action.payload.response.data.tokens.accessToken,
+        refreshToken: action.payload.response.data.tokens.refreshToken,
+        userData: action.payload.response.data.user,
+        error: null,
+      };
 
-        case authTypes.REFRESH_FAILURE:
-            return {
-                ...state,
-                loading: false,
-                accessToken: "",
-                refreshToken: "",
-                error: action.payload.error
-            };
+    case authTypes.REFRESH_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        accessToken: "",
+        refreshToken: "",
+        error: action.payload.error,
+      };
 
-        case authTypes.SET_TOKENS:
-            return {
-                ...state,
-                accessToken: action.payload.accessToken,
-                refreshToken: action.payload.refreshToken
-            };
+    case authTypes.SET_TOKENS:
+      return {
+        ...state,
+        accessToken: action.payload.accessToken,
+        refreshToken: action.payload.refreshToken,
+      };
 
-        default:
-            return state;
-    }
+    default:
+      return state;
+  }
 }

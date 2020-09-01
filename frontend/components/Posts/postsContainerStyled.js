@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { Button } from '@material-ui/core';
+import { Button } from "@material-ui/core";
 
 export const StyledButton = styled(Button)`
-    margin-top: 8px !important;
-    margin-bottom: 8px !important;
-    border-radius: 2em  !important
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+  border-radius: 2em !important;
 `;

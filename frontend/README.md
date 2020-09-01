@@ -1,11 +1,12 @@
 # Frontend
 
-*This is information regarding development. If you're looking for information regarding production setup, see [templates](/templates).*
+_This is information regarding development. If you're looking for information regarding production setup, see [templates](/templates)._
 
 This uses the Next.js framework.
 
 #### Requires
-* npm
+
+- npm
 
 1. Clone the repository if it hasn't been done yet
 2. Navigate to the `frontend` directory (the one this README is in)
