@@ -11,6 +11,7 @@
     <a href="https://example.aqchen.com">
         <img alt="Example Website" src="https://img.shields.io/website?label=example%20site&up_message=Online&url=https%3A%2F%2Fexample.aqchen.com" />
     </a>
+    <img alt="prettier" src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg" />
 </p>
 
 # Bear Blog Engine / Bear Post
