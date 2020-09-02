@@ -145,8 +145,6 @@ export const MetaForm = ({ postData, disableButtons }) => {
       ? localStorage.getItem("bearpost.savedUpdate")
       : localStorage.getItem("bearpost.saved");
 
-    console.log(body);
-
     const params = {
       title: formRef.current.values.title,
       subtitle: formRef.current.values.subtitle,
@@ -263,7 +261,7 @@ export const MetaForm = ({ postData, disableButtons }) => {
                   onClick={() => {
                     setShowDialog(true);
                   }}
-                  disabled={isSubmitting && !disableButtons}
+                  disabled={isSubmitting || disableButtons}
                 >
                   Delete
                 </EditorButtonOutlined>
@@ -277,7 +275,7 @@ export const MetaForm = ({ postData, disableButtons }) => {
                   submitForm();
                 }}
                 type="submit"
-                disabled={isSubmitting && !disableButtons}
+                disabled={isSubmitting || disableButtons}
               >
                 Save
               </EditorButton>
@@ -290,7 +288,7 @@ export const MetaForm = ({ postData, disableButtons }) => {
                   submitForm();
                 }}
                 type="publish"
-                disabled={isSubmitting && !disableButtons}
+                disabled={isSubmitting || disableButtons}
               >
                 Publish
               </EditorButton>
