@@ -131,8 +131,8 @@ const EditorWrapper = ({ query }) => {
                   color="textSecondary"
                   style={{ marginLeft: "10px" }}
                 >
-                  It is recommended to only edit the raw value for
-                  spell-checking
+                  You must toggle off raw mode before saving to verify your
+                  changes
                 </Typography>
               )}
             </ToggleButtonWrapper>

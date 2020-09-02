@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { refresh } from "../../redux/auth/actions";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Snackbar } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { debounce, throttle } from "lodash";
@@ -20,6 +20,14 @@ function Editor({ dispatch, defaultValue, isPreview, isNew, onChange }) {
 
     setSnackbarOpen(false);
   };
+
+  useEffect(() => {
+    if (isNew) {
+      localStorage.setItem("bearpost.saved", defaultValue);
+    } else {
+      localStorage.setItem("bearpost.savedUpdate", defaultValue);
+    }
+  }, []);
 
   // Refresh tokens every 30 seconds
   const handleAuthRefresh = throttle(() => {
