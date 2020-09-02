@@ -55,6 +55,7 @@ function SearchBar() {
           cancelOnEscape={true}
           onChange={(value) => handleChange(value)}
           onCancelSearch={() => setSearchRes([])}
+          type="search"
         />
         <Collapse in={!collapse}>
           {searchRes.map((post) => (

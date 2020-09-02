@@ -3,11 +3,7 @@ import SearchBase from "material-ui-search-bar";
 import { Paper } from "@material-ui/core";
 import GlobalTheme from "../Theme/theme";
 
-export const CenteredContainer = ({ className, children }) => {
-  return <div className={className}>{children}</div>;
-};
-
-export const StyledCenteredContainer = styled(CenteredContainer)`
+export const StyledCenteredContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
