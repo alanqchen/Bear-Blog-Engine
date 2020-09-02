@@ -70,7 +70,7 @@ export const ImagePreview = ({ file }) => {
   );
 };
 
-export const MetaForm = ({ postData }) => {
+export const MetaForm = ({ postData, disableButtons }) => {
   // SNACKBAR
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -263,7 +263,7 @@ export const MetaForm = ({ postData }) => {
                   onClick={() => {
                     setShowDialog(true);
                   }}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting && !disableButtons}
                 >
                   Delete
                 </EditorButtonOutlined>
@@ -277,7 +277,7 @@ export const MetaForm = ({ postData }) => {
                   submitForm();
                 }}
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting && !disableButtons}
               >
                 Save
               </EditorButton>
@@ -290,7 +290,7 @@ export const MetaForm = ({ postData }) => {
                   submitForm();
                 }}
                 type="publish"
-                disabled={isSubmitting}
+                disabled={isSubmitting && !disableButtons}
               >
                 Publish
               </EditorButton>

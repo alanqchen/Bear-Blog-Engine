@@ -8,7 +8,7 @@ import { StyledEditor } from "./EditorStyled";
 import EditorTheme from "../Theme/editorTheme";
 import { EmbedsArray } from "./Embeds";
 
-function Editor({ dispatch, defaultValue, isPreview, isNew }) {
+function Editor({ dispatch, defaultValue, isPreview, isNew, onChange }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -34,6 +34,7 @@ function Editor({ dispatch, defaultValue, isPreview, isNew }) {
     } else {
       localStorage.setItem("bearpost.savedUpdate", text);
     }
+    onChange(value);
     handleAuthRefresh();
   }, 400);
 

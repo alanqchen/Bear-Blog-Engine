@@ -133,3 +133,8 @@ export const ImageInputWrapper = styled.div`
   flex-direction: row;
   align-items: center;
 `;
+
+export const ToggleButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;

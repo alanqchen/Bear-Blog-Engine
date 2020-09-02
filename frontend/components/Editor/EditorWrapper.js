@@ -1,12 +1,22 @@
 import Router from "next/router";
 import { useEffect, useState } from "react";
 import { WidthWrapper } from "../DashboardLayout/dashboardLayoutStyled";
-import { Divider, Snackbar, LinearProgress } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
-import { Visibility as VisibilityIcon } from "@material-ui/icons";
+import {
+  Divider,
+  Snackbar,
+  LinearProgress,
+  Grow,
+  TextField,
+  Typography,
+} from "@material-ui/core";
+import { Alert, ToggleButton } from "@material-ui/lab";
+import {
+  Visibility as VisibilityIcon,
+  Edit as EditIcon,
+} from "@material-ui/icons";
 import Editor from "./Editor";
 import MetaForm from "./MetaForm";
-import { StyledFab } from "./EditorStyled";
+import { StyledFab, ToggleButtonWrapper } from "./EditorStyled";
 
 const EditorWrapper = ({ query }) => {
   // SNACKBAR
@@ -25,6 +35,8 @@ const EditorWrapper = ({ query }) => {
   const [postData, setPostData] = useState({});
   const [isPreview, setIsPreview] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [viewRaw, setViewRaw] = useState(false);
+  const [editorValue, setEditorValue] = useState("");
 
   useEffect(() => {
     // "Cancel" promise if component is not mounted
@@ -44,6 +56,7 @@ const EditorWrapper = ({ query }) => {
           if (isSubscribed && json.success) {
             console.log("Post ID: " + json.data.id);
             setPostData(json.data);
+            setEditorValue(json.data.body);
             setIsError(false);
             setMessage("Found post!");
             setShowMessage(true);
@@ -79,19 +92,71 @@ const EditorWrapper = ({ query }) => {
       {!loaded && <LinearProgress />}
       {loaded && (
         <>
-          <StyledFab
-            aria-label="preview"
-            onClick={() => {
-              setIsPreview(!isPreview);
-            }}
-            style={{ zIndex: "999999" }}
-          >
-            <VisibilityIcon color="action" />
-          </StyledFab>
-          <MetaForm postData={postData} />
+          <Grow in={!viewRaw}>
+            <StyledFab
+              aria-label="preview"
+              onClick={() => {
+                setIsPreview(!isPreview);
+              }}
+              style={{ zIndex: "999999" }}
+            >
+              <Grow
+                in={!isPreview}
+                style={isPreview ? { display: "none" } : {}}
+              >
+                <VisibilityIcon color="action" />
+              </Grow>
+              <Grow in={isPreview}>
+                <EditIcon
+                  color="action"
+                  style={!isPreview ? { display: "none" } : {}}
+                />
+              </Grow>
+            </StyledFab>
+          </Grow>
+          <MetaForm postData={postData} disableButtons={viewRaw} />
           <WidthWrapper>
+            <ToggleButtonWrapper>
+              <ToggleButton
+                value="check"
+                selected={viewRaw}
+                onChange={() => {
+                  setViewRaw(!viewRaw);
+                }}
+              >
+                Raw
+              </ToggleButton>
+              {viewRaw && (
+                <Typography
+                  color="textSecondary"
+                  style={{ marginLeft: "10px" }}
+                >
+                  It is recommended to only edit the raw value for
+                  spell-checking
+                </Typography>
+              )}
+            </ToggleButtonWrapper>
             <Divider style={{ marginTop: "10px", marginBottom: "10px" }} />
-            <Editor defaultValue={postData.body} isPreview={isPreview} />
+            {!viewRaw ? (
+              <Editor
+                defaultValue={editorValue}
+                isPreview={isPreview}
+                onChange={(value) => {
+                  setEditorValue(value);
+                }}
+              />
+            ) : (
+              <TextField
+                name="raw"
+                fullWidth
+                multiline
+                value={editorValue}
+                onChange={(event) => {
+                  setEditorValue(event.target.value);
+                }}
+                variant="outlined"
+              />
+            )}
             <Divider style={{ marginTop: "10px", marginBottom: "10px" }} />
           </WidthWrapper>
         </>
