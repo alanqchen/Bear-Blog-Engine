@@ -1,4 +1,5 @@
 import Layout from "../../../../components/PostLayout/postLayout";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import fetch from "isomorphic-unfetch";
 import Error from "../../../404";
@@ -42,6 +43,19 @@ const Index = (props) => {
 
   return (
     <Layout>
+      <Head>
+        <meta property="og:title" content={props.post.data.title} key="title" />
+        <meta
+          property="og:description"
+          content={props.post.data.subtitle}
+          key="description"
+        />
+        <meta
+          property="og:image"
+          content={props.post.data.FeatureImage}
+          key="image"
+        />
+      </Head>
       <Typography align="left" color="textPrimary" variant="h1" component="h1">
         <Box fontWeight={500} fontSize={"2.5rem"}>
           {props.post.data.title}

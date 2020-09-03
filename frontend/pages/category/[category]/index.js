@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import Head from "next/head";
 import { Typography } from "@material-ui/core";
 import Layout from "../../../components/PublicLayout/publicLayout";
 import { HeaderWrapper } from "../../../components/PublicLayout/publicLayoutStyled";
@@ -11,6 +12,9 @@ const Index = ({ initialData }) => {
 
   return (
     <Layout>
+      <Head>
+        <meta property="og:title" content={category} key="title" />
+      </Head>
       <HeaderWrapper>
         <Typography
           align="center"
