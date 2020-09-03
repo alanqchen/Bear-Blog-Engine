@@ -28,6 +28,9 @@ export const StyledEditor = styled(Editor)`
     line-height: 1.25;
     margin: 1rem 0px 0.5rem;
   }
+  a {
+    color: #ff3d6d;
+  }
 `;
 
 export const StyledYoutubeEmbed = styled.iframe`

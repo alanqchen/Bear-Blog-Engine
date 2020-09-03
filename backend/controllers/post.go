@@ -628,6 +628,12 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	subtitle, err := j.GetString("subtitle")
+	if err != nil {
+		NewAPIError(&APIError{false, "Subtitle is required", http.StatusBadRequest}, w)
+		return
+	}
+
 	body, err := j.GetString("body")
 	if err != nil {
 		NewAPIError(&APIError{false, "Content is required", http.StatusBadRequest}, w)
@@ -667,6 +673,7 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 	//post.UserID = uid
 	post.UpdatedAt = pgtype.Timestamptz{Time: time.Now(), Status: pgtype.Present}
 	post.Title = title
+	post.Subtitle = subtitle
 	post.Body = body
 	post.Slug = slug
 	post.Hidden = hidden
