@@ -14,6 +14,11 @@ const Index = ({ initialData }) => {
     <Layout>
       <Head>
         <meta property="og:title" content={category} key="title" />
+        <meta
+          property="og:description"
+          content={config.blogDescription}
+          key="description"
+        />
       </Head>
       <HeaderWrapper>
         <Typography

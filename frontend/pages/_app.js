@@ -10,6 +10,7 @@ import SCtheme from "../assets/theme/SCtheme";
 import useScrollRestoration from "../components/utils/useScrollRestoration";
 import { RouteIndicator } from "../components/Theme/routeIndicator";
 import * as gtag from "../components/utils/gtag";
+import config from "../config.json";
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -25,7 +26,7 @@ const App = ({ Component, pageProps, router }) => {
   return (
     <React.Fragment>
       <Head>
-        <title>Bear Post</title>
+        <title>{config.blogName}</title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"

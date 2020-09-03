@@ -87,12 +87,6 @@ export default class Document extends NextDocument {
           />
           <meta name="twitter:creator" content={config.blogName} />
           <meta property="og:type" content="website" />
-          <meta property="og:title" content={config.blogName} key="title" />
-          <meta
-            property="og:description"
-            content={config.blogDescription}
-            key="description"
-          />
           <meta property="og:site_name" content={config.blogName} />
           <meta property="og:url" content={config.blogURL} />
           <meta
