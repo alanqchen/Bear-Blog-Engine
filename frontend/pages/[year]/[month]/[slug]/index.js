@@ -8,6 +8,7 @@ import { Typography, Box, Divider, Link } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import FeatureImage from "../../../../components/Posts/Page/PostCard/featureImage";
 import { timestamp2date } from "../../../../components/utils/helpers";
+import config from "../../../../config.json";
 
 const Index = (props) => {
   const router = useRouter();
