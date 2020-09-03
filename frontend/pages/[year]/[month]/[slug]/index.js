@@ -44,6 +44,10 @@ const Index = (props) => {
   return (
     <Layout>
       <Head>
+        <meta
+          property="og:url"
+          content={config.blogURL + "/" + props.post.data.slug}
+        />
         <meta property="og:title" content={props.post.data.title} key="title" />
         <meta
           property="og:description"

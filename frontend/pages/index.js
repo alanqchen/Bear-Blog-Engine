@@ -8,6 +8,7 @@ const Index = ({ initialData }) => {
   return (
     <Layout>
       <Head>
+        <meta property="og:url" content={config.blogURL} />
         <meta property="og:title" content={config.blogName} key="title" />
         <meta
           property="og:description"

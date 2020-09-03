@@ -88,7 +88,6 @@ export default class Document extends NextDocument {
           <meta name="twitter:creator" content={config.blogName} />
           <meta property="og:type" content="website" />
           <meta property="og:site_name" content={config.blogName} />
-          <meta property="og:url" content={config.blogURL} />
           <meta
             property="og:image"
             content={config.blogURL + "/static/icons/apple-touch-icon.png"}

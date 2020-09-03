@@ -13,6 +13,10 @@ const Index = ({ initialData }) => {
   return (
     <Layout>
       <Head>
+        <meta
+          property="og:url"
+          content={config.blogURL + "/category/" + category}
+        />
         <meta property="og:title" content={category} key="title" />
         <meta
           property="og:description"
