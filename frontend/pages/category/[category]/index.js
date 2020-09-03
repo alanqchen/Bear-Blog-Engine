@@ -13,8 +13,11 @@ const Index = ({ initialData }) => {
   return (
     <Layout>
       <Head>
-        <meta name="twitter:url" content={config.blogURL} />
-        <meta name="twitter:title" content={config.blogName} />
+        <meta
+          name="twitter:url"
+          content={config.blogURL + "/category/" + category}
+        />
+        <meta name="twitter:title" content={category} />
         <meta name="twitter:description" content={config.blogDescription} />
         <meta
           name="twitter:image"
