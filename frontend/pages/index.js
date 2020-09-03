@@ -15,6 +15,24 @@ const Index = ({ initialData }) => {
           content={config.blogDescription}
           key="description"
         />
+        <meta
+          property="og:image"
+          content={
+            config.blogURL +
+            "/static/icons/android/android-launchericon-192-192.png"
+          }
+          key="image"
+        />
+        <meta name="twitter:url" content={config.blogURL} />
+        <meta name="twitter:title" content={config.blogName} />
+        <meta name="twitter:description" content={config.blogDescription} />
+        <meta
+          name="twitter:image"
+          content={
+            config.blogURL +
+            "/static/icons/android/android-launchericon-192-192.png"
+          }
+        />
       </Head>
       <PostsContainer category="" initialData={initialData} />
     </Layout>

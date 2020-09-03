@@ -46,6 +46,18 @@ const Index = (props) => {
     <Layout>
       <Head>
         <meta
+          name="twitter:url"
+          content={config.blogURL + "/" + props.post.data.slug}
+        />
+        <meta name="twitter:title" content={props.post.data.title} />
+        <meta name="twitter:description" content={props.post.data.subtitle} />
+        <meta
+          name="twitter:image"
+          content={
+            process.env.NEXT_PUBLIC_API_URL + props.post.data.featureImgUrl
+          }
+        />
+        <meta
           property="og:url"
           content={config.blogURL + "/" + props.post.data.slug}
         />
@@ -57,7 +69,9 @@ const Index = (props) => {
         />
         <meta
           property="og:image"
-          content={props.post.data.FeatureImage}
+          content={
+            process.env.NEXT_PUBLIC_API_URL + props.post.data.featureImgUrl
+          }
           key="image"
         />
       </Head>

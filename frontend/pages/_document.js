@@ -75,23 +75,9 @@ export default class Document extends NextDocument {
           />
 
           <meta name="twitter:card" content="summary" />
-          <meta name="twitter:url" content={config.blogURL} />
-          <meta name="twitter:title" content={config.blogName} />
-          <meta name="twitter:description" content={config.blogDescription} />
-          <meta
-            name="twitter:image"
-            content={
-              config.blogURL +
-              "/static/icons/android/android-launchericon-192-192.png"
-            }
-          />
           <meta name="twitter:creator" content={config.blogName} />
           <meta property="og:type" content="website" />
           <meta property="og:site_name" content={config.blogName} />
-          <meta
-            property="og:image"
-            content={config.blogURL + "/static/icons/apple-touch-icon.png"}
-          />
         </Head>
         <body content={theme.palette.background}>
           <Main />
