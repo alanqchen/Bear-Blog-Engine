@@ -17,7 +17,7 @@ const Index = ({ initialData }) => {
           name="twitter:url"
           content={config.blogURL + "/category/" + category}
         />
-        <meta name="twitter:title" content={category} />
+        <meta name="twitter:title" content={"Category: " + category} />
         <meta name="twitter:description" content={config.blogDescription} />
         <meta
           name="twitter:image"
@@ -38,7 +38,11 @@ const Index = ({ initialData }) => {
           property="og:url"
           content={config.blogURL + "/category/" + category}
         />
-        <meta property="og:title" content={category} key="title" />
+        <meta
+          property="og:title"
+          content={"Category: " + category}
+          key="title"
+        />
         <meta
           property="og:description"
           content={config.blogDescription}
