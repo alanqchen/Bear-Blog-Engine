@@ -1,16 +1,28 @@
+import { useState } from "react";
 import Layout from "../../../../components/PostLayout/postLayout";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import fetch from "isomorphic-unfetch";
 import Error from "../../../404";
 import ReadOnlyEditor from "../../../../components/Editor/ReadOnlyEditor";
-import { Typography, Box, Divider, Link } from "@material-ui/core";
+import {
+  Typography,
+  Box,
+  Divider,
+  Link,
+  Button,
+  Tooltip,
+} from "@material-ui/core";
+import { Link as LinkIcon } from "@material-ui/icons";
 import { Skeleton } from "@material-ui/lab";
 import FeatureImage from "../../../../components/Posts/Page/PostCard/featureImage";
 import { timestamp2date } from "../../../../components/utils/helpers";
+import { DateShareWrapper } from "../../../../components/PostLayout/postLayoutSyled";
 import config from "../../../../config.json";
 
 const Index = (props) => {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
   const router = useRouter();
 
   if (router.isFallback) {
@@ -86,19 +98,46 @@ const Index = (props) => {
         variant="subtitle1"
         color="textPrimary"
         component="h2"
-        gutterBottom
+        gutterBottom={false}
       >
         <Box fontSize={18}>{props.post.data.subtitle}</Box>
       </Typography>
-      <Typography
-        align="left"
-        variant="subtitle2"
-        color="textSecondary"
-        gutterBottom
-      >
-        {props.dateF}
-        {props.updateF && " (updated " + props.updateF + ")"}
-      </Typography>
+      <DateShareWrapper>
+        <Typography
+          align="left"
+          variant="subtitle2"
+          color="textSecondary"
+          gutterBottom={false}
+        >
+          {props.dateF}
+          {props.updateF && " (updated " + props.updateF + ")"}
+        </Typography>
+        <div>
+          <Tooltip
+            title="Copied permalink to clipboard!"
+            open={tooltipOpen}
+            arrow
+            placement="top"
+            onClose={() => {
+              setTooltipOpen(false);
+            }}
+            leaveDelay={1000}
+          >
+            <Button
+              size="small"
+              onClick={async () => {
+                await navigator.clipboard
+                  .writeText(config.blogURL + "/perma/" + props.post.data.id)
+                  .then(() => {
+                    setTooltipOpen(true);
+                  });
+              }}
+            >
+              <LinkIcon />
+            </Button>
+          </Tooltip>
+        </div>
+      </DateShareWrapper>
       <FeatureImage
         featureImgUrl={props.post.data.featureImgUrl}
         tags={props.post.data.tags}
