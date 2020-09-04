@@ -28,7 +28,7 @@ All you need to use Bear-Post is a server to host the backend API. The frontend 
 
 Lighthouse stats of index page:
 
-<img src="https://i.imgur.com/v82b5fu.png" width="40%" />
+<img src="https://i.imgur.com/q82nUYX.png" width="40%" />
 
 Lighthouse stats of a post page:
 
