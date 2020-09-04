@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import Head from "next/head";
 import { Typography } from "@material-ui/core";
 import Layout from "../../../components/PublicLayout/publicLayout";
 import { HeaderWrapper } from "../../../components/PublicLayout/publicLayoutStyled";
@@ -11,6 +12,43 @@ const Index = ({ initialData }) => {
 
   return (
     <Layout>
+      <Head>
+        <meta
+          name="twitter:url"
+          content={config.blogURL + "/category/" + category}
+        />
+        <meta name="twitter:title" content={"Category: " + category} />
+        <meta name="twitter:description" content={config.blogDescription} />
+        <meta
+          name="twitter:image"
+          content={
+            config.blogURL +
+            "/static/icons/android/android-launchericon-192-192.png"
+          }
+        />
+        <meta
+          property="og:image"
+          content={
+            config.blogURL +
+            "/static/icons/android/android-launchericon-192-192.png"
+          }
+          key="image"
+        />
+        <meta
+          property="og:url"
+          content={config.blogURL + "/category/" + category}
+        />
+        <meta
+          property="og:title"
+          content={"Category: " + category}
+          key="title"
+        />
+        <meta
+          property="og:description"
+          content={config.blogDescription}
+          key="description"
+        />
+      </Head>
       <HeaderWrapper>
         <Typography
           align="center"

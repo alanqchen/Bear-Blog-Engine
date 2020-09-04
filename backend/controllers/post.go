@@ -171,8 +171,9 @@ func (pc *PostController) GetPage(w http.ResponseWriter, r *http.Request) {
 			if val.Err() != nil {
 				log.Println("[WARN] Failed to add category posts to cache")
 				log.Println(err)
+			} else {
+				log.Println("Category query result added to cache")
 			}
-			log.Println("Category query result added to cache")
 		}
 	}
 
@@ -296,8 +297,9 @@ func (pc *PostController) GetPageAdmin(w http.ResponseWriter, r *http.Request) {
 		if val.Err() != nil {
 			log.Println("[WARN] Failed to add posts to admin cache")
 			log.Println(err)
+		} else {
+			log.Println("Query result added to admin cache")
 		}
-		log.Println("Query result added to admin cache")
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: posts, Pagination: &postPaginator}, w, http.StatusOK)
@@ -311,10 +313,41 @@ func (pc *PostController) GetByID(w http.ResponseWriter, r *http.Request) {
 		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
 		return
 	}
+
+	resStatus, resCache := pc.checkIDCache(id)
+	if resStatus {
+		var res APIResponse
+		err := json.Unmarshal(resCache, &res)
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("[INFO] Returned result from cache")
+		NewAPIResponse(&res, w, http.StatusOK)
+		return
+	}
+
 	post, err := pc.PostRepository.FindByID(id)
 	if err != nil {
 		NewAPIError(&APIError{false, "Could not find post", http.StatusNotFound}, w)
 		return
+	} else {
+		//Add query result to Redis cache
+		jPosts, err := json.Marshal(&APIResponse{Success: true, Data: post})
+		if err != nil {
+			log.Println("[WARN] Failed to add posts to cache")
+			log.Println(err)
+			// Still send result, but failed to add to cache
+			NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
+			return
+		}
+
+		val := pc.App.Redis.HSet("ID-hash", string(id), []byte(jPosts))
+		if val.Err() != nil {
+			log.Println("[WARN] Failed to add posts to cache")
+			log.Println(err)
+		} else {
+			log.Println("Query result added to ID cache")
+		}
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
@@ -394,8 +427,9 @@ func (pc *PostController) GetBySlug(w http.ResponseWriter, r *http.Request) {
 		if val.Err() != nil {
 			log.Println("[WARN] Failed to add posts to cache")
 			log.Println(err)
+		} else {
+			log.Println("Query result added to cache")
 		}
-		log.Println("Query result added to cache")
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
@@ -456,8 +490,9 @@ func (pc *PostController) GetBySlugAdmin(w http.ResponseWriter, r *http.Request)
 		if val.Err() != nil {
 			log.Println("[WARN] Failed to add posts to admin cache")
 			log.Println(err)
+		} else {
+			log.Println("Query result added to admin cache")
 		}
-		log.Println("Query result added to admin cache")
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
@@ -576,6 +611,7 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 	pc.flushCache()
 	pc.flushTagsCache(tags)
 	pc.flushSlugCache(slug)
+	pc.flushIDCache()
 	pc.flushAdminCache()
 	pc.flushAdminSlugCache(slug)
 
@@ -628,6 +664,12 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	subtitle, err := j.GetString("subtitle")
+	if err != nil {
+		NewAPIError(&APIError{false, "Subtitle is required", http.StatusBadRequest}, w)
+		return
+	}
+
 	body, err := j.GetString("body")
 	if err != nil {
 		NewAPIError(&APIError{false, "Content is required", http.StatusBadRequest}, w)
@@ -667,6 +709,7 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 	//post.UserID = uid
 	post.UpdatedAt = pgtype.Timestamptz{Time: time.Now(), Status: pgtype.Present}
 	post.Title = title
+	post.Subtitle = subtitle
 	post.Body = body
 	post.Slug = slug
 	post.Hidden = hidden
@@ -682,6 +725,7 @@ func (pc *PostController) Update(w http.ResponseWriter, r *http.Request) {
 	pc.flushCache()
 	pc.flushTagsCache(tags)
 	pc.flushSlugCache(slug)
+	pc.flushIDCache()
 	pc.flushAdminCache()
 	pc.flushAdminSlugCache(slug)
 
@@ -711,6 +755,7 @@ func (pc *PostController) Delete(w http.ResponseWriter, r *http.Request) {
 	pc.flushCache()
 	pc.flushTagsCache(post.Tags)
 	pc.flushSlugCache(post.Slug)
+	pc.flushIDCache()
 	pc.flushAdminCache()
 	pc.flushAdminSlugCache(post.Slug)
 
@@ -783,6 +828,20 @@ func (pc *PostController) checkSlugCache(slug string) (bool, []byte) {
 	return true, []byte(val)
 }
 
+// Returns if given ID is in id cache
+func (pc *PostController) checkIDCache(id int) (bool, []byte) {
+
+	val := pc.App.Redis.HGet("ID-hash", string(id))
+	if val.Val() == "" {
+		log.Println("[INFO] Key " + string(id) + " not found in ID cache")
+		return false, []byte("")
+	} else if val.Err() != nil {
+		panic(val.Err())
+	}
+	log.Println("[INFO] Key " + string(id) + " found in ID cache")
+	return true, []byte(val.Val())
+}
+
 // Returns if given category is in category cache
 func (pc *PostController) checkCategoryCache(category string, key string) (bool, []byte) {
 
@@ -845,6 +904,16 @@ func (pc *PostController) flushSlugCache(slug string) {
 		return
 	}
 	log.Println("[INFO] Flushed tags slug cache")
+	return
+}
+
+// Flushes ID cache
+func (pc *PostController) flushIDCache() {
+	err := pc.App.Redis.Del("ID-hash")
+	if err.Err() != nil {
+		log.Println(err.Err())
+	}
+	log.Println("[INFO] Flushed ID hash")
 	return
 }
 

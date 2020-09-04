@@ -19,3 +19,10 @@ export const WidthWrapper = styled.div`
   width: 95%;
   margin: auto;
 `;
+
+export const DateShareWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+`;
