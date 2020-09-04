@@ -38,6 +38,8 @@ Lighthouse stats of a post page:
 * Support for multiple admin and editor users
 * Support for hidden/draft posts
 * Progressive Web Application (service-worker, offline cache, etc.)
+* Support for permalinks
+* Uses metadata for rich content in applications (such as Discord links)
 
 <strong>For images of the admin dashboard, go to [this pull request](https://github.com/alanqchen/Bear-Blog-Engine/pull/140)</strong>
 
@@ -58,3 +60,4 @@ A: A dynamic blog gives me the opportunity to learn working with databases and R
     <img src="https://i.imgur.com/GuoFXNO.png" width="60%" />
 </p>
 
+<img src="https://i.imgur.com/zws45yA.png" width="40%" />
