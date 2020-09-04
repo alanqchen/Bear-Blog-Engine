@@ -28,14 +28,6 @@ export const refreshFailure = (error) => ({
   payload: { error },
 });
 
-export const setTokens = (accessToken, refreshToken) => ({
-  type: types.SET_TOKENS,
-  payload: {
-    accessToken: accessToken,
-    refreshToken: refreshToken,
-  },
-});
-
 export function login(username, password) {
   return (dispatch) => {
     const params = {
@@ -68,12 +60,12 @@ export function login(username, password) {
 }
 
 export function refresh() {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     dispatch(refreshBegin());
     return fetch(process.env.NEXT_PUBLIC_API_URL + "/api/v1/auth/refresh", {
       credentials: "include",
       headers: {
-        Authorization: "Bearer " + getState().auth.refreshToken,
+        Authorization: "Bearer " + localStorage.getItem("bearpost.REFRESH"),
       },
     })
       .then(handleErrors)

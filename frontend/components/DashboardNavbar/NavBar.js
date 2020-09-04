@@ -1,5 +1,3 @@
-import { connect } from "react-redux";
-import { setTokens } from "../../redux/auth/actions";
 import { useState } from "react";
 import {
   AppBar,
@@ -57,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function NavBar({ className, selectedCategory, dispatch }) {
+function NavBar({ className, selectedCategory }) {
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -93,7 +91,6 @@ function NavBar({ className, selectedCategory, dispatch }) {
         if (json.success) {
           localStorage.removeItem("bearpost.JWT");
           localStorage.removeItem("bearpost.REFRESH");
-          await dispatch(setTokens("", ""));
           setIsError(false);
           setAlertMsg("Logged out! Redirecting...");
           setAlertOpen(true);
@@ -256,4 +253,4 @@ function NavBar({ className, selectedCategory, dispatch }) {
   );
 }
 
-export default connect()(NavBar);
+export default NavBar;

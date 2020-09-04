@@ -170,7 +170,6 @@ export const SetupForm = ({ auth }) => {
 const mapStateToProps = (state) => {
   return {
     auth: {
-      accessToken: state.auth.accessToken,
       refreshToken: state.auth.refreshToken,
       userData: state.auth.userData,
       loading: state.auth.loading,

@@ -37,7 +37,7 @@ export function fetchPosts() {
       {
         credentials: "include",
         headers: {
-          Authorization: "Bearer " + getState().auth.accessToken,
+          Authorization: "Bearer " + localStorage.getItem("bearpost.JWT"),
         },
       }
     )

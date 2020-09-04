@@ -52,7 +52,7 @@ export const LoginForm = ({ auth, dispatch }) => {
     if (
       passedCaptcha &&
       !auth.loading &&
-      auth.accessToken !== "" &&
+      localStorage.getItem("bearpost.JWT") !== "" &&
       !auth.error
     ) {
       Router.push("/auth/portal/dashboard");
@@ -132,8 +132,6 @@ export const LoginForm = ({ auth, dispatch }) => {
 const mapStateToProps = (state) => {
   return {
     auth: {
-      accessToken: state.auth.accessToken,
-      refreshToken: state.auth.refreshToken,
       userData: state.auth.userData,
       loading: state.auth.loading,
       error: state.auth.error,
