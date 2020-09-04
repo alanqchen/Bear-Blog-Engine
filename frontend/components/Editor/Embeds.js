@@ -53,7 +53,12 @@ function YoutubeEmbed(props) {
 function ImageEmbed(props) {
   return (
     <StyledEmbedWrapper>
-      <img src={`${props.attrs.matches[0]}`} style={{ display: "block" }} />
+      <img
+        src={`${props.attrs.matches[0]}`}
+        style={{ display: "block" }}
+        loading="lazy"
+        alt={`${props.attrs.matches[0]}`}
+      />
     </StyledEmbedWrapper>
   );
 }
