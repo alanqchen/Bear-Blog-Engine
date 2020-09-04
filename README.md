@@ -8,16 +8,13 @@
         <img alt="Docker Cloud Build Status (API)" src="https://img.shields.io/docker/cloud/build/aqchen/bearpost-api?label=docker%20build%20api" />
     </a>
     <img alt="CI status" src="https://github.com/alanqchen/Bear-Post/workflows/CI%20Production/badge.svg" />
-    <a href="https://example.aqchen.com">
-        <img alt="Example Website" src="https://img.shields.io/website?label=example%20site&up_message=Online&url=https%3A%2F%2Fexample.aqchen.com" />
-    </a>
     <img alt="prettier" src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg" />
 </p>
 
 # Bear Blog Engine / Bear Post
 A Modern Blog Engine. Backend server required, not JAMStack.
 
-<strong>[Example Site](https://example.aqchen.com)</strong>
+## [Example Site](https://example.aqchen.com)
 
 Uses Go (mux) for the backend and React (Next) for the frontend.
 Databases used are PostgreSQL and Redis (auth & caching).
