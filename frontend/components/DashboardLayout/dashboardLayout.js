@@ -6,7 +6,7 @@ import {
   DashBoardWrapper,
 } from "./dashboardLayoutStyled";
 import NavBar from "../DashboardNavbar/NavBar";
-import { refresh, setTokens } from "../../redux/auth/actions";
+import { refresh } from "../../redux/auth/actions";
 
 const dashboardLayoutStyle = {
   marginTop: 64,
@@ -20,7 +20,6 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
 
   useEffect(() => {
     const clearTokens = async () => {
-      await dispatch(setTokens("", ""));
       localStorage.removeItem("bearpost.JWT");
       localStorage.removeItem("bearpost.REFRESH");
     };
@@ -37,9 +36,8 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
     const accessToken = localStorage.getItem("bearpost.JWT");
     const refreshToken = localStorage.getItem("bearpost.REFRESH");
 
-    if (accessToken) {
+    if (accessToken && refreshToken) {
       const setGetNewRefreshToken = async () => {
-        await dispatch(setTokens(accessToken, refreshToken));
         await dispatch(refresh());
         if (auth.error) {
           clearTokens();
@@ -48,16 +46,6 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
         }
       };
       setGetNewRefreshToken();
-    } else if (auth.accessToken !== "") {
-      const getNewRefreshToken = async () => {
-        await dispatch(refresh());
-        if (auth.error) {
-          clearTokens();
-        } else {
-          setIsInitialLoad(false);
-        }
-      };
-      getNewRefreshToken();
     } else {
       clearTokens();
       Router.push("/auth/portal/login");

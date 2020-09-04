@@ -1,8 +1,6 @@
 import * as authTypes from "./types";
 
 const initalAuthState = {
-  accessToken: "",
-  refreshToken: "",
   userData: null,
   loading: false,
   error: null,
@@ -21,8 +19,6 @@ export default function authReducer(state = initalAuthState, action) {
       return {
         ...state,
         loading: false,
-        accessToken: action.payload.response.data.tokens.accessToken,
-        refreshToken: action.payload.response.data.tokens.refreshToken,
         userData: action.payload.response.data.user,
         error: null,
       };
@@ -31,8 +27,6 @@ export default function authReducer(state = initalAuthState, action) {
       return {
         ...state,
         loading: false,
-        accessToken: "",
-        refreshToken: "",
         userData: null,
         error: action.payload.error,
       };
@@ -48,8 +42,6 @@ export default function authReducer(state = initalAuthState, action) {
       return {
         ...state,
         loading: false,
-        accessToken: action.payload.response.data.tokens.accessToken,
-        refreshToken: action.payload.response.data.tokens.refreshToken,
         userData: action.payload.response.data.user,
         error: null,
       };
@@ -61,13 +53,6 @@ export default function authReducer(state = initalAuthState, action) {
         accessToken: "",
         refreshToken: "",
         error: action.payload.error,
-      };
-
-    case authTypes.SET_TOKENS:
-      return {
-        ...state,
-        accessToken: action.payload.accessToken,
-        refreshToken: action.payload.refreshToken,
       };
 
     default:

@@ -1,6 +1,5 @@
-import { connect } from "react-redux";
 import Router from "next/router";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import Particles from "react-particles-js";
 import Layout from "../../../../components/PublicLayout/publicLayout";
 import {
@@ -12,17 +11,22 @@ import LoginForm from "../../../../components/Login/loginForm";
 import SetupForm from "../../../../components/Login/setupForm";
 import StarParticles from "../../../../components/Theme/particles.json";
 
-const Index = ({ data, auth }) => {
+const Index = ({ data }) => {
+  const [loaded, setLoaded] = useState(false);
+
   useEffect(() => {
     const token = localStorage.getItem("bearpost.JWT");
-    if (token && !data.setup) {
+    const refresh = localStorage.getItem("bearpost.REFRESH");
+    if (token && refresh && !data.setup) {
       Router.push("/auth/portal/dashboard");
+    } else {
+      setLoaded(true);
     }
   }, []);
 
   return (
     <>
-      {!auth.accessToken && (
+      {loaded && (
         <Particles
           params={StarParticles}
           style={{ position: "absolute", top: 0 }}
@@ -68,16 +72,4 @@ export async function getServerSideProps() {
   };
 }
 
-const mapStateToProps = (state) => {
-  return {
-    auth: {
-      accessToken: state.auth.accessToken,
-      refreshToken: state.auth.refreshToken,
-      userData: state.auth.userData,
-      loading: state.auth.loading,
-      error: state.auth.error,
-    },
-  };
-};
-
-export default connect(mapStateToProps)(Index);
+export default Index;
