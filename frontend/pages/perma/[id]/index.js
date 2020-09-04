@@ -31,7 +31,7 @@ const Index = ({ post }) => {
         >
           <Skeleton variant="text" width="40%" />
         </Typography>
-        <Skeleton variant="rect" width="100%" height={"600px"} />
+        <Skeleton variant="rect" width="100%" height={"500px"} />
       </Layout>
     );
   }
