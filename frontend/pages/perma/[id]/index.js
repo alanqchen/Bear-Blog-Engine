@@ -5,6 +5,8 @@ import fetch from "isomorphic-unfetch";
 import Error from "../../404";
 import { Typography } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
+import Head from "next/head";
+import config from "../../../config.json";
 
 const Index = ({ post }) => {
   const router = useRouter();
@@ -43,6 +45,33 @@ const Index = ({ post }) => {
 
     return (
       <Layout>
+        <Head>
+          <meta
+            name="twitter:url"
+            content={config.blogURL + "/" + post.data.slug}
+          />
+          <meta name="twitter:title" content={post.data.title} />
+          <meta name="twitter:description" content={post.data.subtitle} />
+          <meta
+            name="twitter:image"
+            content={process.env.NEXT_PUBLIC_API_URL + post.data.featureImgUrl}
+          />
+          <meta
+            property="og:url"
+            content={config.blogURL + "/" + post.data.slug}
+          />
+          <meta property="og:title" content={post.data.title} key="title" />
+          <meta
+            property="og:description"
+            content={post.data.subtitle}
+            key="description"
+          />
+          <meta
+            property="og:image"
+            content={process.env.NEXT_PUBLIC_API_URL + post.data.featureImgUrl}
+            key="image"
+          />
+        </Head>
         <Typography
           align="left"
           color="textPrimary"
@@ -60,7 +89,7 @@ const Index = ({ post }) => {
         >
           <Skeleton variant="text" width="40%" />
         </Typography>
-        <Skeleton variant="rect" width="100%" height={"600px"} />
+        <Skeleton variant="rect" width="100%" height={"500px"} />
       </Layout>
     );
   }
@@ -69,7 +98,7 @@ const Index = ({ post }) => {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: true,
+    fallback: "unstable_blocking",
   };
 }
 
