@@ -98,7 +98,7 @@ const Index = ({ post }) => {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: "blocking",
+    fallback: "unstable_blocking",
   };
 }
 
