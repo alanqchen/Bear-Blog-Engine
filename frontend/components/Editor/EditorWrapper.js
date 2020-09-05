@@ -2,6 +2,7 @@ import Router from "next/router";
 import { useEffect, useState } from "react";
 import { WidthWrapper } from "../DashboardLayout/dashboardLayoutStyled";
 import {
+  Button,
   Divider,
   Snackbar,
   LinearProgress,
@@ -26,17 +27,20 @@ const EditorWrapper = ({ query }) => {
     }
 
     setShowMessage(false);
+    setIsInfo(false);
   };
 
   const [loaded, setLoaded] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
+  const [isInfo, setIsInfo] = useState(false);
   const [postData, setPostData] = useState({});
   const [isPreview, setIsPreview] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [viewRaw, setViewRaw] = useState(false);
   const [editorValue, setEditorValue] = useState("");
+  const [useRestore, setUseRestore] = useState(false);
 
   useEffect(() => {
     // "Cancel" promise if component is not mounted
@@ -57,16 +61,26 @@ const EditorWrapper = ({ query }) => {
             console.log("Post ID: " + json.data.id);
             setPostData(json.data);
             setEditorValue(json.data.body);
+            setIsInfo(false);
             setIsError(false);
             setMessage("Found post!");
             setShowMessage(true);
             setLoaded(true);
           } else if (isSubscribed) {
+            setIsInfo(false);
             setIsError(true);
             setMessage(json.message + " Returning to dashboard...");
             setShowMessage(true);
             await new Promise((r) => setTimeout(r, 2000));
             Router.push("/auth/portal/dashboard");
+          }
+          const prevPath = localStorage.getItem("bearpost.savePath");
+          const prevBody = localStorage.getItem("bearpost.savedRestore");
+
+          if (isSubscribed && prevPath === json.data.slug && prevBody !== "") {
+            setMessage("Load found unsaved changes?");
+            setIsInfo(true);
+            setShowMessage(true);
           }
         })
         .catch(async () => {
@@ -123,6 +137,7 @@ const EditorWrapper = ({ query }) => {
                 onChange={() => {
                   setViewRaw(!viewRaw);
                 }}
+                disabled={isInfo}
               >
                 Raw
               </ToggleButton>
@@ -144,6 +159,8 @@ const EditorWrapper = ({ query }) => {
                 onChange={(value) => {
                   setEditorValue(value);
                 }}
+                savePath={postData.slug}
+                useRestore={useRestore}
               />
             ) : (
               <TextField
@@ -170,7 +187,23 @@ const EditorWrapper = ({ query }) => {
           elevation={6}
           variant="filled"
           onClose={handleClose}
-          severity={isError ? "error" : "success"}
+          severity={isInfo ? "info" : isError ? "error" : "success"}
+          action={
+            isInfo ? (
+              <Button
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setShowMessage(false);
+                  setIsInfo(false);
+                  setUseRestore(true);
+                  setEditorValue(localStorage.getItem("bearpost.savedRestore"));
+                }}
+              >
+                RESTORE
+              </Button>
+            ) : undefined
+          }
         >
           {message}
         </Alert>

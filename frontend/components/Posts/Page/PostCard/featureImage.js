@@ -31,7 +31,7 @@ function FeatureImage({ featureImgUrl, tags, skeleton, moreHeight, noMargin }) {
           <Skeleton
             variant="rect"
             width="100%"
-            height={moreHeight ? "500px" : "300px"}
+            height={moreHeight ? "400px" : "300px"}
           />
         </>
       )}

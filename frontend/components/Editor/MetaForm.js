@@ -173,6 +173,7 @@ export const MetaForm = ({ postData, disableButtons }) => {
             } else {
               setMessage("Published successfully!");
             }
+            localStorage.setItem("bearpost.savePath", "");
             setSnackbarOpen(true);
           } else {
             setMessage("Created successfully! Redirecting in 2 seconds...");
