@@ -39,7 +39,6 @@ const Index = () => {
       <MetaForm />
       <WidthWrapper>
         <Divider style={{ marginTop: "10px", marginBottom: "10px" }} />
-        {console.log(loaded)}
         {loaded && (
           <Editor defaultValue={editorValue} isPreview={isPreview} isNew />
         )}

@@ -8,9 +8,20 @@ import { StyledEditor } from "./EditorStyled";
 import EditorTheme from "../Theme/editorTheme";
 import { EmbedsArray } from "./Embeds";
 
-function Editor({ dispatch, defaultValue, isPreview, isNew, onChange }) {
+function Editor({
+  dispatch,
+  defaultValue,
+  isPreview,
+  isNew,
+  onChange,
+  savePath,
+  useRestore,
+}) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  // Force remounting of component (for restoring unsaved changes)
+  const [restoreVal, setRestoreVal] = useState("");
+  const [initialLoad, setInitialLoad] = useState(true);
 
   // SNACKBAR
   const handleClose = (event, reason) => {
@@ -22,29 +33,57 @@ function Editor({ dispatch, defaultValue, isPreview, isNew, onChange }) {
   };
 
   useEffect(() => {
-    if (isNew) {
-      localStorage.setItem("bearpost.saved", defaultValue);
-    } else {
-      localStorage.setItem("bearpost.savedUpdate", defaultValue);
+    if (initialLoad) {
+      if (isNew) {
+        localStorage.setItem("bearpost.saved", defaultValue);
+      } else {
+        localStorage.setItem("bearpost.savedUpdate", defaultValue);
+      }
+      setInitialLoad(false);
     }
-  }, []);
+    if (useRestore) {
+      const restore = localStorage.getItem("bearpost.savedRestore");
+      setRestoreVal(restore);
+      if (isNew) {
+        localStorage.setItem("bearpost.saved", restore);
+      } else {
+        localStorage.setItem("bearpost.savedUpdate", restore);
+      }
+    }
+  }, [initialLoad, useRestore]);
 
-  // Refresh tokens every 30 seconds
-  const handleAuthRefresh = throttle(() => {
-    console.log("Refreshing tokens");
-    dispatch(refresh());
-  }, 30000);
+  // Refresh tokens every 5 mins
+  const handleAuthRefresh = throttle(
+    () => {
+      console.log("Refreshing tokens");
+      dispatch(refresh());
+    },
+    300000,
+    {
+      leading: false,
+      trailing: true,
+    }
+  );
 
-  const handleChange = debounce((value) => {
+  const handleUpdate = debounce((value) => {
     const text = value();
     if (isNew) {
       localStorage.setItem("bearpost.saved", text);
     } else {
       localStorage.setItem("bearpost.savedUpdate", text);
+      if (savePath) {
+        localStorage.setItem("bearpost.savedRestore", text);
+        localStorage.setItem("bearpost.savePath", savePath);
+      }
     }
     onChange(value);
     handleAuthRefresh();
   }, 400);
+
+  const handleChange = (value) => {
+    handleUpdate(value);
+    handleAuthRefresh();
+  };
 
   return (
     <>
@@ -59,6 +98,7 @@ function Editor({ dispatch, defaultValue, isPreview, isNew, onChange }) {
         }}
         readOnly={isPreview}
         defaultValue={defaultValue}
+        value={restoreVal ? restoreVal : undefined}
         onChange={handleChange}
         embeds={EmbedsArray}
       />
