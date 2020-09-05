@@ -30,4 +30,4 @@ Follow the same steps as *Internal Databases*, but for step 4, make sure to edit
 <img src="https://i.imgur.com/OQil44L.png" width="50%" />
 
 ### CDN
-Consider using Cloudflare as a CDN for your API assests route. If you do decide to use Cloudflare, remember to only enable caching for the `https://API_URL/assets` route, [follow Cloudflare's recommended page rules](https://support.cloudflare.com/hc/en-us/articles/200504045-Using-Cloudflare-with-your-API). If you also add the domain to your Vercel (frontend) deployment to Cloudflare as a DNS record, make sure it's set to "DNS Only", not "Proxied".
+Consider using Cloudflare as a CDN for your API assests route. If you do decide to use Cloudflare, remember to [follow Cloudflare's recommended page rules](https://support.cloudflare.com/hc/en-us/articles/200504045-Using-Cloudflare-with-your-API) (apply these page rules to `API_URL/api`). If you also add the domain to your Vercel (frontend) deployment to Cloudflare as a DNS record, make sure it's set to "DNS Only", not "Proxied".
