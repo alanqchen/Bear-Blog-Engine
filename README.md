@@ -21,16 +21,6 @@ Databases used are PostgreSQL and Redis (auth & caching).
 
 All you need to use Bear-Post is a server to host the backend API. The frontend CDN and SSL certs can be handled by Vercel with your own domain for free!
 
-<img src="https://user-images.githubusercontent.com/18543142/89113712-70958a80-d442-11ea-8e79-f373feb44990.png" width="50%" />
-
-Lighthouse stats of index page:
-
-<img src="https://i.imgur.com/q82nUYX.png" width="40%" />
-
-Lighthouse stats of a post page:
-
-<img src="https://i.imgur.com/hHMmZrj.png" width="40%" />
-
 ## Features
 
 * SEO and performance optimized
@@ -43,6 +33,16 @@ Lighthouse stats of a post page:
 * Uses metadata for rich content in applications (such as Discord links)
 
 <strong>For images of the admin dashboard, go to [this pull request](https://github.com/alanqchen/Bear-Blog-Engine/pull/140)</strong>
+
+<img src="https://user-images.githubusercontent.com/18543142/89113712-70958a80-d442-11ea-8e79-f373feb44990.png" width="50%" />
+
+Lighthouse stats of index page:
+
+<img src="https://i.imgur.com/q82nUYX.png" width="40%" />
+
+Lighthouse stats of a post page:
+
+<img src="https://i.imgur.com/hHMmZrj.png" width="40%" />
 
 # Using Bear-Post
 
