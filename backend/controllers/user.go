@@ -412,6 +412,8 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		user.Admin = admin
+	} else {
+		admin = user.Admin
 	}
 
 	err = uc.UserRepository.Update(user)

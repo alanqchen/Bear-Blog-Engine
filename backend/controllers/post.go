@@ -330,24 +330,23 @@ func (pc *PostController) GetByID(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		NewAPIError(&APIError{false, "Could not find post", http.StatusNotFound}, w)
 		return
-	} else {
-		//Add query result to Redis cache
-		jPosts, err := json.Marshal(&APIResponse{Success: true, Data: post})
-		if err != nil {
-			log.Println("[WARN] Failed to add posts to cache")
-			log.Println(err)
-			// Still send result, but failed to add to cache
-			NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
-			return
-		}
+	}
+	//Add query result to Redis cache
+	jPosts, err := json.Marshal(&APIResponse{Success: true, Data: post})
+	if err != nil {
+		log.Println("[WARN] Failed to add posts to cache")
+		log.Println(err)
+		// Still send result, but failed to add to cache
+		NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
+		return
+	}
 
-		val := pc.App.Redis.HSet("ID-hash", string(id), []byte(jPosts))
-		if val.Err() != nil {
-			log.Println("[WARN] Failed to add posts to cache")
-			log.Println(err)
-		} else {
-			log.Println("Query result added to ID cache")
-		}
+	val := pc.App.Redis.HSet("ID-hash", string(id), []byte(jPosts))
+	if val.Err() != nil {
+		log.Println("[WARN] Failed to add posts to cache")
+		log.Println(err)
+	} else {
+		log.Println("Query result added to ID cache")
 	}
 
 	NewAPIResponse(&APIResponse{Success: true, Data: post}, w, http.StatusOK)
