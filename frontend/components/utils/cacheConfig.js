@@ -86,12 +86,12 @@ module.exports = [
   },
   {
     urlPattern: /(.*\/api\/v\d\/(auth|[a-z]+\/(admin|detailed)).*)/i,
-    handler: "NetworkOnly", // For dashboard, don't cache important requests
+    handler: "NetworkOnly", // don't cache important dashboard requests
     method: "GET",
   },
   {
     urlPattern: /(.*\/api\/v\d\/(auth|[a-z]+\/(admin|detailed)).*)/i,
-    handler: "NetworkOnly", // For dashboard, don't cache important requests
+    handler: "NetworkOnly", // don't cache important dashboard requests
     method: "POST",
   },
   {
@@ -104,7 +104,7 @@ module.exports = [
         maxEntries: 16,
         maxAgeSeconds: 24 * 60 * 60, // 24 hours
       },
-      networkTimeoutSeconds: 3, // fall back to cache if api does not response within 3 seconds
+      networkTimeoutSeconds: 3, // fall back to cache if api does not respond within 3 seconds
     },
   },
   {
