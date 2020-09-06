@@ -15,6 +15,11 @@ Also by default, this template assumes you are using [docker-letsencrypt-nginx-p
 5. Edit `app-docker.json`, particularly database names and passwords, `allowedOrigins`, and `captchaSecret`(not recommended to change `host` and `port`)
 6. Run `docker-compose up` or `docker-compose up -d` to start the backend
 
+Note: If you ever need to dump a backup of the postgres db, run this command in the terminal:
+```bash
+docker exec  -e PGPASSWORD=<pg password> <pg container name> pg_dump -U <pg user> <pg database name> > backup.sql
+```
+
 ### External Databases
 Follow the same steps as *Internal Databases*, but for step 4, make sure to edit the databases host, port, username, password, etc. to the correct values.
 
