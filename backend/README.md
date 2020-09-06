@@ -16,8 +16,10 @@ This includes the backend API with databases
 5. Run `docker-compose build`
 6. Run `docker-compose up` or `docker-compose up -d`
 
-Note that after any changes made to the API, you'll have to run `docker-compose build`.
+Note that after any changes made to the API, you'll have to run `docker-compose build` again (not neccesary if you don't use the databases in docker-compose).
 
 ## Endpoints
 
 See the API documentation in the repository's wiki.
+
+The Postman collection template for the API is provided in [bearblogengine.postman_collection.json](bearblogengine.postman_collection.json) located in this directory.

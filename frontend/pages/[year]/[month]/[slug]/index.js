@@ -57,6 +57,10 @@ const Index = (props) => {
   return (
     <Layout>
       <Head>
+        <link
+          rel="canonical"
+          href={config.blogURL + "/" + props.post.data.slug}
+        />
         <meta
           name="twitter:url"
           content={config.blogURL + "/" + props.post.data.slug}

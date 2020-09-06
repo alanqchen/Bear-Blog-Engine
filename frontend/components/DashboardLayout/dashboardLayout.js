@@ -31,24 +31,24 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
     } else if (!auth.loading && !isInitialLoad) {
       setInitAuth(true);
       return;
-    }
-
-    const accessToken = localStorage.getItem("bearpost.JWT");
-    const refreshToken = localStorage.getItem("bearpost.REFRESH");
-
-    if (accessToken && refreshToken) {
-      const setGetNewRefreshToken = async () => {
-        await dispatch(refresh());
-        if (auth.error) {
-          clearTokens();
-        } else {
-          setIsInitialLoad(false);
-        }
-      };
-      setGetNewRefreshToken();
     } else {
-      clearTokens();
-      Router.push("/auth/portal/login");
+      const accessToken = localStorage.getItem("bearpost.JWT");
+      const refreshToken = localStorage.getItem("bearpost.REFRESH");
+
+      if (accessToken && refreshToken) {
+        const setGetNewRefreshToken = async () => {
+          await dispatch(refresh());
+          if (auth.error) {
+            clearTokens();
+          } else {
+            setIsInitialLoad(false);
+          }
+        };
+        setGetNewRefreshToken();
+      } else {
+        clearTokens();
+        Router.push("/auth/portal/login");
+      }
     }
   }, [auth.error, isInitialLoad]);
 

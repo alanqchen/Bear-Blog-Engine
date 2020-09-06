@@ -46,6 +46,7 @@ const Index = ({ post }) => {
     return (
       <Layout>
         <Head>
+          <link rel="canonical" href={config.blogURL + "/" + post.data.slug} />
           <meta
             name="twitter:url"
             content={config.blogURL + "/" + post.data.slug}
