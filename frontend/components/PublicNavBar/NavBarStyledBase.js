@@ -235,3 +235,15 @@ export const SearchIconWrapper = styled.div`
     cursor: pointer;
   }
 `;
+
+export const WideBox = styled.div`
+  @media (max-width: ${config.navMinWidth}) {
+    display: none !important;
+  }
+`;
+
+export const NarrowBox = styled.div`
+  @media (min-width: ${config.navMinWidth}) {
+    display: none !important;
+  }
+`;
