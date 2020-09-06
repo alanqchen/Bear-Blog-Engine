@@ -116,7 +116,7 @@ module.exports = [
         maxEntries: 32,
         maxAgeSeconds: 24 * 60 * 60, // 24 hours
       },
-      networkTimeoutSeconds: 10,
+      networkTimeoutSeconds: 3,
     },
   },
 ];
