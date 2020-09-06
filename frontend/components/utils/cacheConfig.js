@@ -85,8 +85,14 @@ module.exports = [
     },
   },
   {
-    urlPattern: /\/api\/v\d\/(auth|[a-z]+\/(admin|detailed))/i,
+    urlPattern: /(.*\/api\/v\d\/(auth|[a-z]+\/(admin|detailed)).*)/i,
     handler: "NetworkOnly", // For dashboard, don't cache important requests
+    method: "GET",
+  },
+  {
+    urlPattern: /(.*\/api\/v\d\/(auth|[a-z]+\/(admin|detailed)).*)/i,
+    handler: "NetworkOnly", // For dashboard, don't cache important requests
+    method: "POST",
   },
   {
     urlPattern: /\/api\/.*$/i,

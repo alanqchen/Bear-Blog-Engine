@@ -21,7 +21,7 @@ export const LoginForm = ({ auth, dispatch }) => {
     await dispatch(login(username, password));
   };
 
-  const verifyToken = async (token) => {
+  const verifyToken = async (token, username, password) => {
     const params = {
       token: token,
     };
@@ -35,7 +35,7 @@ export const LoginForm = ({ auth, dispatch }) => {
         if (json.success) {
           setPassedCaptcha(true);
           setFailedCaptcha(false);
-          await doLogin();
+          await doLogin(username, password);
         } else {
           setPassedCaptcha(false);
           setFailedCaptcha(true);
@@ -57,7 +57,7 @@ export const LoginForm = ({ auth, dispatch }) => {
     ) {
       Router.push("/auth/portal/dashboard");
     }
-  });
+  }, [auth]);
 
   return (
     <FormWrapper>
@@ -74,8 +74,7 @@ export const LoginForm = ({ auth, dispatch }) => {
           if (passedCaptcha) {
             await doLogin(values.username, values.password);
           } else {
-            const token = await recaptchaRef.current.executeAsync();
-            await verifyToken(token);
+            await recaptchaRef.current.executeAsync();
           }
         }}
       >
@@ -115,8 +114,8 @@ export const LoginForm = ({ auth, dispatch }) => {
               ref={recaptchaRef}
               size="invisible"
               sitekey={process.env.NEXT_PUBLIC_CAPTCHA_KEY}
-              onChange={async () => {
-                await doLogin(values.username, values.password);
+              onChange={async (token) => {
+                await verifyToken(token, values.username, values.password);
               }}
               onErrored={() => {
                 setFailedCaptcha(true);
