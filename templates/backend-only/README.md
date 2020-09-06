@@ -10,8 +10,8 @@ Also by default, this template assumes you are using [docker-letsencrypt-nginx-p
 ### Internal Databases
 1. Copy all files and subdirectories in this directory to your server
 2. Copy  `.env.sample` to `.env` and edit the variables
-3. Copy the contents of the template `public` folder to the location where you mounted the container's  `public` folder
-4. [Get recaptcha v2 keys from google](https://developers.google.com/recaptcha/intro)
+3. Copy the contents of the template `public` folder to the location where you mounted the container's `public` folder
+4. [Get recaptcha v2 invisible keys from google](https://developers.google.com/recaptcha/intro)
 5. Edit `app-docker.json`, particularly database names and passwords, `allowedOrigins`, and `captchaSecret`(not recommended to change `host` and `port`)
 6. Run `docker-compose up` or `docker-compose up -d` to start the backend
 7. Fork the repo on GitHub add edit `frontend/config.json` and `.env.local` to fit the backend parameters and customization options

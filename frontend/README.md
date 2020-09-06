@@ -14,4 +14,9 @@ This uses the Next.js framework.
 4. Ensure the the backend API is running (See the instructions in the [`backend directory`](/backend) if you haven't started it yet)
 5. Run `npm run dev`
 
-Note that iSSG will not work in development and so pages will likely load slower than in production.
+Note that iSSG and the service worker are not enabled in the development build and so pages will likely load slower than in production.
+
+**Build Production (Test iSSG or Service Worker)**
+
+1. Run `npm run build`
+2. Run `npm run start`

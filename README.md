@@ -38,6 +38,7 @@ Lighthouse stats of a post page:
 
 * SEO and performance optimized
 * WYSIWYG online markdown-based editor that also supports embeds
+* Ability to restore unsaved changes in the editor
 * Support for multiple admin and editor users
 * Support for hidden/draft posts
 * Progressive Web Application (service-worker, offline cache, etc.)
