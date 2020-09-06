@@ -5,6 +5,20 @@
   "numPrimaryLinks": 3,
   "navlinks": [
     {
+      "name": "My Blog",
+      "link": "https://blog.aqchen.com",
+      "external": true,
+      "isCategory": false,
+      "primary": true
+    },
+    {
+      "name": "GitHub",
+      "link": "https://github.com/alanqchen/Bear-Blog-Engine",
+      "external": true,
+      "isCategory": false,
+      "primary": true
+    },
+    {
       "name": "category1",
       "link": "/category/project",
       "external": false,
@@ -13,29 +27,15 @@
     },
     {
       "name": "category2",
-      "link": "/category/yellowstone",
+      "link": "/category/filler",
       "external": false,
       "isCategory": true,
-      "primary": true
-    },
-    {
-      "name": "My Blog",
-      "link": "https://blog.aqchen.com",
-      "external": true,
-      "isCategory": false,
-      "primary": true
-    },
-    {
-      "name": "category4",
-      "link": "/first",
-      "external": false,
-      "isCategory": false,
       "primary": false
     },
     {
-      "name": "Github",
-      "link": "https://github.com/alanqchen/Bear-Blog-Engine",
-      "external": true,
+      "name": "category3",
+      "link": "/category/first",
+      "external": false,
       "isCategory": false,
       "primary": false
     },

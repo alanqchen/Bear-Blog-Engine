@@ -37,7 +37,6 @@
     "react-lottie": "^1.2.3",
     "react-particles-js": "^3.2.1",
     "react-redux": "^7.2.1",
-    "react-responsive": "^8.1.0",
     "react-waypoint": "^9.0.3",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
