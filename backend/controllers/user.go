@@ -393,6 +393,24 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 
 	admin, err := j.GetBool("admin")
 	if err == nil {
+		if user.Admin && !admin {
+			multipleAdmins := false
+			users, err := uc.UserRepository.GetAll()
+			if err != nil {
+				NewAPIError(&APIError{false, "Failed to perform only admin check", http.StatusInternalServerError}, w)
+				return
+			}
+			for _, iUser := range users {
+				if iUser.Admin && iUser.ID != user.ID {
+					multipleAdmins = true
+					break
+				}
+			}
+			if !multipleAdmins {
+				NewAPIError(&APIError{false, "Cannot remove only admin", http.StatusBadRequest}, w)
+				return
+			}
+		}
 		user.Admin = admin
 	}
 
