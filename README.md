@@ -37,6 +37,7 @@ All you need to use Bear-Post is a server to host the backend API. The frontend 
 * Uses metadata for rich content in applications (such as Discord links)
 * Keyset pagination to support infinite scrolling
 * Login protected with reCaptcha
+* Automatic creation of a webp copy of uploaded feature-images
 * Easy startup with docker-compose and Vercel
 
 <strong>For images of the admin dashboard, go to [this pull request](https://github.com/alanqchen/Bear-Blog-Engine/pull/140)</strong>
