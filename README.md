@@ -24,13 +24,20 @@ All you need to use Bear-Post is a server to host the backend API. The frontend 
 ## Features
 
 * SEO and performance optimized
+* Backend uses Go for fast performance coupled with Redis for authentication and caching PostgreSQL requests
 * WYSIWYG online markdown-based editor that also supports embeds
-* Ability to restore unsaved changes in the editor
+  * Same base editor used in [Outline](https://www.getoutline.com/)
+  * Added custom ability to restore unsaved changes in the editor
+  * Added custom embeds
+  * Added raw markdown edit mode for compatibility with spell-checkers (like Grammarly)
 * Support for multiple admin and editor users
 * Support for hidden/draft posts
 * Progressive Web Application (service-worker, offline cache, etc.)
 * Support for permalinks
 * Uses metadata for rich content in applications (such as Discord links)
+* Keyset pagination to support infinite scrolling
+* Login protected with reCaptcha
+* Easy startup with docker-compose and Vercel
 
 <strong>For images of the admin dashboard, go to [this pull request](https://github.com/alanqchen/Bear-Blog-Engine/pull/140)</strong>
 
@@ -49,8 +56,8 @@ Lighthouse stats of a post page:
 Find the start up information in the [`templates/backend-only` directory](templates/backend-only).
 It will guide you through starting the API and deploying the frontend to Vercel.
 
-### Q: Why not a static blog?
-A: A dynamic blog gives me the opportunity to learn working with databases and React. This is my first large project working with these, so while a static blog has lots of advantages, a dynamic blog gives lots of opportunities to learn more.
+### Q: Why not a static blog (Gatsby, Hugo, etc.)?
+A: A dynamic, non-JAMStack, blog gives me the opportunity to learn working with databases and React. This is my first large project working with databases, React, Go, Docker, and such much more! So while a static blog has lots of advantages, a dynamic blog gives lots of opportunities to learn more. 
 
 > What I cannot create, I do not understand - Richard Feynman
 
