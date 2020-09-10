@@ -36,6 +36,7 @@ All you need to use Bear-Post is a server to host the backend API. The frontend 
 * Support for permalinks
 * Uses metadata for rich content in applications (such as Discord links)
 * Keyset pagination to support infinite scrolling
+* Redux to save fetched posts during navigation and thus reduce API requests
 * Login protected with reCaptcha
 * Automatic creation of a webp copy of uploaded feature-images
 * Easy startup with docker-compose and Vercel
