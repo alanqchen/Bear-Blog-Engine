@@ -38,6 +38,25 @@ export const EmbedsArray = [
     },
     component: ImageEmbed,
   },
+  {
+    title: "Google Drive File",
+    keywords: "google drive file video pdf",
+    // eslint-disable-next-line react/display-name
+    icon: () => (
+      <img
+        alt="embed image"
+        src="/embed-icons/drive-embed.png"
+        width={24}
+        height={24}
+      />
+    ),
+    matcher: (url) => {
+      return url.match(
+        /https?:?(\/\/drive\.google\.com\/file\/d\/.*\/preview)$/i
+      );
+    },
+    component: DriveEmbed,
+  },
 ];
 
 function YoutubeEmbed(props) {
@@ -60,5 +79,15 @@ function ImageEmbed(props) {
         alt={`${props.attrs.matches[0]}`}
       />
     </StyledEmbedWrapper>
+  );
+}
+function DriveEmbed(props) {
+  return (
+    <iframe
+      src={`${props.attrs.matches[0]}`}
+      width="100%"
+      height="400px"
+      style={{ border: "none" }}
+    />
   );
 }
