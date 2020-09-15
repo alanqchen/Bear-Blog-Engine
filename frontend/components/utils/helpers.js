@@ -1,4 +1,4 @@
-import dateFormat from "dateformat";
+import { format } from "date-fns";
 
 // Returns MMMM DD, YYYY
 export function timestamp2date(dateStr) {
@@ -7,11 +7,5 @@ export function timestamp2date(dateStr) {
   // YYYY-MM-DDT00:00:00
   dateStr += "T00:00:00";
   const date = new Date(dateStr.replace(/-/g, "/").replace(/T.+/, ""));
-  return (
-    dateFormat(date, "mmmm") +
-    " " +
-    dateFormat(date, "dd") +
-    ", " +
-    dateFormat(date, "yyyy")
-  );
+  return format(date, "MMMM do, yyyy");
 }
