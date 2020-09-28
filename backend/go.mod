@@ -12,7 +12,7 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
-	github.com/jackc/pgtype v1.4.2
+	github.com/jackc/pgtype v1.5.0
 	github.com/jackc/pgx/v4 v4.8.1
 	github.com/mholt/archiver v3.1.1+incompatible // indirect
 	github.com/nickalie/go-binwrapper v0.0.0-20190114141239-525121d43c84 // indirect
