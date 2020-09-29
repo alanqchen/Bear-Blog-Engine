@@ -17,7 +17,7 @@ import { Link as LinkIcon } from "@material-ui/icons";
 import { Skeleton } from "@material-ui/lab";
 import FeatureImage from "../../../../components/Posts/Page/PostCard/featureImage";
 import { timestamp2date } from "../../../../components/utils/helpers";
-import { DateShareWrapper } from "../../../../components/PostLayout/postLayoutSyled";
+import { DateShareWrapper } from "../../../../components/PostLayout/postLayoutStyled";
 import config from "../../../../config.json";
 
 const Index = (props) => {

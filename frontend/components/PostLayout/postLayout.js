@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Waypoint } from "react-waypoint";
 import { StyledNavBar } from "../PublicNavBar/NavBarStyled";
-import { StyledCenteredContainer, WidthWrapper } from "./postLayoutSyled";
+import { StyledCenteredContainer, WidthWrapper } from "./postLayoutStyled";
 import { Collapse } from "@material-ui/core";
 import SearchBar from "../PublicLayout/searchBar";
 
