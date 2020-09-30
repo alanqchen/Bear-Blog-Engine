@@ -16,7 +16,7 @@
     "dateformat": "^3.0.3",
     "email-validator": "^2.0.4",
     "form-data": "^3.0.0",
-    "formik": "^2.1.5",
+    "formik": "^2.1.6",
     "formik-material-ui": "^3.0.0",
     "hamburger-react": "^2.2.0",
     "immutable": "^4.0.0-rc.12",
