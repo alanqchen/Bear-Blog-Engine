@@ -43,7 +43,7 @@
     "redux-thunk": "^2.3.0",
     "rich-markdown-editor": "^11.0.1",
     "styled-components": "^5.2.0",
-    "uuid": "^8.3.0",
+    "uuid": "^8.3.1",
     "yup": "^0.29.2"
   },
   "devDependencies": {
