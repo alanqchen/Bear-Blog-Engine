@@ -24,8 +24,8 @@ docker exec  -e PGPASSWORD=<pg password> <pg container name> pg_dump -U <pg user
 Follow the same steps as *Internal Databases*, but for step 4, make sure to edit the databases host, port, username, password, etc. to the correct values.
 
 ### Frontend
-1. Fork the repo on GitHub add edit `frontend/config.json` and `.env.local` to fit the backend parameters and customization options
-2. Add your PWA icons in `frontend/public/static/icons` and update `frontend/public/static/manifest.json` accordingly. Note that you don't have to replace them all (more a given than neccessary), but you should remove the icons you don't replace.
+1. Fork the repo on GitHub and edit `frontend/config.json` to fit the backend parameters and customization options
+2. Add your PWA icons in `frontend/public/static/icons` and update `frontend/public/static/manifest.json` accordingly. Note that you don't have to replace them all (more are given than neccessary), but you should remove the icons you don't replace.
 3. [Follow the instructions for connecting Vercel to your forked repo](https://vercel.com/docs/v2/git-integrations/vercel-for-github#connecting-with-github)
 4. Your first deployment on Vercel may fail, this is expected. Add the following environment variables in the Vercel deployment and redeploy:
    - <strong>NEXT_PUBLIC_CAPTCHA_KEY</strong>: this should have the value of a site (not secret) ReCaptcha v2 key
