@@ -203,6 +203,7 @@ export async function getStaticProps(context) {
 
   if (errorCode) {
     return {
+      revalidate: 10,
       props: {
         errorCode: errorCode,
         post: post,

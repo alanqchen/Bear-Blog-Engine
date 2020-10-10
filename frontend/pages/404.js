@@ -58,3 +58,10 @@ export default function Custom404() {
     </Layout>
   );
 }
+
+export async function getStaticProps() {
+  return {
+    revalidate: 10,
+    props: {},
+  };
+}
