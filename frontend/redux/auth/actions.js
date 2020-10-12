@@ -78,6 +78,9 @@ export function refresh() {
             json.data.tokens.refreshToken
           );
           dispatch(refreshSuccess(json));
+        } else {
+          localStorage.removeItem("bearpost.JWT");
+          localStorage.removeItem("bearpost.REFRESH");
         }
       })
       .catch((error) => {

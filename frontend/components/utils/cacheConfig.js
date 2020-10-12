@@ -95,6 +95,11 @@ module.exports = [
     method: "POST",
   },
   {
+    urlPattern: /(.*\/api\/v\d\/posts\/get.*)/i,
+    handler: "NetworkOnly", // don't cache pagination
+    method: "GET",
+  },
+  {
     urlPattern: /\/api\/.*$/i,
     handler: "NetworkFirst",
     method: "GET",

@@ -13,7 +13,6 @@ function Editor({
   defaultValue,
   isPreview,
   isNew,
-  onChange,
   savePath,
   useRestore,
 }) {
@@ -52,7 +51,7 @@ function Editor({
     }
   }, [initialLoad, useRestore]);
 
-  // Refresh tokens every 5 mins
+  // Refresh tokens every 5 mins (300000 ms)
   const handleAuthRefresh = throttle(
     () => {
       console.log("Refreshing tokens");
@@ -66,6 +65,7 @@ function Editor({
   );
 
   const handleUpdate = debounce((value) => {
+    console.log("Storing unsaved changes...");
     const text = value();
     if (isNew) {
       localStorage.setItem("bearpost.saved", text);
@@ -76,8 +76,6 @@ function Editor({
         localStorage.setItem("bearpost.savePath", savePath);
       }
     }
-    onChange(value);
-    handleAuthRefresh();
   }, 400);
 
   const handleChange = (value) => {
