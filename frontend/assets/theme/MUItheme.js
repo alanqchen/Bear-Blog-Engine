@@ -15,6 +15,9 @@ const theme = createMuiTheme({
       main: red.A400,
     },
   },
+  typography: {
+    fontFamily: `Inter,Helvetica Neue,Helvetica,Arial,sans-serif`,
+  },
   overrides: {
     MuiTypography: {
       root: {

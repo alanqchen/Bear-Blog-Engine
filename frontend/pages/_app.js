@@ -33,11 +33,6 @@ const App = ({ Component, pageProps, router }) => {
         />
         <link
           rel="preconnect"
-          href="https://fonts.gstatic.com/"
-          crossOrigin="true"
-        />
-        <link
-          rel="preconnect"
           href={process.env.NEXT_PUBLIC_API_URL}
           crossOrigin="true"
         />

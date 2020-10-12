@@ -1,5 +1,5 @@
 import React from "react";
-import NextDocument, { Head, Main, NextScript } from "next/document";
+import NextDocument, { Html, Head, Main, NextScript } from "next/document";
 import { ServerStyleSheet as StyledComponentSheets } from "styled-components";
 import { ServerStyleSheets as MaterialUiServerStyleSheets } from "@material-ui/styles";
 import theme from "../assets/theme/MUItheme";
@@ -9,7 +9,7 @@ import { GA_TRACKING_ID } from "../components/utils/gtag";
 export default class Document extends NextDocument {
   render() {
     return (
-      <html lang="en">
+      <Html lang="en">
         <Head>
           {GA_TRACKING_ID && (
             <>
@@ -69,10 +69,6 @@ export default class Document extends NextDocument {
           />
           <link rel="manifest" href="/static/manifest.json" />
           <link rel="shortcut icon" href="/static/icons/favicon.ico" />
-          <link
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap"
-            rel="stylesheet"
-          />
 
           <meta name="twitter:card" content="summary" />
           <meta name="twitter:creator" content={config.blogName} />
@@ -83,7 +79,7 @@ export default class Document extends NextDocument {
           <Main />
           <NextScript />
         </body>
-      </html>
+      </Html>
     );
   }
 }
