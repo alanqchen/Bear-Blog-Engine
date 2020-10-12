@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Waypoint } from "react-waypoint";
 import { StyledCenteredContainer, WidthWrapper } from "./publicLayoutStyled";
 import { StyledNavBar } from "../PublicNavBar/NavBarStyled";
-import { Collapse } from "@material-ui/core";
+import { Collapse, Typography, Link } from "@material-ui/core";
 import SearchBar from "./searchBar";
 
 const publicLayoutStyle = {
@@ -56,6 +56,15 @@ function publicLayout({ children }) {
           </Collapse>
         </WidthWrapper>
         {children}
+        <Typography align="center" color="textSecondary" gutterBottom>
+          Powered by{" "}
+          <Link
+            href="https://github.com/alanqchen/Bear-Blog-Engine"
+            color="textSecondary"
+          >
+            Bear Blog Engine
+          </Link>
+        </Typography>
       </StyledCenteredContainer>
     </div>
   );

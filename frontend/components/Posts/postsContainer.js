@@ -14,6 +14,7 @@ import PostCard from "./Page/PostCard/postCard";
 import CloudOffIcon from "@material-ui/icons/CloudOff";
 import { Typography } from "@material-ui/core";
 import { WaveButton } from "../Theme/StyledComponents";
+import { StyledInfoContainer } from "./postsContainerStyled";
 
 function PostsContainer({
   initialData,
@@ -65,42 +66,44 @@ function PostsContainer({
       ) : (
         fetchType.loading && <PostCard post={null} skeleton={true} />
       )}
-      {((initialData && initialData.data.length === 0) ||
-        !fetchType.hasMore) && (
-        <Typography
-          align="center"
-          fontWeight="fontWeightLight"
-          variant="subtitle1"
-          color="textSecondary"
-          component="h1"
-        >
-          No more posts to show!
-        </Typography>
-      )}
-      {!fetchType.loading && fetchType.error !== null && fetchType.hasMore && (
-        <>
-          <CloudOffIcon fontSize="large" />
+      <StyledInfoContainer>
+        {((initialData && initialData.data.length === 0) ||
+          !fetchType.hasMore) && (
           <Typography
             align="center"
             fontWeight="fontWeightLight"
-            variant="h6"
-            color="textPrimary"
-            component="h6"
+            variant="subtitle1"
+            color="textSecondary"
+            component="h1"
           >
-            Oops! Something went wrong. Check your internet connection and try
-            again.
+            No more posts to show!
           </Typography>
-          <WaveButton
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              loadMorePosts();
-            }}
-          >
-            Try Again
-          </WaveButton>
-        </>
-      )}
+        )}
+        {!fetchType.loading && fetchType.error !== null && fetchType.hasMore && (
+          <>
+            <CloudOffIcon fontSize="large" />
+            <Typography
+              align="center"
+              fontWeight="fontWeightLight"
+              variant="h6"
+              color="textPrimary"
+              component="h6"
+            >
+              Oops! Something went wrong. Check your internet connection and try
+              again.
+            </Typography>
+            <WaveButton
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                loadMorePosts();
+              }}
+            >
+              Try Again
+            </WaveButton>
+          </>
+        )}
+      </StyledInfoContainer>
     </>
   );
 }

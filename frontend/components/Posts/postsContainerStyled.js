@@ -1,8 +1,10 @@
 import styled from "styled-components";
-import { Button } from "@material-ui/core";
 
-export const StyledButton = styled(Button)`
-  margin-top: 8px !important;
-  margin-bottom: 8px !important;
-  border-radius: 2em !important;
+export const StyledInfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0.35em;
+  max-width: 700px;
+  width: 95%;
 `;
