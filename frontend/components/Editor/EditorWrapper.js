@@ -135,6 +135,11 @@ const EditorWrapper = ({ query }) => {
                 value="check"
                 selected={viewRaw}
                 onChange={() => {
+                  if (!viewRaw) {
+                    setEditorValue(
+                      localStorage.getItem("bearpost.savedUpdate")
+                    );
+                  }
                   setViewRaw(!viewRaw);
                 }}
                 disabled={isInfo}
@@ -156,11 +161,9 @@ const EditorWrapper = ({ query }) => {
               <Editor
                 defaultValue={editorValue}
                 isPreview={isPreview}
-                onChange={(value) => {
-                  setEditorValue(value);
-                }}
                 savePath={postData.slug}
                 useRestore={useRestore}
+                newValue={editorValue}
               />
             ) : (
               <TextField

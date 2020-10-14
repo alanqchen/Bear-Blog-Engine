@@ -15,6 +15,8 @@ function Editor({
   isNew,
   savePath,
   useRestore,
+  callback,
+  newValue,
 }) {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -76,6 +78,9 @@ function Editor({
         localStorage.setItem("bearpost.savePath", savePath);
       }
     }
+    if (callback) {
+      callback(text);
+    }
   }, 400);
 
   const handleChange = (value) => {
@@ -96,7 +101,7 @@ function Editor({
         }}
         readOnly={isPreview}
         defaultValue={defaultValue}
-        value={restoreVal ? restoreVal : undefined}
+        value={newValue ? newValue : restoreVal ? restoreVal : undefined}
         onChange={handleChange}
         embeds={EmbedsArray}
       />

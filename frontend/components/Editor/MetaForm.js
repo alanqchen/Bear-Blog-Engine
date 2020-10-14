@@ -1,3 +1,5 @@
+import { connect } from "react-redux";
+import { refresh } from "../../redux/auth/actions";
 import Router from "next/router";
 import { useEffect, useState, useRef } from "react";
 import {
@@ -70,7 +72,7 @@ export const ImagePreview = ({ file }) => {
   );
 };
 
-export const MetaForm = ({ postData, disableButtons }) => {
+const MetaForm = ({ dispatch, postData, disableButtons }) => {
   // SNACKBAR
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -95,6 +97,9 @@ export const MetaForm = ({ postData, disableButtons }) => {
   useEffect(() => {}, [rmOrigFeatureImage, uploadedNew]);
 
   const doSave = async () => {
+    console.log("Refreshing tokens");
+    dispatch(refresh());
+
     let featureImageURL = "";
 
     // Upload new image if needed
@@ -441,4 +446,4 @@ export const MetaForm = ({ postData, disableButtons }) => {
   );
 };
 
-export default MetaForm;
+export default connect()(MetaForm);
