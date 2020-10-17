@@ -30,7 +30,7 @@
     "react-animated-burgers": "^1.2.8",
     "react-burger-menu": "^2.9.0",
     "react-cookie": "^4.0.3",
-    "react-dom": "^16.13.1",
+    "react-dom": "^16.14.0",
     "react-google-recaptcha": "^2.1.0",
     "react-lazyload": "^3.0.0",
     "react-lottie": "^1.2.3",
