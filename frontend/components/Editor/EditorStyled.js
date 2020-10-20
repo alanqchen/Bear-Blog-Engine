@@ -79,6 +79,7 @@ export const EditorButton = styled(Button).withConfig({
       ? GlobalStyle.publishGreen
       : GlobalStyle.bluePrimary} !important;
   margin-left: 10px !important;
+  z-index: 999999;
 `;
 
 export const EditorButtonOutlined = styled(Button).withConfig({

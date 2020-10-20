@@ -248,7 +248,6 @@ function EditorsTable({ auth }) {
                 values.password,
                 values.admin
               );
-            } else {
             }
             setSubmitting(false);
           }}
