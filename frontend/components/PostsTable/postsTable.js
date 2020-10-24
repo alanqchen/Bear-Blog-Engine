@@ -13,12 +13,13 @@ import {
   PostsTableContainer,
   PostsTableHead,
 } from "./postsTableStyled";
+import { TableRowsSkeleton } from "../DashboardLayout/dashboardLayoutSkeletons";
 import { Waypoint } from "react-waypoint";
 import { fetchPosts } from "../../redux/fetchDashboardPosts/action";
 import { timestamp2date } from "../utils/helpers";
 import Router from "next/router";
 
-function PostsList({ fetchDashboardPosts, auth, dispatch }) {
+function PostsTable({ fetchDashboardPosts, auth, dispatch }) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -40,30 +41,37 @@ function PostsList({ fetchDashboardPosts, auth, dispatch }) {
           </TableRow>
         </PostsTableHead>
         <TableBody>
-          {fetchDashboardPosts.posts.map((post, i) => (
-            <PostsTableRow
-              hover
-              onClick={() => {
-                Router.push("/auth/portal/dashboard/post/" + post.slug);
-              }}
-              key={i}
-            >
-              <TableCell>{post.title}</TableCell>
-              <TableCell>
-                {post.hidden ? (
-                  <StatusChip label="Draft" />
-                ) : (
-                  <StatusChip label="Published" published />
-                )}
-              </TableCell>
-              <TableCell>
-                {post.updatedAt
-                  ? timestamp2date(post.updatedAt)
-                  : timestamp2date(post.createdAt)}
-              </TableCell>
-              <TableCell>{post.authorid}</TableCell>
-            </PostsTableRow>
-          ))}
+          {Array.isArray(fetchDashboardPosts.posts) &&
+          fetchDashboardPosts.posts.length ? (
+            fetchDashboardPosts.posts.map((post, i) => (
+              <PostsTableRow
+                hover
+                onClick={() => {
+                  Router.push("/auth/portal/dashboard/post/" + post.slug);
+                }}
+                key={i}
+              >
+                <TableCell>{post.title}</TableCell>
+                <TableCell>
+                  {post.hidden ? (
+                    <StatusChip label="Draft" />
+                  ) : (
+                    <StatusChip label="Published" published />
+                  )}
+                </TableCell>
+                <TableCell>
+                  {post.updatedAt
+                    ? timestamp2date(post.updatedAt)
+                    : timestamp2date(post.createdAt)}
+                </TableCell>
+                <TableCell>{post.authorid}</TableCell>
+              </PostsTableRow>
+            ))
+          ) : (
+            <>
+              <TableRowsSkeleton />
+            </>
+          )}
         </TableBody>
       </Table>
       {loaded && !auth.loading && fetchDashboardPosts.hasMore && (
@@ -94,4 +102,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(PostsList);
+export default connect(mapStateToProps)(PostsTable);

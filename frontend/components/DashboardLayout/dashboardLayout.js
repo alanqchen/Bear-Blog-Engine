@@ -4,17 +4,20 @@ import React, { useEffect, useState } from "react";
 import {
   StyledCenteredContainer,
   DashBoardWrapper,
+  ContentWrapper,
 } from "./dashboardLayoutStyled";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import { TableSkeleton } from "./dashboardLayoutSkeletons";
 import NavBar from "../DashboardNavbar/NavBar";
 import { refresh } from "../../redux/auth/actions";
 
-const dashboardLayoutStyle = {
-  marginTop: 64,
-  marginBottom: 20,
-  flexGrow: 1,
-};
-
-function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
+function DashboardLayout({
+  auth,
+  dispatch,
+  children,
+  selectedCategory,
+  skeletonType,
+}) {
   const [initAuth, setInitAuth] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
@@ -54,13 +57,25 @@ function DashboardLayout({ auth, dispatch, children, selectedCategory }) {
 
   return (
     <>
+      {console.log("Test1")}
       <DashBoardWrapper>
         <NavBar selectedCategory={selectedCategory} />
-        <div style={dashboardLayoutStyle}>
+        <ContentWrapper>
+          {console.log("Test")}
           <StyledCenteredContainer>
-            {initAuth && <>{children}</>}
+            {initAuth ? (
+              <>{children}</>
+            ) : skeletonType === "table" ? (
+              <>
+                <LinearProgress />
+              </>
+            ) : (
+              <>
+                <TableSkeleton />
+              </>
+            )}
           </StyledCenteredContainer>
-        </div>
+        </ContentWrapper>
       </DashBoardWrapper>
     </>
   );

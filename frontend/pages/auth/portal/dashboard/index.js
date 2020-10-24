@@ -1,6 +1,6 @@
 import Router from "next/router";
 import Layout from "../../../../components/DashboardLayout/dashboardLayout";
-import PostsList from "../../../../components/PostsTable/postsTable";
+import PostsTable from "../../../../components/PostsTable/postsTable";
 import {
   EditorButtonGroupWrapper,
   EditorButton,
@@ -23,7 +23,7 @@ const Index = () => {
           New Post
         </EditorButton>
       </EditorButtonGroupWrapper>
-      <PostsList />
+      <PostsTable />
     </Layout>
   );
 };
