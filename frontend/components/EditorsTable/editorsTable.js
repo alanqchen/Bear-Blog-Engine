@@ -25,6 +25,8 @@ import {
   EditorsTableContainer,
   EditorsTableHead,
 } from "./editorsTableStyled";
+import { TableRowsSkeleton } from "../DashboardLayout/dashboardLayoutSkeletons";
+import { ContentSpacer } from "../DashboardLayout/dashboardLayoutStyled";
 import { EditorButtonGroupWrapper, EditorButton } from "../Editor/EditorStyled";
 import { timestamp2date } from "../utils/helpers";
 
@@ -147,8 +149,8 @@ function EditorsTable({ auth }) {
 
   return (
     <>
-      {auth.userData && auth.userData.admin && (
-        <EditorButtonGroupWrapper noBottomMargin>
+      {auth.userData && auth.userData.admin ? (
+        <EditorButtonGroupWrapper style={{ marginBottom: "20px" }}>
           <EditorButton
             variant="contained"
             color="secondary"
@@ -162,8 +164,10 @@ function EditorsTable({ auth }) {
             New User
           </EditorButton>
         </EditorButtonGroupWrapper>
+      ) : (
+        <ContentSpacer />
       )}
-      <EditorsTableContainer component={Paper} style={{ marginTop: "20px" }}>
+      <EditorsTableContainer component={Paper}>
         <Table aria-label="editors table">
           <EditorsTableHead>
             <TableRow>
@@ -174,8 +178,7 @@ function EditorsTable({ auth }) {
             </TableRow>
           </EditorsTableHead>
           <TableBody>
-            {loaded &&
-              auth.userData &&
+            {loaded && auth.userData ? (
               editors.map((user, i) => (
                 <EditorsTableRow
                   hover={auth.userData.admin}
@@ -193,7 +196,12 @@ function EditorsTable({ auth }) {
                   <TableCell>{timestamp2date(user.createdAt)}</TableCell>
                   <TableCell>{user.admin ? "Admin" : "Editor"}</TableCell>
                 </EditorsTableRow>
-              ))}
+              ))
+            ) : (
+              <>
+                <TableRowsSkeleton />
+              </>
+            )}
           </TableBody>
         </Table>
       </EditorsTableContainer>
