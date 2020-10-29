@@ -59,15 +59,16 @@ const fadeOut = keyframes`
 `;
 
 export const SideMenuClose = styled.div`
-  display: block;
+  ${({ initialLoad }) => (initialLoad ? `display: none;` : `display: block;`)}
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: 11;
+  opacity: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  animation: 0.2s ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)};
+  animation: 0.4s ${({ isOpen }) => (isOpen ? fadeIn : fadeOut)};
   animation-timing-function: cubic-bezier(0.25, 1, 0.25, 1);
   animation-fill-mode: forwards;
   ${({ isOpen }) =>
