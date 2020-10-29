@@ -96,7 +96,7 @@ func (ur *userRepository) CreateFirstAdmin(u *models.User) (bool, error) {
 
 }
 
-// Update updates a user in the database
+// Update a user in the database
 func (ur *userRepository) Update(u *models.User) error {
 	// Check if an user already exists with the email
 	// Prepare statement for inserting data
@@ -107,14 +107,21 @@ func (ur *userRepository) Update(u *models.User) error {
 			return err
 		}
 	*/
-	//defer ur.Conn.Close(context.Background())
-	_, err := ur.Pool.Exec(context.Background(),
-		"UPDATE user_schema.user SET name=$1, email=$2, password=$3, updated_at=$4, username=$5 WHERE id=$6",
-		u.Name, u.Email, u.Password, u.UpdatedAt, u.Username, u.ID,
-	)
+	//defer ur.Conn.Close(context.Background())\
+	var err error
+
+	if u.Password == "" {
+		_, err = ur.Pool.Exec(context.Background(),
+			"UPDATE user_schema.user SET name=$1, email=$2, updated_at=$3, username=$4, admin=$5 WHERE id=$6",
+			u.Name, u.Email, u.UpdatedAt, u.Username, u.Admin, u.ID,
+		)
+	} else {
+		_, err = ur.Pool.Exec(context.Background(),
+			"UPDATE user_schema.user SET name=$1, email=$2, password=$3, updated_at=$4, username=$5, admin=$6 WHERE id=$7",
+			u.Name, u.Email, u.Password, u.UpdatedAt, u.Username, u.Admin, u.ID,
+		)
+	}
 	if err != nil {
-		log.Println(u.Username)
-		log.Println(u.ID)
 		log.Println(err)
 		return err
 	}

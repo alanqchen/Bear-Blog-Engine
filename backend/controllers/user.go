@@ -324,21 +324,22 @@ func (uc *UserController) GetByIDDetailed(w http.ResponseWriter, r *http.Request
 
 // Update updates the given uid user's info
 func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
-	uid, err := services.UserIDFromContext(r.Context())
-	if err != nil {
-		NewAPIError(&APIError{false, "Something went wrong", http.StatusInternalServerError}, w)
-		return
-	}
-
-	user, err := uc.UserRepository.FindByID(uid)
-	if err != nil {
-		NewAPIError(&APIError{false, "Could not find user", http.StatusBadRequest}, w)
-		return
-	}
 
 	j, err := GetJSON(r.Body)
 	if err != nil {
 		NewAPIError(&APIError{false, "Invalid request", http.StatusBadRequest}, w)
+		return
+	}
+
+	uid, err := j.GetString("uid")
+	if err != nil {
+		NewAPIError(&APIError{false, "UID is required", http.StatusInternalServerError}, w)
+		return
+	}
+
+	user, err := uc.UserRepository.FindByIDDetailed(uid)
+	if err != nil {
+		NewAPIError(&APIError{false, "Could not find user", http.StatusBadRequest}, w)
 		return
 	}
 
@@ -366,7 +367,7 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 		user.Email = email
 	}
 
-	newpw, err := j.GetString("newpassword")
+	newpw, err := j.GetString("password")
 	if newpw != "" && err == nil {
 		// confirm password
 		/*
@@ -386,35 +387,37 @@ func (uc *UserController) Update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		user.SetPassword(newpw)
+		log.Println("[AUTH] Changing password for user", user.Username)
 	}
 
 	tempTime := time.Now()
 	user.UpdatedAt = &tempTime
 
 	admin, err := j.GetBool("admin")
-	if err == nil {
-		if user.Admin && !admin {
-			multipleAdmins := false
-			users, err := uc.UserRepository.GetAll()
-			if err != nil {
-				NewAPIError(&APIError{false, "Failed to perform only admin check", http.StatusInternalServerError}, w)
-				return
-			}
-			for _, iUser := range users {
-				if iUser.Admin && iUser.ID != user.ID {
-					multipleAdmins = true
-					break
-				}
-			}
-			if !multipleAdmins {
-				NewAPIError(&APIError{false, "Cannot remove only admin", http.StatusBadRequest}, w)
-				return
+	if err != nil {
+		NewAPIError(&APIError{false, "Something went wrong", http.StatusInternalServerError}, w)
+		return
+	}
+
+	if user.Admin && !admin {
+		multipleAdmins := false
+		users, err := uc.UserRepository.GetAllDetailed()
+		if err != nil {
+			NewAPIError(&APIError{false, "Failed to perform only admin check", http.StatusInternalServerError}, w)
+			return
+		}
+		for _, iUser := range users {
+			if iUser.Admin && iUser.ID != user.ID {
+				multipleAdmins = true
+				break
 			}
 		}
-		user.Admin = admin
-	} else {
-		admin = user.Admin
+		if !multipleAdmins {
+			NewAPIError(&APIError{false, "Cannot remove only admin", http.StatusBadRequest}, w)
+			return
+		}
 	}
+	user.Admin = admin
 
 	err = uc.UserRepository.Update(user)
 	if err != nil {
@@ -473,7 +476,7 @@ func (uc *UserController) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("[DELETE USER SUCCESS] - username:", user.Email)
+	log.Println("[DELETE USER SUCCESS] - username:", user.Username)
 	NewAPIResponse(&APIResponse{Success: true, Data: user}, w, http.StatusOK)
 }
 

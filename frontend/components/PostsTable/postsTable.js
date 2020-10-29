@@ -13,7 +13,6 @@ import {
   PostsTableContainer,
   PostsTableHead,
 } from "./postsTableStyled";
-import { TableRowsSkeleton } from "../DashboardLayout/dashboardLayoutSkeletons";
 import { Waypoint } from "react-waypoint";
 import { fetchPosts } from "../../redux/fetchDashboardPosts/action";
 import { timestamp2date } from "../utils/helpers";
@@ -42,7 +41,7 @@ function PostsTable({ fetchDashboardPosts, auth, dispatch }) {
         </PostsTableHead>
         <TableBody>
           {Array.isArray(fetchDashboardPosts.posts) &&
-          fetchDashboardPosts.posts.length ? (
+            fetchDashboardPosts.posts.length !== 0 &&
             fetchDashboardPosts.posts.map((post, i) => (
               <PostsTableRow
                 hover
@@ -66,12 +65,7 @@ function PostsTable({ fetchDashboardPosts, auth, dispatch }) {
                 </TableCell>
                 <TableCell>{post.authorid}</TableCell>
               </PostsTableRow>
-            ))
-          ) : (
-            <>
-              <TableRowsSkeleton />
-            </>
-          )}
+            ))}
         </TableBody>
       </Table>
       {loaded && !auth.loading && fetchDashboardPosts.hasMore && (

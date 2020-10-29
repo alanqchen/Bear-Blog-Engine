@@ -9,7 +9,7 @@ import { Add as AddIcon } from "@material-ui/icons";
 
 const Index = () => {
   return (
-    <Layout selectedCategory={"Posts"}>
+    <Layout selectedCategory="Posts" skeletonType="table">
       <EditorButtonGroupWrapper>
         <EditorButton
           variant="contained"

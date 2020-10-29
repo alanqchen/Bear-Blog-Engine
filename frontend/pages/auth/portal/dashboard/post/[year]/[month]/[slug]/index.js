@@ -5,7 +5,7 @@ import EditorWrapper from "../../../../../../../../components/Editor/EditorWrapp
 const Index = () => {
   const router = useRouter();
   return (
-    <Layout selectedCategory={"None"}>
+    <Layout selectedCategory="None" skeletonType="post">
       <EditorWrapper query={router.query} />
     </Layout>
   );
