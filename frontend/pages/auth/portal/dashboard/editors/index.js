@@ -3,7 +3,7 @@ import EditorsTable from "../../../../../components/EditorsTable/editorsTable";
 
 const Index = () => {
   return (
-    <Layout selectedCategory={"Editors"}>
+    <Layout selectedCategory="Editors" skeletonType="table">
       <EditorsTable />
     </Layout>
   );

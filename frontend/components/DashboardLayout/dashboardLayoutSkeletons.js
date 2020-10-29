@@ -4,6 +4,8 @@ import {
   TableCell,
   TableRow,
   Paper,
+  Box,
+  Typography,
 } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import {
@@ -17,74 +19,19 @@ export const TableRowsSkeleton = () => {
   return (
     <>
       <PostsTableRow>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
+        <TableCell></TableCell>
       </PostsTableRow>
       <PostsTableRow>
-        <TableCell>
-          <Skeleton variant="text" width="85%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
+        <TableCell></TableCell>
       </PostsTableRow>
       <PostsTableRow>
-        <TableCell>
-          <Skeleton variant="text" width="92%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
+        <TableCell></TableCell>
       </PostsTableRow>
       <PostsTableRow>
-        <TableCell>
-          <Skeleton variant="text" width="100%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
+        <TableCell></TableCell>
       </PostsTableRow>
       <PostsTableRow>
-        <TableCell>
-          <Skeleton variant="text" width="88%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" width="90%" />
-        </TableCell>
+        <TableCell></TableCell>
       </PostsTableRow>
     </>
   );
@@ -99,24 +46,36 @@ export const TableSkeleton = () => {
           <PostsTableHead>
             <TableRow>
               <TableCell>
-                <Skeleton variant="text" width="70%" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" width="50%" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" width="60%" />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant="text" width="55%" />
+                <span style={{ visibility: "hidden" }}>.</span>
               </TableCell>
             </TableRow>
           </PostsTableHead>
-          <TableBody>
-            <TableRowsSkeleton />
-          </TableBody>
+          <TableBody></TableBody>
         </Table>
       </PostsTableContainer>
+    </>
+  );
+};
+
+export const PostEditSkeleton = () => {
+  return (
+    <>
+      <ContentSpacer />
+      <Skeleton width="80%">
+        <Typography>.</Typography>
+      </Skeleton>
+      <Skeleton width="100%">
+        <Typography>.</Typography>
+      </Skeleton>
+      <Skeleton width="90%">
+        <Typography>.</Typography>
+      </Skeleton>
+      <Box m="46px" />
+      <Skeleton variant="rect" width="100%" height="300px">
+        <Typography>.</Typography>
+      </Skeleton>
+      <Box m="46px" />
+      <Skeleton variant="text" width="100%" />
     </>
   );
 };

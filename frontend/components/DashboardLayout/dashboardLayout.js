@@ -57,22 +57,16 @@ function DashboardLayout({
 
   return (
     <>
-      {console.log("Test1")}
       <DashBoardWrapper>
         <NavBar selectedCategory={selectedCategory} />
         <ContentWrapper>
-          {console.log("Test")}
           <StyledCenteredContainer>
             {initAuth ? (
               <>{children}</>
             ) : skeletonType === "table" ? (
-              <>
-                <LinearProgress />
-              </>
+              <TableSkeleton />
             ) : (
-              <>
-                <TableSkeleton />
-              </>
+              <LinearProgress />
             )}
           </StyledCenteredContainer>
         </ContentWrapper>

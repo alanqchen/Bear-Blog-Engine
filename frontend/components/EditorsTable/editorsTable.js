@@ -25,7 +25,6 @@ import {
   EditorsTableContainer,
   EditorsTableHead,
 } from "./editorsTableStyled";
-import { TableRowsSkeleton } from "../DashboardLayout/dashboardLayoutSkeletons";
 import { ContentSpacer } from "../DashboardLayout/dashboardLayoutStyled";
 import { EditorButtonGroupWrapper, EditorButton } from "../Editor/EditorStyled";
 import { timestamp2date } from "../utils/helpers";
@@ -88,37 +87,67 @@ function EditorsTable({ auth }) {
   const editUser = async (name, username, password, admin) => {
     const params = {
       name: name,
-      username: username,
+      username: userEdit ? userEdit.username : username,
       password: password,
       admin: admin,
+      uid: userEdit ? userEdit.id : "",
     };
 
-    await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/v1/users", {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("bearpost.JWT"),
-      },
-      method: userEdit ? "PUT" : "POST",
-      body: JSON.stringify(params),
-    })
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.success) {
-          setIsError(false);
-          setMessage("Created editor!");
-          setSnackbarOpen(true);
-          setShowDialog(false);
-          setRefresh(!refresh);
-        } else {
-          setIsError(true);
-          setMessage(json.message);
-          setSnackbarOpen(true);
-        }
+    if (userEdit) {
+      await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/v1/auth/update", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("bearpost.JWT"),
+        },
+        method: "PUT",
+        body: JSON.stringify(params),
       })
-      .catch(() => {
-        setIsError(true);
-        setMessage("Failed to create/update editor!");
-        setSnackbarOpen(true);
-      });
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.success) {
+            setIsError(false);
+            setMessage("Updated user!");
+            setSnackbarOpen(true);
+            setShowDialog(false);
+            setRefresh(!refresh);
+          } else {
+            setIsError(true);
+            setMessage(json.message);
+            setSnackbarOpen(true);
+          }
+        })
+        .catch(() => {
+          setIsError(true);
+          setMessage("Failed to update user!");
+          setSnackbarOpen(true);
+        });
+    } else {
+      await fetch(process.env.NEXT_PUBLIC_API_URL + "/api/v1/users", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("bearpost.JWT"),
+        },
+        method: "POST",
+        body: JSON.stringify(params),
+      })
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.success) {
+            setIsError(false);
+            setMessage("Created user!");
+            setSnackbarOpen(true);
+            setShowDialog(false);
+            setRefresh(!refresh);
+          } else {
+            setIsError(true);
+            setMessage(json.message);
+            setSnackbarOpen(true);
+          }
+        })
+        .catch(() => {
+          setIsError(true);
+          setMessage("Failed to create user!");
+          setSnackbarOpen(true);
+        });
+    }
   };
 
   const deleteUser = async (id) => {
@@ -178,7 +207,8 @@ function EditorsTable({ auth }) {
             </TableRow>
           </EditorsTableHead>
           <TableBody>
-            {loaded && auth.userData ? (
+            {loaded &&
+              auth.userData &&
               editors.map((user, i) => (
                 <EditorsTableRow
                   hover={auth.userData.admin}
@@ -196,12 +226,7 @@ function EditorsTable({ auth }) {
                   <TableCell>{timestamp2date(user.createdAt)}</TableCell>
                   <TableCell>{user.admin ? "Admin" : "Editor"}</TableCell>
                 </EditorsTableRow>
-              ))
-            ) : (
-              <>
-                <TableRowsSkeleton />
-              </>
-            )}
+              ))}
           </TableBody>
         </Table>
       </EditorsTableContainer>
@@ -229,7 +254,7 @@ function EditorsTable({ auth }) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="form-dialog-title">
-          {userEdit ? "Edit Editor" : "Create New Editor"}
+          {userEdit ? "Edit User" : "Create New User"}
         </DialogTitle>
         <Formik
           initialValues={{
@@ -239,24 +264,33 @@ function EditorsTable({ auth }) {
             passwordConfirm: "",
             admin: userEdit ? userEdit.admin : false,
           }}
-          validationSchema={Yup.object().shape({
-            name: Yup.string().required("Required"),
-            username: Yup.string().required("Required"),
-            password: Yup.string().required("Required"),
-            passwordConfirm: Yup.string()
-              .oneOf([Yup.ref("password")], "Passwords must match")
-              .required("Required"),
-          })}
+          validationSchema={
+            userEdit
+              ? Yup.object().shape({
+                  name: Yup.string().required("Required"),
+                  username: Yup.string(),
+                  password: Yup.string(),
+                  passwordConfirm: Yup.string().oneOf(
+                    [Yup.ref("password")],
+                    "Passwords must match"
+                  ),
+                })
+              : Yup.object().shape({
+                  name: Yup.string().required("Required"),
+                  username: Yup.string().required("Required"),
+                  password: Yup.string().required("Required"),
+                  passwordConfirm: Yup.string()
+                    .oneOf([Yup.ref("password")], "Passwords must match")
+                    .required("Required"),
+                })
+          }
           onSubmit={async (values, { setSubmitting }) => {
-            if (!userEdit) {
-              console.log("Calling edit user");
-              await editUser(
-                values.name,
-                values.username,
-                values.password,
-                values.admin
-              );
-            }
+            await editUser(
+              values.name,
+              values.username,
+              values.password,
+              values.admin
+            );
             setSubmitting(false);
           }}
         >
@@ -354,7 +388,7 @@ function EditorsTable({ auth }) {
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               {`
-              Are you sure you want to delete the user "{userEdit.username}"?
+              Are you sure you want to delete the user "${userEdit.username}"?
               This cannot be undone!
               `}
             </DialogContentText>
