@@ -34,7 +34,15 @@ function HideOnScroll(props) {
 
 function NavBar({ props, atTop, className, toggleSearch }) {
   const [isActive, setIsActive] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const trigger = useScrollTrigger();
+
+  const hamburgerFunction = () => {
+    setIsActive(!isActive);
+    if (isInitialLoad) {
+      setIsInitialLoad(false);
+    }
+  };
 
   useEffect(() => {
     setIsActive(isActive && trigger ? false : isActive);
@@ -84,14 +92,18 @@ function NavBar({ props, atTop, className, toggleSearch }) {
             <Hamburger
               label="sidebar"
               toggled={isActive}
-              toggle={setIsActive}
+              toggle={hamburgerFunction}
               color={GlobalTheme.textPrimary}
               size={26}
             />
           </Toolbar>
         </AppBar>
       </HideOnScroll>
-      <SideMenuClose isOpen={isActive} onClick={() => setIsActive(false)} />
+      <SideMenuClose
+        initialLoad={isInitialLoad}
+        isOpen={isActive}
+        onClick={() => setIsActive(false)}
+      />
       <SideMenuWrapper isOpen={isActive && !trigger}>
         <SideMenuNavigation>
           <SideMenuNavLinks>

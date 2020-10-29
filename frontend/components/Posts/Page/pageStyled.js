@@ -1,3 +1,4 @@
+import React from "react";
 import styled, { keyframes } from "styled-components";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
