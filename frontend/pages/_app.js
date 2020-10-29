@@ -23,6 +23,14 @@ Router.events.on("routeChangeComplete", (url) => gtag.pageview(url));
 const App = ({ Component, pageProps, router }) => {
   useScrollRestoration(router);
 
+  React.useEffect(() => {
+    // Remove the server-side injected CSS.
+    const jssStyles = document.querySelector("#jss-server-side");
+    if (jssStyles) {
+      jssStyles.parentElement.removeChild(jssStyles);
+    }
+  }, []);
+
   return (
     <React.Fragment>
       <Head>

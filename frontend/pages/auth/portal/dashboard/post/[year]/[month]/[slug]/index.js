@@ -1,20 +1,14 @@
+import { useRouter } from "next/router";
 import Layout from "../../../../../../../../components/DashboardLayout/dashboardLayout";
 import EditorWrapper from "../../../../../../../../components/Editor/EditorWrapper";
 
-const Index = ({ query }) => {
+const Index = () => {
+  const router = useRouter();
   return (
-    <Layout selectedCategory={"None"}>
-      <EditorWrapper query={query} />
+    <Layout selectedCategory="None" skeletonType="post">
+      <EditorWrapper query={router.query} />
     </Layout>
   );
 };
-
-export async function getServerSideProps(context) {
-  return {
-    props: {
-      query: context.query,
-    },
-  };
-}
 
 export default Index;

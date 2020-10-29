@@ -1,6 +1,6 @@
 import Router from "next/router";
 import Layout from "../../../../components/DashboardLayout/dashboardLayout";
-import PostsList from "../../../../components/PostsTable/postsTable";
+import PostsTable from "../../../../components/PostsTable/postsTable";
 import {
   EditorButtonGroupWrapper,
   EditorButton,
@@ -9,7 +9,7 @@ import { Add as AddIcon } from "@material-ui/icons";
 
 const Index = () => {
   return (
-    <Layout selectedCategory={"Posts"}>
+    <Layout selectedCategory="Posts" skeletonType="table">
       <EditorButtonGroupWrapper>
         <EditorButton
           variant="contained"
@@ -23,7 +23,7 @@ const Index = () => {
           New Post
         </EditorButton>
       </EditorButtonGroupWrapper>
-      <PostsList />
+      <PostsTable />
     </Layout>
   );
 };
