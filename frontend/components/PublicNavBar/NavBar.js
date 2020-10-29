@@ -108,28 +108,9 @@ function NavBar({ props, atTop, className, toggleSearch }) {
         <SideMenuNavigation>
           <SideMenuNavLinks>
             <WideBox>
-              {config.navlinks.map((category, i) =>
-                !category.primary && !category.external ? (
-                  <SideMenuNavLinkItem
-                    key={i}
-                    isOpen={isActive}
-                    style={
-                      isActive
-                        ? {
-                            transitionDelay:
-                              (i - config.numPrimaryLinks) * 0.025 + "s",
-                          }
-                        : null
-                    }
-                  >
-                    <Typography variant="h6" color="textPrimary">
-                      <Link href={category.link} passHref>
-                        <a>{category.name}</a>
-                      </Link>
-                    </Typography>
-                  </SideMenuNavLinkItem>
-                ) : (
-                  !category.primary && (
+              <ul style={{ padding: "0" }}>
+                {config.navlinks.map((category, i) =>
+                  !category.primary && !category.external ? (
                     <SideMenuNavLinkItem
                       key={i}
                       isOpen={isActive}
@@ -143,43 +124,68 @@ function NavBar({ props, atTop, className, toggleSearch }) {
                       }
                     >
                       <Typography variant="h6" color="textPrimary">
+                        <Link href={category.link} passHref>
+                          <a>{category.name}</a>
+                        </Link>
+                      </Typography>
+                    </SideMenuNavLinkItem>
+                  ) : (
+                    !category.primary && (
+                      <SideMenuNavLinkItem
+                        key={i}
+                        isOpen={isActive}
+                        style={
+                          isActive
+                            ? {
+                                transitionDelay:
+                                  (i - config.numPrimaryLinks) * 0.025 + "s",
+                              }
+                            : null
+                        }
+                      >
+                        <Typography variant="h6" color="textPrimary">
+                          <MUILink href={category.link}>
+                            {category.name}
+                          </MUILink>
+                        </Typography>
+                      </SideMenuNavLinkItem>
+                    )
+                  )
+                )}
+              </ul>
+            </WideBox>
+            <NarrowBox>
+              <ul style={{ padding: "0" }}>
+                {config.navlinks.map((category, i) =>
+                  !category.external ? (
+                    <SideMenuNavLinkItem
+                      key={i}
+                      isOpen={isActive}
+                      style={
+                        isActive ? { transitionDelay: i * 0.025 + "s" } : null
+                      }
+                    >
+                      <Typography variant="h6" color="textPrimary">
+                        <Link href={category.link} passHref>
+                          <a>{category.name}</a>
+                        </Link>
+                      </Typography>
+                    </SideMenuNavLinkItem>
+                  ) : (
+                    <SideMenuNavLinkItem
+                      key={i}
+                      isOpen={isActive}
+                      style={
+                        isActive ? { transitionDelay: i * 0.025 + "s" } : null
+                      }
+                    >
+                      <Typography variant="h6" color="textPrimary">
                         <MUILink href={category.link}>{category.name}</MUILink>
                       </Typography>
                     </SideMenuNavLinkItem>
                   )
-                )
-              )}
-            </WideBox>
-            <NarrowBox>
-              {config.navlinks.map((category, i) =>
-                !category.external ? (
-                  <SideMenuNavLinkItem
-                    key={i}
-                    isOpen={isActive}
-                    style={
-                      isActive ? { transitionDelay: i * 0.025 + "s" } : null
-                    }
-                  >
-                    <Typography variant="h6" color="textPrimary">
-                      <Link href={category.link} passHref>
-                        <a>{category.name}</a>
-                      </Link>
-                    </Typography>
-                  </SideMenuNavLinkItem>
-                ) : (
-                  <SideMenuNavLinkItem
-                    key={i}
-                    isOpen={isActive}
-                    style={
-                      isActive ? { transitionDelay: i * 0.025 + "s" } : null
-                    }
-                  >
-                    <Typography variant="h6" color="textPrimary">
-                      <MUILink href={category.link}>{category.name}</MUILink>
-                    </Typography>
-                  </SideMenuNavLinkItem>
-                )
-              )}
+                )}
+              </ul>
             </NarrowBox>
           </SideMenuNavLinks>
         </SideMenuNavigation>

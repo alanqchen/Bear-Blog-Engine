@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Image from "next/image";
 import { Card, Chip } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import GlobalTheme from "../../../Theme/theme";
@@ -41,7 +42,7 @@ export const StyledPicture = styled.picture`
   width: 100%;
 `;
 
-export const StyledImage = styled.img`
+export const StyledImage = styled(Image)`
   display: block;
   flex-shrink: 0;
   width: 100%;
