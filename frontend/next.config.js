@@ -11,7 +11,7 @@ module.exports = withPWA({
     deviceSizes: [320, 420, 768, 1024, 1200],
     iconSizes: [],
     domains: [
-      process.env.NEXT_PUBLIC_API_URL.match(/http?s?:\/\/(\S*)\:\d*$/i)[1],
+      process.env.NEXT_PUBLIC_API_URL.match(/http?s?:\/\/(\S*)?\:?\d*$/i)[1],
     ],
     loader: "default",
   },
