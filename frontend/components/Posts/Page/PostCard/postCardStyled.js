@@ -35,14 +35,14 @@ export const StyledImageWrapper = styled.div`
   align-items: center;
   overflow: hidden;
   max-height: ${({ moreHeight }) => (moreHeight ? "600px" : "300px")};
-`;
 
-export const StyledPicture = styled.picture`
-  z-index: 1;
-  width: 100%;
+  & div div {
+    padding-bottom: 0 !important;
+  }
 `;
 
 export const StyledImage = styled(Image)`
+  position: relative !important;
   display: block;
   flex-shrink: 0;
   width: 100%;
