@@ -1,14 +1,15 @@
-# Ubuntu is used since the webp wrapper doesn't support alpine
-FROM ubuntu:latest
+# If you uncomment the automatic webp conversion on the server, use ubuntu for the base image
+# Note that this will increase build times significantly
+FROM golang:latest
 # Copy source
 COPY . /bearpost/backend
 WORKDIR /bearpost/backend
 
 # Set timezone for ubuntu
-RUN export TZ=America/New_York
-# Get packages
-RUN apt-get update -y -q && apt-get upgrade -y -q && \
-    DEBIAN_FRONTEND=noninteractive apt-get install golang git openssl jq -y
+# RUN export TZ=America/New_York
+# Get packages for ubuntu
+# RUN apt-get update -y -q && apt-get upgrade -y -q && \
+#    DEBIAN_FRONTEND=noninteractive apt-get install golang git openssl jq -y
 
 # Gen jwt keys
 RUN openssl genrsa -out config/api.rsa 4096

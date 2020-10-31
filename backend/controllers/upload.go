@@ -2,18 +2,14 @@ package controllers
 
 import (
 	"bytes"
-	"image"
 	"image/jpeg"
 	"image/png"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 	"time"
-
-	"github.com/nickalie/go-webpbin"
 
 	"github.com/alanqchen/Bear-Post/backend/util"
 )
@@ -49,10 +45,10 @@ func (uc *UploadController) UploadImage(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	// Limit upload size
-	r.Body = http.MaxBytesReader(w, r.Body, 2*MB)
+	r.Body = http.MaxBytesReader(w, r.Body, 4*MB)
 
-	if err := r.ParseMultipartForm(2 * MB); err != nil {
-		NewAPIError(&APIError{false, "The file you are uploading is too big. Maximum file size is 2MB", http.StatusBadRequest}, w)
+	if err := r.ParseMultipartForm(4 * MB); err != nil {
+		NewAPIError(&APIError{false, "The file you are uploading is too big. Maximum file size is 4MB", http.StatusBadRequest}, w)
 		return
 	}
 
@@ -98,6 +94,8 @@ func (uc *UploadController) UploadImage(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	// NOTE: AUTO WEBP CONVERSION NO LONGER USED SINCE NEXT.JS 10's IMAGE COMPONENT PROVIDES AUTOMATIC CONVERSION TO WEBP
+	// WHEN THE CLIENT'S BROWSER SUPPORTS IT. THUS WE DON'T NEED TO SAVE THE SAME IMAGE TWICE ON THE API SERVER
 	// .webp will only be saved in the /webp directory
 	if ext == ".webp" {
 		err = ioutil.WriteFile("./public/images/webp/"+fileName+ext, Buf.Bytes(), 0644)
@@ -109,38 +107,40 @@ func (uc *UploadController) UploadImage(w http.ResponseWriter, r *http.Request) 
 	} else {
 
 		// .png and .jpeg images will be also saved as webp
-		if ext != ".gif" {
-			// Decode to get image type
-			img, _, err := image.Decode(bytes.NewReader(Buf.Bytes()))
-			if err != nil {
-				log.Println(err)
-				NewAPIError(&APIError{false, "Failed to decode original image", http.StatusBadRequest}, w)
-				return
-			}
-
-			// Create webp image writer
-			outWebp, err := os.Create("./public/images/webp/" + fileName + ".webp")
-			if err != nil {
-				log.Println(err)
-				NewAPIError(&APIError{false, "Failed to create webp image", http.StatusBadRequest}, w)
-				return
-			}
-			defer outWebp.Close()
-
-			// Encode image to webp
-			err = webpbin.Encode(outWebp, img)
-			if err != nil {
-				log.Println(err)
-				NewAPIError(&APIError{false, "Failed to encode original image", http.StatusBadRequest}, w)
-				err = os.Remove("./public/images/webp/" + fileName + ".webp")
+		/*
+			if ext != ".gif" {
+				// Decode to get image type
+				img, _, err := image.Decode(bytes.NewReader(Buf.Bytes()))
 				if err != nil {
 					log.Println(err)
-					log.Println("[WARN] Failed to delete webp image after failed encoding")
+					NewAPIError(&APIError{false, "Failed to decode original image", http.StatusBadRequest}, w)
+					return
 				}
-				return
-			}
 
-		}
+				// Create webp image writer
+				outWebp, err := os.Create("./public/images/webp/" + fileName + ".webp")
+				if err != nil {
+					log.Println(err)
+					NewAPIError(&APIError{false, "Failed to create webp image", http.StatusBadRequest}, w)
+					return
+				}
+				defer outWebp.Close()
+
+				// Encode image to webp
+				err = webpbin.Encode(outWebp, img)
+				if err != nil {
+					log.Println(err)
+					NewAPIError(&APIError{false, "Failed to encode original image", http.StatusBadRequest}, w)
+					err = os.Remove("./public/images/webp/" + fileName + ".webp")
+					if err != nil {
+						log.Println(err)
+						log.Println("[WARN] Failed to delete webp image after failed encoding")
+					}
+					return
+				}
+
+			}
+		*/
 
 		err = ioutil.WriteFile("./public/images/original/"+fileName+ext, Buf.Bytes(), 0644)
 		if err != nil {
