@@ -34,7 +34,15 @@ function HideOnScroll(props) {
 
 function NavBar({ props, atTop, className, toggleSearch }) {
   const [isActive, setIsActive] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const trigger = useScrollTrigger();
+
+  const hamburgerFunction = () => {
+    setIsActive(!isActive);
+    if (isInitialLoad) {
+      setIsInitialLoad(false);
+    }
+  };
 
   useEffect(() => {
     setIsActive(isActive && trigger ? false : isActive);
@@ -84,40 +92,25 @@ function NavBar({ props, atTop, className, toggleSearch }) {
             <Hamburger
               label="sidebar"
               toggled={isActive}
-              toggle={setIsActive}
+              toggle={hamburgerFunction}
               color={GlobalTheme.textPrimary}
               size={26}
             />
           </Toolbar>
         </AppBar>
       </HideOnScroll>
-      <SideMenuClose isOpen={isActive} onClick={() => setIsActive(false)} />
+      <SideMenuClose
+        initialLoad={isInitialLoad}
+        isOpen={isActive}
+        onClick={() => setIsActive(false)}
+      />
       <SideMenuWrapper isOpen={isActive && !trigger}>
         <SideMenuNavigation>
           <SideMenuNavLinks>
             <WideBox>
-              {config.navlinks.map((category, i) =>
-                !category.primary && !category.external ? (
-                  <SideMenuNavLinkItem
-                    key={i}
-                    isOpen={isActive}
-                    style={
-                      isActive
-                        ? {
-                            transitionDelay:
-                              (i - config.numPrimaryLinks) * 0.025 + "s",
-                          }
-                        : null
-                    }
-                  >
-                    <Typography variant="h6" color="textPrimary">
-                      <Link href={category.link} passHref>
-                        <a>{category.name}</a>
-                      </Link>
-                    </Typography>
-                  </SideMenuNavLinkItem>
-                ) : (
-                  !category.primary && (
+              <ul style={{ padding: "0" }}>
+                {config.navlinks.map((category, i) =>
+                  !category.primary && !category.external ? (
                     <SideMenuNavLinkItem
                       key={i}
                       isOpen={isActive}
@@ -131,43 +124,68 @@ function NavBar({ props, atTop, className, toggleSearch }) {
                       }
                     >
                       <Typography variant="h6" color="textPrimary">
+                        <Link href={category.link} passHref>
+                          <a>{category.name}</a>
+                        </Link>
+                      </Typography>
+                    </SideMenuNavLinkItem>
+                  ) : (
+                    !category.primary && (
+                      <SideMenuNavLinkItem
+                        key={i}
+                        isOpen={isActive}
+                        style={
+                          isActive
+                            ? {
+                                transitionDelay:
+                                  (i - config.numPrimaryLinks) * 0.025 + "s",
+                              }
+                            : null
+                        }
+                      >
+                        <Typography variant="h6" color="textPrimary">
+                          <MUILink href={category.link}>
+                            {category.name}
+                          </MUILink>
+                        </Typography>
+                      </SideMenuNavLinkItem>
+                    )
+                  )
+                )}
+              </ul>
+            </WideBox>
+            <NarrowBox>
+              <ul style={{ padding: "0" }}>
+                {config.navlinks.map((category, i) =>
+                  !category.external ? (
+                    <SideMenuNavLinkItem
+                      key={i}
+                      isOpen={isActive}
+                      style={
+                        isActive ? { transitionDelay: i * 0.025 + "s" } : null
+                      }
+                    >
+                      <Typography variant="h6" color="textPrimary">
+                        <Link href={category.link} passHref>
+                          <a>{category.name}</a>
+                        </Link>
+                      </Typography>
+                    </SideMenuNavLinkItem>
+                  ) : (
+                    <SideMenuNavLinkItem
+                      key={i}
+                      isOpen={isActive}
+                      style={
+                        isActive ? { transitionDelay: i * 0.025 + "s" } : null
+                      }
+                    >
+                      <Typography variant="h6" color="textPrimary">
                         <MUILink href={category.link}>{category.name}</MUILink>
                       </Typography>
                     </SideMenuNavLinkItem>
                   )
-                )
-              )}
-            </WideBox>
-            <NarrowBox>
-              {config.navlinks.map((category, i) =>
-                !category.external ? (
-                  <SideMenuNavLinkItem
-                    key={i}
-                    isOpen={isActive}
-                    style={
-                      isActive ? { transitionDelay: i * 0.025 + "s" } : null
-                    }
-                  >
-                    <Typography variant="h6" color="textPrimary">
-                      <Link href={category.link} passHref>
-                        <a>{category.name}</a>
-                      </Link>
-                    </Typography>
-                  </SideMenuNavLinkItem>
-                ) : (
-                  <SideMenuNavLinkItem
-                    key={i}
-                    isOpen={isActive}
-                    style={
-                      isActive ? { transitionDelay: i * 0.025 + "s" } : null
-                    }
-                  >
-                    <Typography variant="h6" color="textPrimary">
-                      <MUILink href={category.link}>{category.name}</MUILink>
-                    </Typography>
-                  </SideMenuNavLinkItem>
-                )
-              )}
+                )}
+              </ul>
             </NarrowBox>
           </SideMenuNavLinks>
         </SideMenuNavigation>

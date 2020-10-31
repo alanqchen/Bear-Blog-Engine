@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   StyledImage,
-  StyledPicture,
   StyledImageWrapper,
   FeatureImageWrapper,
   TagsWrapper,
@@ -64,52 +63,30 @@ function FeatureImage({ featureImgUrl, tags, skeleton, moreHeight, noMargin }) {
             height={moreHeight ? "600px" : "300px"}
           />
         ) : (
-          <StyledPicture>
-            {featureImgUrl.substring(
-              featureImgUrl.length - 5,
-              featureImgUrl.length
-            ) === ".jpeg" ? (
-              <source
-                type="image/webp"
-                srcSet={
-                  process.env.NEXT_PUBLIC_API_URL +
-                  featureImgUrl.substring(0, featureImgUrl.length - 5) +
-                  ".webp"
-                }
-              />
-            ) : (
-              <source
-                type="image/webp"
-                srcSet={
-                  process.env.NEXT_PUBLIC_API_URL +
-                  featureImgUrl.substring(0, featureImgUrl.length - 4) +
-                  ".webp"
-                }
-              />
-            )}
-            <StyledImage
-              ref={(input) => {
-                // onLoad replacement for SSR
-                if (!input) {
-                  return;
-                }
-                const img = input;
+          <StyledImage
+            ref={(input) => {
+              // onLoad replacement for SSR
+              if (!input) {
+                return;
+              }
+              const img = input;
 
-                const updateFunc = () => {
-                  this.setState({ loaded: true });
-                };
-                img.onload = updateFunc;
-                if (img.complete) {
-                  handleLoad();
-                }
-                img.onload = null;
-              }}
-              src={process.env.NEXT_PUBLIC_API_URL + featureImgUrl}
-              alt="Feature Image"
-              onLoad={() => handleLoad()}
-              loading="lazy"
-            />
-          </StyledPicture>
+              const updateFunc = () => {
+                this.setState({ loaded: true });
+              };
+              img.onload = updateFunc;
+              if (img.complete) {
+                handleLoad();
+              }
+              img.onload = null;
+            }}
+            src={process.env.NEXT_PUBLIC_API_URL + featureImgUrl}
+            alt="Feature Image"
+            onLoad={() => handleLoad()}
+            width={700}
+            height={300}
+            style={{ paddingBottom: "0" }}
+          />
         )}
       </StyledImageWrapper>
     </FeatureImageWrapper>
