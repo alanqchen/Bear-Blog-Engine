@@ -7,7 +7,7 @@ export const fetchPostsBegin = () => ({
 export const fetchPostsSuccess = (response) => ({
   type: types.FETCH_POSTS_SUCCESS,
   payload: { response },
-  hasMore: response.data.length > 0,
+  hasMore: response.data.length > 4 && response.data.minID !== 1,
 });
 
 export const fetchPostsFailure = (error) => ({
@@ -22,12 +22,18 @@ export const fetchPostsNoMore = () => ({
 export const fetchPostsSetMinID = (minID) => ({
   type: types.FETCH_POSTS_SET_MINID,
   minID: minID,
+  hasMore: minID !== 1,
 });
 
 export function fetchPosts() {
   return (dispatch, getState) => {
+    const minPostID = getState().fetchPosts.minID;
+    if (minPostID === 1) {
+      dispatch(fetchPostsNoMore());
+      return;
+    }
     const params = {
-      maxID: getState().fetchPosts.minID,
+      maxID: minPostID,
     };
     dispatch(fetchPostsBegin());
     return fetch(
