@@ -7,7 +7,7 @@ export const fetchCategoryBegin = () => ({
 export const fetchCategorySuccess = (response) => ({
   type: types.FETCH_CATEGORY_SUCCESS,
   payload: { response },
-  hasMore: response.data.length > 0,
+  hasMore: response.data.length > 4 && response.data.minID !== 1,
 });
 
 export const fetchCategoryFailure = (error) => ({
@@ -27,6 +27,7 @@ export const fetchCategoryNew = (category) => ({
 export const fetchCategorySetMinID = (minID) => ({
   type: types.FETCH_CATEGORY_SET_MINID,
   minID: minID,
+  hasMore: minID !== 1,
 });
 
 export function fetchCategory(category) {
@@ -37,8 +38,14 @@ export function fetchCategory(category) {
       dispatch(fetchCategoryNew(category));
     }
 
+    const minCategoryPostID = getState().fetchCategory.minID;
+    if (minPostID === 1) {
+      dispatch(fetchCategoryNoMore());
+      return;
+    }
+
     const params = {
-      maxID: getState().fetchCategory.minID,
+      maxID: minCategoryPostID,
       tags: category,
     };
     dispatch(fetchCategoryBegin());

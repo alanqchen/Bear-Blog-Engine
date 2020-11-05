@@ -57,6 +57,7 @@ export default function fetchCategoryReducer(
       return {
         ...state,
         minID: action.minID,
+        hasMore: action.hasMore,
       };
 
     default:

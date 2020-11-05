@@ -37,7 +37,7 @@ export const StyledImageWrapper = styled.div`
   max-height: ${({ moreHeight }) => (moreHeight ? "600px" : "300px")};
 
   & div div {
-    padding-bottom: 0 !important;
+    padding: 0 !important;
   }
 `;
 
@@ -45,8 +45,8 @@ export const StyledImage = styled(Image)`
   position: relative !important;
   display: block;
   flex-shrink: 0;
-  width: 100%;
-  height: auto;
+  width: 100% !important;
+  height: auto !important;
 `;
 
 export const FeatureImageWrapper = styled.div`

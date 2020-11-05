@@ -49,6 +49,7 @@ export default function fetchPostsReducer(
       return {
         ...state,
         minID: action.minID,
+        hasMore: action.hasMore,
       };
 
     default:

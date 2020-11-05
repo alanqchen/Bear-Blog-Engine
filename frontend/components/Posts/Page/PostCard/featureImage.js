@@ -64,27 +64,12 @@ function FeatureImage({ featureImgUrl, tags, skeleton, moreHeight, noMargin }) {
           />
         ) : (
           <StyledImage
-            ref={(input) => {
-              // onLoad replacement for SSR
-              if (!input) {
-                return;
-              }
-              const img = input;
-
-              const updateFunc = () => {
-                this.setState({ loaded: true });
-              };
-              img.onload = updateFunc;
-              if (img.complete) {
-                handleLoad();
-              }
-              img.onload = null;
-            }}
             src={process.env.NEXT_PUBLIC_API_URL + featureImgUrl}
             alt="Feature Image"
             onLoad={() => handleLoad()}
             width={700}
             height={300}
+            layout="responsive"
             style={{ paddingBottom: "0" }}
           />
         )}
