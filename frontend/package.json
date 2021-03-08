@@ -24,7 +24,7 @@
     "lodash": "^4.17.20",
     "material-ui-search-bar": "^1.0.0",
     "next": "^10.0.5",
-    "next-pwa": "^5.0.4",
+    "next-pwa": "^5.0.6",
     "next-redux-wrapper": "^6.0.2",
     "react": "^17.0.1",
     "react-animated-burgers": "^1.2.8",
