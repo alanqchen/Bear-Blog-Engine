@@ -42,7 +42,7 @@
     "rich-markdown-editor": "^11.6.4",
     "styled-components": "^5.2.1",
     "uuid": "^8.3.1",
-    "yup": "^0.29.2"
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "babel-plugin-styled-components": "^1.12.0",
