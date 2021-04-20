@@ -37,7 +37,7 @@
     "react-redux": "^7.2.3",
     "react-waypoint": "^9.0.3",
     "redux": "^4.0.5",
-    "redux-devtools-extension": "^2.13.8",
+    "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.3.0",
     "rich-markdown-editor": "^11.6.4",
     "styled-components": "^5.2.1",
