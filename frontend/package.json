@@ -12,7 +12,7 @@
     "babel-install": "^2.1.0",
     "babel-plugin-import": "^1.13.1",
     "core-js": "^3.8.3",
-    "date-fns": "^2.16.1",
+    "date-fns": "^2.22.0",
     "dateformat": "^4.5.1",
     "email-validator": "^2.0.4",
     "form-data": "^3.0.0",
