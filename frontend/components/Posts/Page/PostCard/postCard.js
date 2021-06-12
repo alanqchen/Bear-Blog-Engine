@@ -25,7 +25,7 @@ export const PostCard = ({ post, skeleton }) => {
           variant="h4"
         >
           {skeleton ? (
-            <Skeleton variant="text" width="100%" />
+            <Skeleton animation="wave" variant="text" width="100%" />
           ) : (
             <>{post.title}</>
           )}
@@ -37,7 +37,7 @@ export const PostCard = ({ post, skeleton }) => {
           component="h2"
         >
           {skeleton ? (
-            <Skeleton variant="text" width="80%" />
+            <Skeleton animation="wave" variant="text" width="80%" />
           ) : (
             <>{post.subtitle}</>
           )}
@@ -49,7 +49,7 @@ export const PostCard = ({ post, skeleton }) => {
           component="h3"
         >
           {skeleton ? (
-            <Skeleton variant="text" width="40%" />
+            <Skeleton animation="wave" variant="text" width="40%" />
           ) : (
             <>{timestamp2date(post.createdAt)}</>
           )}

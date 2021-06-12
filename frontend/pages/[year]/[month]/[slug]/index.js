@@ -45,7 +45,12 @@ const Index = (props) => {
         >
           <Skeleton animation="wave" variant="text" width="40%" />
         </Typography>
-        <Skeleton animation="wave" variant="rect" width="100%" height={"400px"} />
+        <Skeleton
+          animation="wave"
+          variant="rect"
+          width="100%"
+          height={"400px"}
+        />
       </Layout>
     );
   }
