@@ -61,21 +61,21 @@ export const PostEditSkeleton = () => {
   return (
     <>
       <ContentSpacer />
-      <Skeleton width="80%">
+      <Skeleton animation="wave" width="80%">
         <Typography>.</Typography>
       </Skeleton>
-      <Skeleton width="100%">
+      <Skeleton animation="wave" width="100%">
         <Typography>.</Typography>
       </Skeleton>
-      <Skeleton width="90%">
-        <Typography>.</Typography>
-      </Skeleton>
-      <Box m="46px" />
-      <Skeleton variant="rect" width="100%" height="300px">
+      <Skeleton animation="wave" width="90%">
         <Typography>.</Typography>
       </Skeleton>
       <Box m="46px" />
-      <Skeleton variant="text" width="100%" />
+      <Skeleton animation="wave" variant="rect" width="100%" height="300px">
+        <Typography>.</Typography>
+      </Skeleton>
+      <Box m="46px" />
+      <Skeleton animation="wave" variant="text" width="100%" />
     </>
   );
 };

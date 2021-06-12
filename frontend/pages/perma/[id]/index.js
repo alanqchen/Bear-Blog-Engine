@@ -20,7 +20,7 @@ const Index = ({ post }) => {
           variant="h1"
           component="h1"
         >
-          <Skeleton variant="text" width="80%" />
+          <Skeleton animation="wave" variant="text" width="80%" />
         </Typography>
         <Typography
           align="left"
@@ -29,9 +29,9 @@ const Index = ({ post }) => {
           component="h2"
           gutterBottom
         >
-          <Skeleton variant="text" width="40%" />
+          <Skeleton animation="wave" variant="text" width="40%" />
         </Typography>
-        <Skeleton variant="rect" width="100%" height={"400px"} />
+        <Skeleton animation="wave" variant="rect" width="100%" height={"400px"} />
       </Layout>
     );
   }
@@ -79,7 +79,7 @@ const Index = ({ post }) => {
           variant="h1"
           component="h1"
         >
-          <Skeleton variant="text" width="80%" />
+          <Skeleton animation="wave" variant="text" width="80%" />
         </Typography>
         <Typography
           align="left"
@@ -88,9 +88,9 @@ const Index = ({ post }) => {
           component="h2"
           gutterBottom
         >
-          <Skeleton variant="text" width="40%" />
+          <Skeleton animation="wave" variant="text" width="40%" />
         </Typography>
-        <Skeleton variant="rect" width="100%" height={"400px"} />
+        <Skeleton animation="wave" variant="rect" width="100%" height={"400px"} />
       </Layout>
     );
   }
