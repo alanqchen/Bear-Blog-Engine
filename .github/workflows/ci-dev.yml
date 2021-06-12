@@ -31,7 +31,7 @@ jobs:
         GITHUB_REF=$(echo $GITHUB_REF | sed -e "s#refs/heads/##g")
         echo "new GITHUB_REF is $GITHUB_REF"
         docker build --network="host" -t aqchen/bearpost-frontend:$GITHUB_REF frontend/
-        docker push aqchen/bearpost-frontend
+        docker push aqchen/bearpost-frontend:$GITHUB_REF
         
     - name: Build and push backend docker file (master pull request or non-master push)
       run: |
@@ -39,5 +39,5 @@ jobs:
         echo "old GITHUB_REF is $GITHUB_REF"
         GITHUB_REF=$(echo $GITHUB_REF | sed -e "s#refs/heads/##g")
         echo "new GITHUB_REF is $GITHUB_REF"
-        docker tag bear-blog-engine_api-dev:latest aqchen/bearpost-api:$GITHUB_REF
-        docker push aqchen/bearpost-api
+        docker tag bear-blog-engine_api-dev:$GITHUB_REF aqchen/bearpost-api:$GITHUB_REF
+        docker push aqchen/bearpost-api:$GITHUB_REF
