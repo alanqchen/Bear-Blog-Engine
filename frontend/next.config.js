@@ -15,4 +15,7 @@ module.exports = withPWA({
     ],
     loader: "default",
   },
+  future: {
+    webpack5: true,
+  },
 });

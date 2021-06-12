@@ -1,32 +1,21 @@
 import Layout from "../components/PublicLayout/publicLayout";
 import { useRouter } from "next/router";
 import { WaveButton, ErrorWrapper } from "../components/Theme/StyledComponents";
-import Lottie from "react-lottie";
+import Lottie from "lottie-react";
 import { Typography } from "@material-ui/core";
 import Icon404Data from "../components/Theme/404Icon.json";
 
 export default function Custom404() {
   const router = useRouter();
 
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: Icon404Data,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
-  };
-
   return (
     <Layout>
       <ErrorWrapper>
         <Lottie
-          options={defaultOptions}
-          width={"90%"}
-          isStopped={false}
-          isPaused={false}
-          isClickToPauseDisabled={true}
-          style={{ maxWidth: "400px" }}
+          animationData={Icon404Data}
+          loop={true}
+          autoplay={true}
+          style={{ width: "90%", maxWidth: "400px" }}
         />
         <Typography
           fontWeight="fontWeightLight"
