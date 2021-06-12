@@ -36,5 +36,5 @@ jobs:
         
     - name: Build and push backend docker file (master pull request or non-master push)
       run: |
-        docker tag bear-blog-engine_api-dev:$BRANCH_NAME aqchen/bearpost-api:$BRANCH_NAME
+        docker tag bear-blog-engine_api-dev:latest aqchen/bearpost-api:$BRANCH_NAME
         docker push aqchen/bearpost-api:$BRANCH_NAME
