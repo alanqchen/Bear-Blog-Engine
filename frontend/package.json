@@ -61,7 +61,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint --fix .",
-    "format": "prettier --write \"**/*.+(js|jsx|json|yml|yaml|md)\""
+    "format": "prettier --write \"**/*.+(js|jsx|json|yml|yaml|md)\"",
+    "prepare": "cd .. && husky install"
   },
   "husky": {
     "hooks": {
