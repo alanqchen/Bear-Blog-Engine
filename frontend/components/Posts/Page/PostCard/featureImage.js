@@ -28,6 +28,7 @@ function FeatureImage({ featureImgUrl, tags, skeleton, moreHeight, noMargin }) {
       {!skeleton && loading && (
         <>
           <Skeleton
+            animation="wave"
             variant="rect"
             width="100%"
             height={moreHeight ? "400px" : "300px"}
@@ -58,6 +59,7 @@ function FeatureImage({ featureImgUrl, tags, skeleton, moreHeight, noMargin }) {
       >
         {skeleton ? (
           <Skeleton
+            animation="wave"
             variant="rect"
             width="100%"
             height={moreHeight ? "600px" : "300px"}

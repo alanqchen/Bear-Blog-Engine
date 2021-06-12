@@ -15,6 +15,10 @@ jobs:
 
     - name: Check out code
       uses: actions/checkout@v2
+    
+    - name: Set GitHub branch name
+      run: |
+        echo "BRANCH_NAME=$(echo ${{ github.ref }} | sed -e "s#refs/heads/##g")" >> $GITHUB_ENV
 
     - name: Build backend docker image and run
       run: |
@@ -26,18 +30,11 @@ jobs:
 
     - name: Build and push frontend docker file (master pull request or non-master push)
       run: |
-        echo "::set-env name=GITHUB_REF::${{ github.ref }}"
-        echo "old GITHUB_REF is $GITHUB_REF"
-        GITHUB_REF=$(echo $GITHUB_REF | sed -e "s#refs/heads/##g")
-        echo "new GITHUB_REF is $GITHUB_REF"
-        docker build --network="host" -t aqchen/bearpost-frontend:$GITHUB_REF frontend/
-        docker push aqchen/bearpost-frontend:$GITHUB_REF
+        echo "Branch name is $BRANCH_NAME"
+        docker build --network="host" -t aqchen/bearpost-frontend:$BRANCH_NAME frontend/
+        docker push aqchen/bearpost-frontend:$BRANCH_NAME
         
     - name: Build and push backend docker file (master pull request or non-master push)
       run: |
-        echo "::set-env name=GITHUB_REF::${{ github.ref }}"
-        echo "old GITHUB_REF is $GITHUB_REF"
-        GITHUB_REF=$(echo $GITHUB_REF | sed -e "s#refs/heads/##g")
-        echo "new GITHUB_REF is $GITHUB_REF"
-        docker tag bear-blog-engine_api-dev:$GITHUB_REF aqchen/bearpost-api:$GITHUB_REF
-        docker push aqchen/bearpost-api:$GITHUB_REF
+        docker tag bear-blog-engine_api-dev:$BRANCH_NAME aqchen/bearpost-api:$BRANCH_NAME
+        docker push aqchen/bearpost-api:$BRANCH_NAME
