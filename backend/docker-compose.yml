@@ -29,7 +29,7 @@ services:
     ##                               PostgreSQL
     ################################################################################
     postgres:
-        image: postgres:latest
+        image: postgres:12
         container_name: bearpost_postgres
         restart: unless-stopped
         environment:
