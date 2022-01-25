@@ -13,8 +13,8 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/app"
 	"github.com/alanqchen/Bear-Post/backend/controllers"
 	"github.com/alanqchen/Bear-Post/backend/services"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/dgrijalva/jwt-go/request"
+	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v4/request"
 )
 
 // RequireAuthentication is the middleware function for routes that require a bearer token

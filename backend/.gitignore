@@ -1,5 +1,7 @@
 # Config
 main
+data
+vendor
 .env
 config/app.json
 config/app-custom.json

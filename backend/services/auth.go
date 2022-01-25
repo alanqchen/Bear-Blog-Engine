@@ -17,9 +17,9 @@ import (
 	"github.com/alanqchen/Bear-Post/backend/database"
 	"github.com/alanqchen/Bear-Post/backend/models"
 	"github.com/alanqchen/Bear-Post/backend/util"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/dgrijalva/jwt-go/request"
 	"github.com/gofrs/uuid"
+	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v4/request"
 )
 
 // KAuthTokenClaims stores the claims associated with a token

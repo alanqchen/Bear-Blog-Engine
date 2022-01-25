@@ -46,8 +46,8 @@ func NewRouter(a *app.App) *mux.Router {
 	api.HandleFunc("/videos/upload", middleware.Logger(middleware.RequireAuthentication(a, uploadController.UploadVideo, false))).Methods(http.MethodPost)
 	log.Println("Created media uploads route")
 	// Users
-	api.HandleFunc("/users", middleware.Logger(uc.GetAll)).Methods(http.MethodGet)
-	api.HandleFunc("/users/detailed", middleware.Logger(middleware.RequireAuthentication(a, uc.GetAllDetailed, false))).Methods(http.MethodGet)
+	api.HandleFunc("/users", middleware.Logger(middleware.RequireAuthentication(a, uc.GetAll, false))).Methods(http.MethodGet)
+	api.HandleFunc("/users/detailed", middleware.Logger(middleware.RequireAuthentication(a, uc.GetAllDetailed, true))).Methods(http.MethodGet)
 	api.HandleFunc("/users", middleware.Logger(middleware.RequireAuthentication(a, uc.Create, true))).Methods(http.MethodPost)
 	api.HandleFunc("/users/setup", middleware.Logger(uc.CreateFirstAdmin)).Methods(http.MethodPost)
 	api.HandleFunc("/users/{id}", middleware.Logger(uc.GetByID)).Methods(http.MethodGet)
