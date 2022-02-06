@@ -3,7 +3,6 @@ module github.com/alanqchen/Bear-Post/backend
 go 1.17
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/gofrs/uuid v4.0.0+incompatible
 	github.com/golang-jwt/jwt/v4 v4.2.0

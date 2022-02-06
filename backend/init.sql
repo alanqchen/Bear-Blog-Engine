@@ -54,3 +54,54 @@ create unique index user_username_uindex
 alter table user_schema."user"
 	add constraint user_pk
 		primary key (id);
+
+-- v2.0.0 changes
+alter sequence post_schema.post_id_seq as integer;
+
+alter table post_schema.post
+    alter column authorid drop not null;
+
+alter table post_schema.post
+    alter column authorid set default null;
+
+alter table post_schema.post
+	add constraint user_fk
+		foreign key (authorid)
+			references user_schema."user"(id)
+			on delete set default
+
+alter table post_schema.post
+    add featured bool default false;
+    add published_at timestamptz default null;
+	add category text default null;
+
+create schema tag_schema;
+create schema post_tag_schema;
+
+create table tag_schema.tag
+(
+    id   serial
+        constraint tag_pk
+            primary key,
+    name text default '' not null
+);
+
+create unique index tag_name_uindex
+    on tag_schema.tag (name);
+create unique index tag_id_uindex
+    on tag_schema.tag (id);
+
+create table post_tag_schema.post_tag
+(
+    id      int not null generated always as identity 
+        constraint post_tag_pk
+            primary key,
+    post_id int not null
+        constraint post_tag_post_id_fk
+            references post_schema.post
+            on delete cascade,
+    tag_id  int not null
+        constraint post_tag_tag_id_fk
+            references tag_schema.tag
+            on delete cascade
+);
