@@ -16,6 +16,8 @@ This uses the Next.js framework.
 
 Note that iSSG and the service worker are not enabled in the development build and so pages will likely load slower than in production.
 
+To use the pre-commit hooks, navigate to the root project directory (that has both the frontend and backend directory) and run `npx husky install`.
+
 **Build Production (Test iSSG or Service Worker)**
 
 1. Run `npm run build`

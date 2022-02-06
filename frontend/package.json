@@ -1,6 +1,6 @@
 {
   "name": "bearpost-frontend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Frontend for the Bear Blog Engine",
   "main": "index.js",
   "dependencies": {
@@ -57,24 +57,24 @@
     "prettier": "^2.1.2"
   },
   "scripts": {
-    "dev": "next",
+    "dev": "export NODE_OPTIONS=--openssl-legacy-provider && next",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --fix .",
-    "format": "prettier --write \"**/*.+(js|jsx|json|yml|yaml|md)\"",
-    "prepare": "cd .. && husky install"
+    "lint": "npx eslint --fix .",
+    "format": "npx prettier --write \"**/*.+(js|jsx|json|yml|yaml|md)\"",
+    "prepare": "cd .. && npx husky install"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "npx lint-staged"
     }
   },
   "lint-staged": {
     "*.+(js|jsx)": [
-      "eslint --fix"
+      "npx eslint --fix"
     ],
     "*.+(json|css|md)": [
-      "prettier --write"
+      "npx prettier --write"
     ]
   },
   "keywords": [],
