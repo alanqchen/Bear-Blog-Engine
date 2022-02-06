@@ -105,3 +105,43 @@ create table post_tag_schema.post_tag
             references tag_schema.tag
             on delete cascade
 );
+
+create schema image_schema;
+
+create table image_schema.user_image
+(
+    id          int         not null generated always as identity 
+        constraint user_image_pk
+            primary key,
+    user_id     uuid        not null
+        constraint user_image_user_id_fk
+            references user_schema."user"
+            on delete cascade,
+    image_id    text        not null,
+	link        text        not null,
+    delete_hash text,
+    created_at  timestamptz not null,
+    name        text,
+    type        text        not null
+);
+
+create table image_schema.post_image
+(
+    id          int         not null
+        constraint table_name_pk
+            primary key,
+    post_id     int         not null
+        constraint post_image_post_id_fk
+            references post_schema.post
+            on delete cascade,
+    image_id    text        not null,
+	link        text        not null,
+    delete_hash int,
+    created_at  timestamptz not null,
+    name        text,
+    type        text        not null,
+    user_id     uuid
+        constraint post_image_user_id_fk
+            references user_schema."user"
+            on delete set null
+);
