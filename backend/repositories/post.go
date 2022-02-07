@@ -64,7 +64,7 @@ func (pr *postRepository) Create(p *models.Post) error {
 	err := pr.Pool.QueryRow(
 		context.Background(),
 		"INSERT INTO post_schema.post VALUES (default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id",
-		p.Title, p.Slug, p.Body, p.CreatedAt.UTC(), nil, p.Tags, p.Hidden, p.AuthorID, p.FeatureImgURL, p.Subtitle, p.Views,
+		p.Title, p.Slug, p.Body, p.CreatedAt.Time, nil, p.Tags, p.Hidden, p.AuthorID, p.FeatureImgURL, p.Subtitle, p.Views,
 	).Scan(&pID)
 
 	if err != nil {
@@ -122,7 +122,7 @@ func (pr *postRepository) createWithSlugCount(p *models.Post) error {
 	err = pr.Pool.QueryRow(
 		context.Background(),
 		"INSERT INTO post_schema.post VALUES (default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id",
-		p.Title, p.Slug+"-"+counter, p.Body, p.CreatedAt.UTC(), nil, p.Tags, p.Hidden, p.AuthorID, p.FeatureImgURL, p.Subtitle, p.Views,
+		p.Title, p.Slug+"-"+counter, p.Body, p.CreatedAt.Time, nil, p.Tags, p.Hidden, p.AuthorID, p.FeatureImgURL, p.Subtitle, p.Views,
 	).Scan(&pID)
 
 	if err != nil {

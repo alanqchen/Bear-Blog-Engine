@@ -1,28 +1,63 @@
-# GraphQL schema example
-#
-# https://gqlgen.com/getting-started/
+# Date is a timezonetz string timestamp
+scalar Date
 
-type Todo {
+type Post {
   id: ID!
-  text: String!
-  done: Boolean!
-  user: User!
+  featureImage: PostImage
+  title: String!
+  subtitle: String!
+  slug: String!
+  body: String!
+  category: String
+  tags: [String!]!
+  authorid: ID!
+  createdAt: Date!
+  updatedAt: Date
+  publishedAt: Date
+  hidden: Boolean
+  views: Int
+  featured: Boolean
 }
 
 type User {
   id: ID!
+  name: String
+  username: String
+  email: String
+  password: String
+  admin: Boolean
+  created_at: Date!
+  updated_at: Date
+  userImage: UserImage
+}
+
+type PostImage {
+  id: ID!
+  postID: ID!
+  imageID: ID!
+  link: String!
+  deleteHash: String
+  createdAt: Date!
   name: String!
+  type: String!
+  userID: ID
 }
 
-type Query {
-  todos: [Todo!]!
+type UserImage {
+  id: ID!
+  userID: ID!
+  imageID: ID!
+  link: String!
+  deleteHash: String
+  createdAt: Date!
+  name: String!
+  type: String!
 }
 
-input NewTodo {
-  text: String!
-  userId: String!
+input getPosts {
+  maxID: Int!
 }
 
 type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  getPosts(input: getPosts): [Post!]!
 }

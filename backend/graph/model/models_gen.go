@@ -2,19 +2,59 @@
 
 package model
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
+type Post struct {
+	ID           string     `json:"id"`
+	FeatureImage *PostImage `json:"featureImage"`
+	Title        string     `json:"title"`
+	Subtitle     string     `json:"subtitle"`
+	Slug         string     `json:"slug"`
+	Body         string     `json:"body"`
+	Category     *string    `json:"category"`
+	Tags         []string   `json:"tags"`
+	Authorid     string     `json:"authorid"`
+	CreatedAt    string     `json:"createdAt"`
+	UpdatedAt    *string    `json:"updatedAt"`
+	PublishedAt  *string    `json:"publishedAt"`
+	Hidden       *bool      `json:"hidden"`
+	Views        *int       `json:"views"`
+	Featured     *bool      `json:"featured"`
 }
 
-type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
+type PostImage struct {
+	ID         string  `json:"id"`
+	PostID     string  `json:"postID"`
+	ImageID    string  `json:"imageID"`
+	Link       string  `json:"link"`
+	DeleteHash *string `json:"deleteHash"`
+	CreatedAt  string  `json:"createdAt"`
+	Name       string  `json:"name"`
+	Type       string  `json:"type"`
+	UserID     *string `json:"userID"`
 }
 
 type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID        string     `json:"id"`
+	Name      *string    `json:"name"`
+	Username  *string    `json:"username"`
+	Email     *string    `json:"email"`
+	Password  *string    `json:"password"`
+	Admin     *bool      `json:"admin"`
+	CreatedAt string     `json:"created_at"`
+	UpdatedAt *string    `json:"updated_at"`
+	UserImage *UserImage `json:"userImage"`
+}
+
+type UserImage struct {
+	ID         string  `json:"id"`
+	UserID     string  `json:"userID"`
+	ImageID    string  `json:"imageID"`
+	Link       string  `json:"link"`
+	DeleteHash *string `json:"deleteHash"`
+	CreatedAt  string  `json:"createdAt"`
+	Name       string  `json:"name"`
+	Type       string  `json:"type"`
+}
+
+type GetPosts struct {
+	MaxID int `json:"maxID"`
 }

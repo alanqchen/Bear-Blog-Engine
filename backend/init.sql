@@ -145,3 +145,25 @@ create table image_schema.post_image
             references user_schema."user"
             on delete set null
 );
+
+alter table post_schema.post
+    rename column authorid to author_id;
+
+alter table post_schema.post
+    drop column feature_image_url;
+
+alter table post_schema.post
+    add feature_image_id int default null;
+
+alter table post_schema.post
+    add constraint post_post_image_id_fk
+        foreign key (feature_image_id) references image_schema.post_image
+            on delete set null;
+
+alter table user_schema."user"
+    add user_image_id int default null;
+
+alter table user_schema."user"
+    add constraint user_user_image_id_fk
+        foreign key (user_image_id) references image_schema.user_image
+            on delete set null;

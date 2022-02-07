@@ -584,7 +584,7 @@ func (pc *PostController) Create(w http.ResponseWriter, r *http.Request) {
 		Title:         title,
 		Slug:          slug,
 		Body:          body,
-		CreatedAt:     time.Now(),
+		CreatedAt:     pgtype.Timestamptz{Time: time.Now(), Status: pgtype.Present},
 		Tags:          tags,
 		Hidden:        hidden,
 		AuthorID:      uid,
@@ -830,14 +830,14 @@ func (pc *PostController) checkSlugCache(slug string) (bool, []byte) {
 // Returns if given ID is in id cache
 func (pc *PostController) checkIDCache(id int) (bool, []byte) {
 
-	val := pc.App.Redis.HGet("ID-hash", string(id))
+	val := pc.App.Redis.HGet("ID-hash", strconv.Itoa(id))
 	if val.Val() == "" {
-		log.Println("[INFO] Key " + string(id) + " not found in ID cache")
+		log.Println("[INFO] Key " + strconv.Itoa(id) + " not found in ID cache")
 		return false, []byte("")
 	} else if val.Err() != nil {
 		panic(val.Err())
 	}
-	log.Println("[INFO] Key " + string(id) + " found in ID cache")
+	log.Println("[INFO] Key " + strconv.Itoa(id) + " found in ID cache")
 	return true, []byte(val.Val())
 }
 
@@ -967,18 +967,19 @@ func rmDuplicateTags(tags []string) []string {
 
 // Returns true if tags contains no keywords, false otherwise
 func checkTags(tags []string) bool {
+	regex, err := regexp.Compile(`^\d{4}[\/]\d{2}[\/].`)
+	if err != nil {
+		log.Println(err)
+		log.Println("[WARN] Failed to compile check tags regex")
+		return false
+	}
 	for _, tag := range tags {
 		// Check if page-hash
 		if tag == "page-hash" {
 			return false
 		}
 		// Check if slug
-		matched, err := regexp.Match(`^\d{4}[\/]\d{2}[\/].`, []byte(tag))
-		if err != nil {
-			log.Println(err)
-			log.Println("[WARN] Failed to check tags using regexp")
-			return false
-		}
+		matched := regex.Match([]byte(tag))
 		if matched {
 			return false
 		}
