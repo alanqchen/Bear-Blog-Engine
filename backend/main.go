@@ -2,10 +2,15 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/alanqchen/Bear-Post/backend/app"
 	"github.com/alanqchen/Bear-Post/backend/config"
+	"github.com/alanqchen/Bear-Post/backend/graph"
+	"github.com/alanqchen/Bear-Post/backend/graph/generated"
 	"github.com/alanqchen/Bear-Post/backend/routes"
 )
 
@@ -24,6 +29,8 @@ import (
  */
 
 func main() {
+	Reference()
+	return
 	log.Println("Starting up API...")
 	var cfg config.Config
 	var err error
@@ -56,4 +63,21 @@ func main() {
 	router := routes.NewRouter(app)
 	log.Println("Running api...")
 	app.Run(router)
+}
+
+const defaultPort = "8090"
+
+func Reference() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = defaultPort
+	}
+
+	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+
+	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	http.Handle("/query", srv)
+
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

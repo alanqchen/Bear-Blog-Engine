@@ -2,6 +2,16 @@
 
 package model
 
+type Image interface {
+	IsImage()
+}
+
+type PageInfo struct {
+	Total       int  `json:"total"`
+	PerPage     int  `json:"perPage"`
+	HasNextPage bool `json:"hasNextPage"`
+}
+
 type Post struct {
 	ID           string     `json:"id"`
 	FeatureImage *PostImage `json:"featureImage"`
@@ -11,7 +21,7 @@ type Post struct {
 	Body         string     `json:"body"`
 	Category     *string    `json:"category"`
 	Tags         []string   `json:"tags"`
-	Authorid     string     `json:"authorid"`
+	Author       *User      `json:"author"`
 	CreatedAt    string     `json:"createdAt"`
 	UpdatedAt    *string    `json:"updatedAt"`
 	PublishedAt  *string    `json:"publishedAt"`
@@ -30,6 +40,17 @@ type PostImage struct {
 	Name       string  `json:"name"`
 	Type       string  `json:"type"`
 	UserID     *string `json:"userID"`
+	Width      int     `json:"width"`
+	Height     int     `json:"height"`
+	Base64Blur string  `json:"base64Blur"`
+}
+
+func (PostImage) IsImage() {}
+
+type Posts struct {
+	Total    int       `json:"total"`
+	Posts    []*Post   `json:"posts"`
+	PageInfo *PageInfo `json:"pageInfo"`
 }
 
 type User struct {
@@ -53,6 +74,19 @@ type UserImage struct {
 	CreatedAt  string  `json:"createdAt"`
 	Name       string  `json:"name"`
 	Type       string  `json:"type"`
+	Width      int     `json:"width"`
+	Height     int     `json:"height"`
+	Base64Blur string  `json:"base64Blur"`
+}
+
+func (UserImage) IsImage() {}
+
+type GetPostByID struct {
+	PostID int `json:"postID"`
+}
+
+type GetPostBySlug struct {
+	Slug string `json:"slug"`
 }
 
 type GetPosts struct {

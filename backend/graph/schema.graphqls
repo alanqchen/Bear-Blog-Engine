@@ -1,5 +1,5 @@
-# Date is a timezonetz string timestamp
-scalar Date
+# Date is a timestamptz string timestamp
+scalar Timestamptz
 
 type Post {
   id: ID!
@@ -10,10 +10,10 @@ type Post {
   body: String!
   category: String
   tags: [String!]!
-  authorid: ID!
-  createdAt: Date!
-  updatedAt: Date
-  publishedAt: Date
+  author: User
+  createdAt: Timestamptz!
+  updatedAt: Timestamptz
+  publishedAt: Timestamptz
   hidden: Boolean
   views: Int
   featured: Boolean
@@ -26,38 +26,82 @@ type User {
   email: String
   password: String
   admin: Boolean
-  created_at: Date!
-  updated_at: Date
+  created_at: Timestamptz!
+  updated_at: Timestamptz
   userImage: UserImage
 }
 
-type PostImage {
+interface Image {
+  id: ID!
+  imageID: ID!
+  link: String!
+  deleteHash: String
+  createdAt: Timestamptz!
+  name: String!
+  type: String!
+  width: Int!
+  height: Int!
+  base64Blur: String!
+}
+
+type PostImage implements Image {
   id: ID!
   postID: ID!
   imageID: ID!
   link: String!
   deleteHash: String
-  createdAt: Date!
+  createdAt: Timestamptz!
   name: String!
   type: String!
   userID: ID
+  width: Int!
+  height: Int!
+  base64Blur: String!
 }
 
-type UserImage {
+type UserImage implements Image {
   id: ID!
   userID: ID!
   imageID: ID!
   link: String!
   deleteHash: String
-  createdAt: Date!
+  createdAt: Timestamptz!
   name: String!
   type: String!
+  width: Int!
+  height: Int!
+  base64Blur: String!
 }
 
 input getPosts {
   maxID: Int!
 }
 
-type Mutation {
-  getPosts(input: getPosts): [Post!]!
+input getPostByID {
+  postID: Int!
 }
+
+input getPostBySlug {
+  slug: String!
+}
+
+type Posts {
+  total: Int!
+  posts: [Post!]!
+  pageInfo: PageInfo!
+}
+
+# Information regarding pagination
+type PageInfo {
+  total: Int!
+  perPage: Int!
+  hasNextPage: Boolean!
+}
+
+type Query {
+  postByID(id: ID!): Post!
+  postBySlug(slug: String!): Post!
+  posts(first: Int = 5, after: String): Posts!
+  editorPosts(first: Int = 5, after: String): Posts!
+}
+

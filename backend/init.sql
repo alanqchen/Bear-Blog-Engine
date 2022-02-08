@@ -72,7 +72,11 @@ alter table post_schema.post
 
 alter table post_schema.post
     add featured bool default false;
+
+alter table post_schema.post
     add published_at timestamptz default null;
+
+alter table post_schema.post
 	add category text default null;
 
 create schema tag_schema;
@@ -167,3 +171,22 @@ alter table user_schema."user"
     add constraint user_user_image_id_fk
         foreign key (user_image_id) references image_schema.user_image
             on delete set null;
+
+alter table image_schema.post_image
+    add width int not null;
+
+alter table image_schema.post_image
+    add height int not null;
+
+alter table image_schema.post_image
+    add base64_blur text not null;
+
+alter table image_schema.user_image
+    add width int not null;
+
+alter table image_schema.user_image
+    add height int not null;
+
+alter table image_schema.user_image
+    add base64_blur text not null;
+
